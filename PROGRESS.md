@@ -18,6 +18,21 @@ Seguimiento de los entregables de la actividad (ver `docs/actividad.jpg`). Proye
 
 ---
 
+## Actividades del enunciado (columna izquierda)
+
+Cada actividad tiene requisitos propios que deben cumplirse aunque su resultado se presente dentro de un entregable de la tabla.
+
+| # | Actividad | Requisitos | Estado | Se entrega en |
+|---|---|---|---|---|
+| A1 | **Analizar los requerimientos de la aplicación** | A1.1 Identificar ≥8 requerimientos funcionales · A1.2 Formular 5 consultas que el sistema debe resolver · A1.3 ≥2 consultas involucran relaciones entre 3+ entidades | ⬜ Pendiente | Entregable 1 |
+| A2 | **Identificar entidades, propiedades y relaciones** | A2.1 Identificar las entidades necesarias para el dominio · A2.2 ≥3 propiedades por entidad con nombre, tipo de dato, obligatoria/opcional, única · A2.3 Tabla de relaciones con entidad origen, nombre, entidad destino y descripción | ⬜ Pendiente | Entregables 2 y 3 |
+| A3 | **Establecer restricciones de integridad** | A3.1 Definir ≥8 restricciones · A3.2 Cubrir: unicidad de identificadores, propiedades obligatorias, valores permitidos, consistencia entre entidades, reglas de negocio | ⬜ Pendiente | Entregable 4 |
+| A4 | **Determinar las cardinalidades** | A4.1 Usar la tabla Relación–Origen–Destino · A4.2 ¿Puede existir una entidad sin relacionarse? · A4.3 ¿Se relaciona con una o muchas? · A4.4 Mínimo y máximo permitido | ⬜ Pendiente | Entregable 5 |
+| A5 | **Construcción del modelo lógico** | A5.1 Integrar entidades, propiedades, relaciones, restricciones y cardinalidades en el modelo de grafos | ⬜ Pendiente | Entregable 6 |
+| A6 | **Conclusiones** | A6.1 ¿Por qué no basta identificar entidades para construir una BD de grafos? · A6.2 Cómo influyen consultas, restricciones y cardinalidades en el modelado | ⬜ Pendiente | Sección de conclusiones |
+
+---
+
 ## Detalle por entregable
 
 ### 1. Tabla de requerimientos y consultas — ⬜ Pendiente
@@ -101,3 +116,4 @@ Seguimiento de los entregables de la actividad (ver `docs/actividad.jpg`). Proye
 | Fecha | Cambio |
 |---|---|
 | 2026-11-12 | Creación de PROGRESS.md con los 6 entregables + conclusiones; todos pendientes. |
+| 2026-11-12 | Se añaden explícitamente las actividades A1–A6 de la columna izquierda del enunciado, con sus requisitos y el entregable donde se presentan. |
