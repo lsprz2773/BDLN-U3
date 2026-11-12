@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Modelo lógico QATO'K</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Layout: escenario del grafo a la izquierda, explicación del paso a la derecha, barra de control fija abajo. */
+:root{
+  --bg:#F6F4EF; --surface:#FDFCF9; --ink:#22201C; --muted:#6B655C; --line:#D8D1C4;
+  --accent:#B8541E; --accent-soft:#F6E2D3;
+  --zc-fill:#ECEAE5; --zc-stroke:#6E6A63;
+  --ze-fill:#FBE8DA; --ze-stroke:#B8541E;
+  --zr-fill:#E3EEE0; --zr-stroke:#3F7A45;
+  --code-bg:#EFEBE3;
+  --f-display:'Space Grotesk', 'Segoe UI', Arial, sans-serif;
+  --f-body:'Inter', 'Segoe UI', Arial, sans-serif;
+  --f-mono:'JetBrains Mono', ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1A1916; --surface:#23211D; --ink:#EEE9E0; --muted:#A39C90; --line:#3D3933;
+  --accent:#E07A43; --accent-soft:#3A2619;
+  --zc-fill:#2D2B27; --zc-stroke:#9C968C;
+  --ze-fill:#3A2619; --ze-stroke:#E07A43;
+  --zr-fill:#22301F; --zr-stroke:#7DB883;
+  --code-bg:#2A2824; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#1A1916; --surface:#23211D; --ink:#EEE9E0; --muted:#A39C90; --line:#3D3933;
+  --accent:#E07A43; --accent-soft:#3A2619;
+  --zc-fill:#2D2B27; --zc-stroke:#9C968C;
+  --ze-fill:#3A2619; --ze-stroke:#E07A43;
+  --zr-fill:#22301F; --zr-stroke:#7DB883;
+  --code-bg:#2A2824; color-scheme:dark;}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-block:20px calc(96px + env(safe-area-inset-bottom, 0px));}
+.wrap{max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px}
+header.top h1{font-family:var(--f-display);font-weight:700;font-size:clamp(24px,3vw,34px);line-height:1.1;margin:0;letter-spacing:-.01em;text-wrap:balance}
+header.top p{margin:4px 0 0;color:var(--muted);max-width:60ch}
+
+.phases{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0;padding:0}
+.phases li{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:6px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);transition:background .35s,color .35s,border-color .35s}
+.phases li.done{color:var(--ink)}
+.phases li.cur{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:980px){.grid{grid-template-columns:minmax(0,1fr)}.stage{position:relative;top:auto}}
+
+.stage{position:sticky;top:12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px;position:relative}
+.stage .scroll{overflow-x:auto}
+.stage svg{display:block;width:100%;height:auto}
+@media (max-width:640px){.stage svg{min-width:680px}}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;padding:6px 8px 2px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:4px;border:1.5px solid}
+.sw.c{background:var(--zc-fill);border-color:var(--zc-stroke)}
+.sw.e{background:var(--ze-fill);border-color:var(--ze-stroke)}
+.sw.r{background:var(--zr-fill);border-color:var(--zr-stroke)}
+
+/* Nodos */
+.node .nb{transform-box:fill-box;transform-origin:center;transition:opacity .45s ease}
+.node rect.box{stroke-width:1.6;transition:fill .5s,stroke .5s,stroke-width .3s,stroke-dasharray .3s}
+.node text{font-family:var(--f-display);font-weight:600;font-size:16px;text-anchor:middle;dominant-baseline:central;transition:fill .5s}
+.node.ghost rect.box{fill:transparent;stroke:var(--line);stroke-dasharray:5 5}
+.node.ghost text{fill:var(--line)}
+.node.on.z-c rect.box{fill:var(--zc-fill);stroke:var(--zc-stroke)}
+.node.on.z-e rect.box{fill:var(--ze-fill);stroke:var(--ze-stroke)}
+.node.on.z-r rect.box{fill:var(--zr-fill);stroke:var(--zr-stroke)}
+.node.on text{fill:var(--ink)}
+.node.on.hub rect.box{stroke-width:2.6}
+.node rect.halo{fill:none;stroke:var(--accent);stroke-width:2;opacity:0}
+.node.new rect.halo{animation:halo 1.8s ease-out .4s 2}
+.node.new rect.box{stroke:var(--accent);stroke-width:2.6}
+.node.dim .nb{opacity:.22}
+.node.pop .nb{animation:pop .6s cubic-bezier(.2,.9,.25,1.25) both}
+.node.on{cursor:help}
+@keyframes pop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+@keyframes halo{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.25)}}
+.node rect.halo{transform-box:fill-box;transform-origin:center}
+
+/* Relaciones */
+.edge{transition:opacity .4s}
+.edge.off{opacity:0}
+.edge path.ln{fill:none;stroke:var(--muted);stroke-width:1.6;transition:stroke .4s,stroke-width .3s}
+.edge.new path.ln,.edge.hot path.ln{stroke:var(--accent);stroke-width:2.4}
+.edge.dim{opacity:.15}
+.edge text{font-family:var(--f-mono);font-size:13.5px;font-weight:600;fill:var(--muted);text-anchor:middle;dominant-baseline:central;font-variant-ligatures:none;transition:opacity .4s,fill .4s}
+.edge rect.lb{fill:var(--surface);transition:opacity .4s}
+.edge.drawing rect.lb{opacity:0}
+.edge.new text,.edge.hot text{fill:var(--accent)}
+.edge.drawing text{opacity:0}
+.arrow-n{fill:var(--muted)} .arrow-h{fill:var(--accent)}
+.pulse{fill:var(--accent)}
+
+/* Panel */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 22px 24px;min-width:0}
+.pin{display:flex;flex-direction:column;gap:14px}
+.pin.enter-f{animation:inF .5s cubic-bezier(.2,.8,.2,1) both}
+.pin.enter-b{animation:inB .5s cubic-bezier(.2,.8,.2,1) both}
+@keyframes inF{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+@keyframes inB{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+.eyebrow{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.panel h2{font-family:var(--f-display);font-size:clamp(22px,2.2vw,28px);line-height:1.15;margin:0;font-weight:600;text-wrap:balance}
+.panel p{margin:0;max-width:62ch}
+.panel h3{font-family:var(--f-display);font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:6px 0 0;font-weight:600}
+.panel code,.mono{font-family:var(--f-mono);font-size:.88em}
+.panel strong{font-weight:600}
+
+.cards{display:flex;flex-direction:column;gap:10px}
+.card{border:1px solid var(--line);border-radius:10px;padding:10px 12px;border-left-width:4px}
+.card.z-c{border-left-color:var(--zc-stroke)} .card.z-e{border-left-color:var(--ze-stroke)} .card.z-r{border-left-color:var(--zr-stroke)}
+.card .nm{font-family:var(--f-display);font-weight:600;font-size:16px}
+.props{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:4px 6px}
+.props li{font-family:var(--f-mono);font-size:12px;background:var(--code-bg);border-radius:5px;padding:2px 6px;white-space:nowrap}
+.props li i{font-style:normal;color:var(--muted)}
+.props li b{color:var(--accent);font-weight:600}
+
+.rels{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.rels li{display:flex;flex-direction:column;gap:2px;padding-bottom:8px;border-bottom:1px dashed var(--line)}
+.rels li:last-child{border-bottom:0;padding-bottom:0}
+.rels .pat{font-variant-ligatures:none;font-family:var(--f-mono);font-size:12.5px;overflow-wrap:anywhere}
+.rels .pat em{font-style:normal;color:var(--accent);font-weight:600}
+.rels .cd{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.rels .ds{font-size:13.5px}
+
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:420px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stats div{border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.stats b{display:block;font-family:var(--f-display);font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums}
+.stats span{font-size:12px;color:var(--muted)}
+
+.note{background:var(--accent-soft);border-radius:10px;padding:10px 12px;font-size:14px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+.tbl table{border-collapse:collapse;width:100%;font-size:12.5px}
+.tbl th,.tbl td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl th{font-weight:600;color:var(--muted);background:var(--code-bg)}
+.tbl td.m{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.tbl tr:last-child td{border-bottom:0}
+pre.cy{font-variant-ligatures:none;margin:0;background:var(--code-bg);border-radius:10px;padding:12px 14px;overflow-x:auto;font-family:var(--f-mono);font-size:12.5px;line-height:1.6}
+pre.cy .k{color:var(--accent);font-weight:600}
+.tiers{display:flex;flex-direction:column;gap:10px}
+.tier{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.tier .t{font-weight:600}
+.tier ul{margin:4px 0 0;padding-left:18px}
+.tier .tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:999px;margin-bottom:4px}
+.tag.n{background:var(--zr-fill);color:var(--zr-stroke)}
+.tag.e{background:var(--zc-fill);color:var(--zc-stroke)}
+.tag.a{background:var(--ze-fill);color:var(--ze-stroke)}
+.steps-mini{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;counter-reset:s}
+.steps-mini li{display:flex;gap:10px;align-items:baseline;opacity:.35;transition:opacity .4s}
+.steps-mini li.lit{opacity:1}
+.steps-mini li::before{counter-increment:s;content:counter(s);font-family:var(--f-mono);font-size:12px;color:var(--accent);font-weight:600;min-width:14px}
+
+/* Barra de control */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  padding-top:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom, 0px))}
+.bar .in{max-width:1360px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.prog{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.prog .lbl{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prog .lbl b{color:var(--ink);font-weight:600}
+.dots{display:flex;gap:5px}
+.dots button{flex:1;height:6px;border-radius:3px;border:0;padding:0;background:var(--line);cursor:pointer;transition:background .35s}
+.dots button.done{background:var(--muted)}
+.dots button.cur{background:var(--accent)}
+.dots button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.btn{font-family:var(--f-body);font-size:15px;font-weight:600;border-radius:10px;padding:11px 18px;cursor:pointer;border:1.5px solid var(--ink);display:inline-flex;align-items:center;gap:8px;transition:transform .15s,background .2s,opacity .2s}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn.sec{background:transparent;color:var(--ink)}
+.btn.pri{background:var(--accent);border-color:var(--accent);color:#FFF8F2}
+.btn:disabled{opacity:.35;cursor:default}
+@media (max-width:560px){.btn{padding:10px 12px}.btn .tx{display:none}.prog .lbl{font-size:12px}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Modelo lógico de QATO'K</h1>
+      <p>Construcción guiada del grafo de propiedades para Neo4j, fase por fase.</p>
+    </div>
+    <ol class="phases" id="phases" aria-label="Fases"></ol>
+  </header>
+
+  <div class="grid">
+    <section class="stage" aria-label="Diagrama del grafo">
+      <div class="scroll"><svg id="g" viewBox="0 0 1100 700" role="img" aria-labelledby="gt">
+        <title id="gt">Grafo del modelo lógico de QATO'K</title>
+        <defs>
+          <marker id="an" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="arrow-n" d="M0,0 L10,5 L0,10 z"/></marker>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path class="arrow-h" d="M0,0 L10,5 L0,10 z"/></marker>
+        </defs>
+        <g id="edges"></g>
+        <g id="nodes"></g>
+        <circle id="pulse" class="pulse" r="6" opacity="0"/>
+      </svg></div>
+      <div class="legend">
+        <span><i class="sw c"></i>Contenido</span>
+        <span><i class="sw e"></i>Ejecución</span>
+        <span><i class="sw r"></i>Resultados</span>
+        <span>Contorno punteado: nodo aún no construido</span>
+      </div>
+    </section>
+
+    <section class="panel" aria-live="polite"><div class="pin" id="pin"></div></section>
+  </div>
+</div>
+
+<nav class="bar" aria-label="Navegación entre pasos">
+  <div class="in">
+    <button class="btn sec" id="prev" type="button" aria-label="Paso anterior">← <span class="tx">Anterior</span></button>
+    <div class="prog">
+      <div class="lbl" id="lbl"></div>
+      <div class="dots" id="dots"></div>
+    </div>
+    <button class="btn pri" id="next" type="button" aria-label="Paso siguiente"><span class="tx">Siguiente</span> →</button>
+  </div>
+</nav>
+
+<script>
+(function(){
+const W = 176, H = 48;
+const NODES = {
+  Simulacion:{x:150,y:90,z:'c',d:'Situación profesional que se practica.',p:[['id_simulacion','String','U'],['titulo','String'],['descripcion','String'],['dificultad','String'],['duracion_estimada','Integer','?'],['estado','String']]},
+  Intento:{x:480,y:90,z:'e',d:'Cada vez que un usuario juega una simulación.',p:[['id_intento','String','U'],['fecha_inicio','DateTime'],['fecha_fin','DateTime','?'],['estado','String'],['puntuacion','Float','?']]},
+  Usuario:{x:850,y:90,z:'e',d:'Estudiante o recién egresado que practica.',p:[['id_usuario','String','U'],['nombre','String'],['correo','String','U'],['contrasena_hash','String'],['fecha_registro','DateTime'],['estado','String']]},
+  Paso:{x:150,y:320,z:'c',d:'Momento de la simulación donde se decide.',p:[['id_paso','String','U'],['titulo','String'],['descripcion','String'],['orden','Integer'],['tipo','String']]},
+  Respuesta:{x:480,y:320,z:'e',d:'Decisión concreta tomada en un intento.',p:[['id_respuesta','String','U'],['fecha_respuesta','DateTime'],['secuencia','Integer']]},
+  Opcion:{x:150,y:530,z:'c',d:'Alternativa que ofrece un paso.',p:[['id_opcion','String','U'],['descripcion','String'],['valoracion','Float','?']]},
+  Consecuencia:{x:150,y:650,z:'c',d:'Resultado visible de elegir una opción.',p:[['id_consecuencia','String','U'],['descripcion','String'],['impacto','String'],['tipo','String']]},
+  Retroalimentacion:{x:480,y:530,z:'e',d:'Explicación del acierto o error y cómo mejorar.',p:[['id_retroalimentacion','String','U'],['comentario','String'],['tipo','String'],['recomendacion','String']]},
+  Evidencia:{x:720,y:330,z:'r',d:'Prueba de una habilidad demostrada.',p:[['id_evidencia','String','U'],['titulo','String'],['descripcion','String'],['fecha_generacion','DateTime'],['visibilidad','String']]},
+  Progreso:{x:978,y:330,z:'r',d:'Nivel actual de un usuario en una habilidad.',p:[['id_progreso','String','U'],['nivel_actual','Float'],['fecha_actualizacion','DateTime']]},
+  Habilidad:{x:850,y:530,z:'c',hub:true,d:'Competencia profesional; une las tres zonas.',p:[['id_habilidad','String','U'],['nombre','String','U'],['descripcion','String'],['categoria','String'],['nivel_objetivo','Integer','?']]},
+  Comparticion:{x:720,y:650,z:'r',d:'Permiso para que alguien vea una evidencia.',p:[['id_comparticion','String','U'],['token','String','U'],['fecha_creacion','DateTime'],['fecha_expiracion','DateTime','?'],['estado','String'],['destinatario','String','?p']]}
+};
+const ZN = {c:'Contenido',e:'Ejecución',r:'Resultados'};
+
+const EDGES = {
+  contiene:{f:'Simulacion',t:'Paso',n:'CONTIENE',c:'0..N / 1..1',d:'Una simulación contiene sus pasos; cada paso es de una sola simulación.'},
+  ofrece:{f:'Paso',t:'Opcion',n:'OFRECE',c:'1..N / 1..1',d:'Cada paso ofrece al menos una opción.'},
+  generaC:{f:'Opcion',t:'Consecuencia',n:'GENERA',c:'1..N / 1..1',d:'Toda opción genera al menos una consecuencia.',ly:592},
+  conduce:{f:'Opcion',t:'Paso',n:'CONDUCE_A',c:'0..1 / 0..N',d:'Lleva al siguiente paso. Sin ella, la opción es terminal.',curve:'M 62 522 C 6 492, 6 358, 62 328',lx:30,ly:425,rot:-90},
+  desarrolla:{f:'Simulacion',t:'Habilidad',n:'DESARROLLA {peso, nivel_esperado}',c:'0..N / 0..N',d:'La simulación desarrolla habilidades; la relación guarda peso y nivel esperado.',curve:'M 150 66 L 150 24 L 1082 24 L 1082 530 L 940 530',lx:640,ly:24},
+  realiza:{f:'Usuario',t:'Intento',n:'REALIZA',c:'0..N / 1..1',d:'Un usuario realiza intentos; cada intento es de un solo usuario.'},
+  tiene:{f:'Simulacion',t:'Intento',n:'TIENE',c:'0..N / 1..1',d:'Cada intento corresponde a una sola simulación.'},
+  registra:{f:'Intento',t:'Respuesta',n:'REGISTRA',c:'0..N / 1..1',d:'El intento registra cada decisión, en orden.'},
+  corrP:{f:'Respuesta',t:'Paso',n:'CORRESPONDE_A',c:'1..1 / 0..N',d:'Paso en el que se tomó la decisión.'},
+  selecciona:{f:'Respuesta',t:'Opcion',n:'SELECCIONA',c:'1..1 / 0..N',d:'Opción que eligió el usuario.',lx:300,ly:438},
+  generaR:{f:'Respuesta',t:'Retroalimentacion',n:'GENERA',c:'0..N / 1..1',d:'La decisión puede generar retroalimentación.'},
+  progreso:{f:'Usuario',t:'Progreso',n:'TIENE_PROGRESO',c:'0..N / 1..1',d:'El usuario tiene un progreso por habilidad.',lx:935,ly:205},
+  corrH:{f:'Progreso',t:'Habilidad',n:'CORRESPONDE_A',c:'1..1 / 0..N',d:'Cada progreso mide una sola habilidad.',lx:950,ly:440},
+  generaE:{f:'Usuario',t:'Evidencia',n:'GENERA',c:'0..N / 1..1',d:'El usuario es dueño de sus evidencias.',lx:770,ly:205},
+  produce:{f:'Intento',t:'Evidencia',n:'PRODUCE',c:'0..N / 1..1',d:'La evidencia nace de un intento concreto.'},
+  demuestra:{f:'Evidencia',t:'Habilidad',n:'DEMUESTRA',c:'1..N / 0..N',d:'La evidencia demuestra una o más habilidades.',lx:752,ly:440},
+  compart:{f:'Evidencia',t:'Comparticion',n:'TIENE_COMPARTICION',c:'0..N / 1..1',d:'Cada compartición da acceso a una evidencia.',ly:592}
+};
+const ORDER = ['realiza','tiene','contiene','desarrolla','ofrece','generaC','conduce','registra','corrP','selecciona','generaR','progreso','corrH','generaE','produce','demuestra','compart'];
+
+/* ---------- contenido de los pasos ---------- */
+const P = s => '<p>'+s+'</p>';
+const STEPS = [
+ {ph:0,eb:'Introducción',t:'El modelo lógico, paso a paso',build:[],e:[],
+  html:P('QATO\'K es una plataforma para practicar situaciones laborales mediante simulaciones. Su modelo lógico es un <strong>grafo de propiedades</strong> para Neo4j: los datos son nodos con propiedades, unidos por relaciones dirigidas que también pueden guardar datos.')
+   +P('El modelo se construye en tres fases, una por cada zona del grafo. Las siluetas punteadas del diagrama marcan dónde quedará cada nodo.')
+   +'<div class="stats"><div><b>12</b><span>tipos de nodo</span></div><div><b>17</b><span>relaciones</span></div><div><b>55</b><span>propiedades</span></div><div><b>3</b><span>zonas</span></div></div>'
+   +'<h3>Cómo leer el diagrama</h3><ul class="rels"><li><span class="ds"><span class="mono">U</span> marca una propiedad única; <span class="mono">?</span>, una opcional. Las demás son obligatorias.</span></li><li><span class="ds">La cardinalidad <span class="mono">0..N / 1..1</span> se lee así: cada origen tiene de 0 a N destinos, y cada destino tiene exactamente un origen.</span></li><li><span class="ds">Pase el cursor sobre un nodo construido para ver sus propiedades.</span></li></ul>'},
+ {ph:1,eb:'Fase 1 · Contenido',t:'La simulación y sus pasos',build:['Simulacion','Paso'],e:['contiene'],
+  html:P('Todo empieza por el contenido que publica la plataforma. Una <strong>Simulacion</strong> representa una situación profesional, por ejemplo, atender a un cliente molesto por un retraso. Tiene una dificultad (básica, intermedia o avanzada) y un estado: borrador, publicada o inactiva.')
+   +P('La simulación <strong>CONTIENE</strong> sus pasos. Cada <strong>Paso</strong> es un momento de la situación: un correo, una reunión, una conversación, una tarea o un incidente. El paso con <span class="mono">orden = 1</span> es el inicial.')
+   +'<div class="note">En el modelo relacional, el paso guardaría la clave foránea de su simulación. En el grafo esa clave desaparece: la relación CONTIENE la sustituye.</div>'},
+ {ph:1,eb:'Fase 1 · Contenido',t:'Opciones, consecuencias y ramificaciones',build:['Opcion','Consecuencia'],e:['ofrece','generaC','conduce'],
+  html:P('Cada paso <strong>OFRECE</strong> una o más opciones, y cada <strong>Opcion</strong> <strong>GENERA</strong> al menos una <strong>Consecuencia</strong>: toda decisión tiene un resultado visible.')
+   +P('<strong>CONDUCE_A</strong> lleva de una opción al siguiente paso. Varias opciones pueden llegar al mismo paso, y así se forman las ramificaciones. Una opción sin CONDUCE_A es <strong>terminal</strong>: al elegirla, el intento termina.')
+   +'<div class="note">Primera ventaja del grafo: las rutas de una simulación ya son nodos unidos por aristas dirigidas.</div>'},
+ {ph:1,eb:'Fase 1 · Contenido',t:'Habilidad, el nodo que une las tres zonas',build:['Habilidad'],e:['desarrolla'],
+  html:P('Una <strong>Habilidad</strong> es una competencia profesional, como la comunicación asertiva o la gestión del tiempo. Su nombre es único.')
+   +P('La simulación <strong>DESARROLLA</strong> habilidades, y la relación guarda dos propiedades: <span class="mono">peso</span>, cuánto aporta la simulación a la habilidad (de 0 a 1), y <span class="mono">nivel_esperado</span>, el nivel que se espera alcanzar (de 0 a 100). Ambos rangos son propuestas iniciales.')
+   +'<div class="note">En un modelo relacional esto exigiría una tabla intermedia. En el grafo los datos viven en la propia relación, y cada par simulación–habilidad aparece una sola vez.</div>'},
+ {ph:2,eb:'Fase 2 · Ejecución',t:'El usuario inicia un intento',build:['Usuario','Intento'],e:['realiza','tiene'],
+  html:P('El <strong>Usuario</strong> es el estudiante o recién egresado que practica. Su correo es único y se guarda en minúsculas, para que la unicidad no dependa de las mayúsculas. La contraseña solo se guarda como hash.')
+   +P('Cada vez que juega una simulación se crea un <strong>Intento</strong>. El usuario <strong>REALIZA</strong> el intento y la simulación lo <strong>TIENE</strong>: cada intento pertenece exactamente a un usuario y a una simulación. Solo se pueden intentar simulaciones publicadas.')
+   +P('Un intento está en curso, completado o abandonado. Si está completado, debe tener fecha de fin, y esa fecha no puede ser anterior a la de inicio.')},
+ {ph:2,eb:'Fase 2 · Ejecución',t:'Cada decisión es un nodo Respuesta',build:['Respuesta'],e:['registra','corrP','selecciona'],
+  html:P('Cuando el usuario elige una opción, el intento <strong>REGISTRA</strong> una <strong>Respuesta</strong>. La respuesta <strong>CORRESPONDE_A</strong> el paso en que estaba y <strong>SELECCIONA</strong> la opción elegida.')
+   +'<div class="note">¿Por qué un nodo y no una relación? La decisión se conecta con cuatro elementos a la vez: el intento, el paso, la opción y la retroalimentación. Una relación solo puede unir dos nodos.</div>'
+   +P('La propiedad <span class="mono">secuencia</span> (1, 2, 3…) es única dentro de cada intento y permite reconstruir el recorrido en orden. La aplicación comprueba que la opción pertenezca al paso y que el paso pertenezca a la simulación del intento.')},
+ {ph:2,eb:'Fase 2 · Ejecución',t:'La retroalimentación',build:['Retroalimentacion'],e:['generaR'],
+  html:P('Cada respuesta puede <strong>GENERAR</strong> <strong>Retroalimentacion</strong>: un comentario que explica el acierto o el error y una recomendación para mejorar. Su tipo es acierto, parcial o error.')
+   +P('Con esto la zona de ejecución queda completa. El grafo sabe qué hizo el usuario, en qué orden y qué aprendió de cada decisión.')},
+ {ph:3,eb:'Fase 3 · Resultados',t:'El progreso por habilidad',build:['Progreso'],e:['progreso','corrH'],
+  html:P('El usuario <strong>TIENE_PROGRESO</strong> en cada habilidad que practica, y cada <strong>Progreso</strong> <strong>CORRESPONDE_A</strong> una habilidad. Hay un solo progreso por par usuario–habilidad, con un <span class="mono">nivel_actual</span> entre 0 y 100.')
+   +'<div class="note">Progreso es un nodo propio, y no una propiedad del usuario, para poder agregar después un historial de mediciones sin rediseñar el modelo.</div>'},
+ {ph:3,eb:'Fase 3 · Resultados',t:'Evidencias y compartición',build:['Evidencia','Comparticion'],e:['generaE','produce','demuestra','compart'],
+  html:P('Un intento <strong>PRODUCE</strong> una <strong>Evidencia</strong>, que el usuario <strong>GENERA</strong> y que <strong>DEMUESTRA</strong> una o más habilidades. La evidencia y su intento pertenecen al mismo usuario, y solo puede demostrar habilidades que la simulación desarrolla.')
+   +P('La evidencia es privada por defecto. Para mostrarla a un empleador, el usuario crea una <strong>Comparticion</strong> con un token único, una fecha de expiración opcional y un estado (activa o revocada). Sin una compartición vigente, la evidencia privada no es accesible.')
+   +'<div class="note">Habilidad ya recibe relaciones de las tres zonas: DESARROLLA desde el contenido, CORRESPONDE_A y DEMUESTRA desde los resultados.</div>'},
+ {ph:4,eb:'Modelo completo',t:'El grafo terminado',all:true,e:[],
+  html:P('Doce tipos de nodo y diecisiete relaciones. Hay catorce tipos de relación distintos, porque GENERA y CORRESPONDE_A unen pares de nodos diferentes.')
+   +'<div class="tbl"><table><thead><tr><th>Origen</th><th>Relación</th><th>Destino</th><th>Card.</th></tr></thead><tbody>'
+   +ORDER.map(k=>{const e=EDGES[k];return '<tr><td>'+e.f+'</td><td class="m">'+e.n.replace(' {peso, nivel_esperado}','')+'</td><td>'+e.t+'</td><td class="m">'+e.c+'</td></tr>'}).join('')
+   +'</tbody></table></div>'
+   +P('Solo tres tipos de nodo pueden existir sin relaciones: Usuario, Simulacion (en borrador) y Habilidad. Los otros nueve se crean junto con sus relaciones obligatorias.')},
+ {ph:5,eb:'Consultas',t:'Una consulta, un recorrido',all:true,path:true,e:[],
+  html:P('<strong>Pregunta:</strong> ¿qué decidió un usuario durante una simulación, qué consecuencias tuvo y qué retroalimentación recibió?')
+   +P('En Neo4j la consulta es un patrón que sigue las flechas del diagrama. Son siete relaciones recorridas en una sola consulta. En una base relacional harían falta varios JOIN encadenados.')
+   +'<ol class="steps-mini" id="mini"><li>Usuario REALIZA Intento, que la Simulacion TIENE</li><li>Intento REGISTRA cada Respuesta</li><li>Respuesta CORRESPONDE_A un Paso</li><li>Respuesta SELECCIONA una Opcion</li><li>Opcion GENERA Consecuencia</li><li>Respuesta GENERA Retroalimentacion</li></ol>'
+   +'<pre class="cy"><span class="k">MATCH</span> (u:Usuario {id_usuario: $idUsuario})-[:REALIZA]-&gt;(i:Intento)\n      &lt;-[:TIENE]-(s:Simulacion {id_simulacion: $idSimulacion})\n<span class="k">MATCH</span> (i)-[:REGISTRA]-&gt;(r:Respuesta)-[:CORRESPONDE_A]-&gt;(p:Paso)\n<span class="k">MATCH</span> (r)-[:SELECCIONA]-&gt;(o:Opcion)\n<span class="k">OPTIONAL MATCH</span> (o)-[:GENERA]-&gt;(c:Consecuencia)\n<span class="k">OPTIONAL MATCH</span> (r)-[:GENERA]-&gt;(f:Retroalimentacion)\n<span class="k">RETURN</span> r.secuencia, p.titulo, o.descripcion,\n       collect(DISTINCT c.descripcion),\n       collect(DISTINCT f.comentario)\n<span class="k">ORDER BY</span> r.secuencia</pre>'},
+ {ph:5,eb:'Integridad',t:'Quién garantiza cada regla',all:true,rules:true,e:[],
+  html:P('Neo4j no tiene restricciones CHECK ni puede exigir que una relación exista. Por eso las reglas del modelo se reparten en tres niveles.')
+   +'<div class="tiers">'
+   +'<div class="tier"><span class="tag n">Neo4j nativo</span><div class="t">Unicidad: 15 restricciones</div><ul><li>Los 12 identificadores</li><li>El correo del usuario, el nombre de la habilidad y el token de compartición (resaltados en el diagrama)</li></ul></div>'
+   +'<div class="tier"><span class="tag e">Neo4j Enterprise</span><div class="t">Propiedades obligatorias y tipos de dato</div><ul><li>En la edición Community los valida la aplicación</li></ul></div>'
+   +'<div class="tier"><span class="tag a">Aplicación</span><div class="t">Reglas entre nodos, en la misma transacción</div><ul><li>La opción respondida pertenece al paso, y el paso a la simulación del intento</li><li>Todo paso ofrece una opción y toda opción genera una consecuencia</li><li>Valores permitidos, rangos de 0 a 100 y fechas coherentes</li><li>Un solo progreso por usuario y habilidad</li></ul></div>'
+   +'</div>'}
+];
+const PHASES = ['Inicio','Contenido','Ejecución','Resultados','Modelo','Uso'];
+const PATH_SEQ = [['realiza','tiene'],['registra'],['corrP'],['selecciona'],['generaC'],['generaR']];
+const PATH_NODES = ['Usuario','Intento','Simulacion','Respuesta','Paso','Opcion','Consecuencia','Retroalimentacion'];
+const RULE_NODES = ['Usuario','Habilidad','Comparticion'];
+
+/* ---------- construcción del SVG ---------- */
+const NS='http://www.w3.org/2000/svg';
+const mk=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+const gN=document.getElementById('nodes'), gE=document.getElementById('edges');
+
+function border(n,tx,ty,gap){ // punto del borde del rectángulo de n en dirección a (tx,ty)
+  const dx=tx-n.x, dy=ty-n.y, hw=W/2+gap, hh=H/2+gap;
+  const s=Math.min(dx?hw/Math.abs(dx):Infinity, dy?hh/Math.abs(dy):Infinity);
+  return [n.x+dx*s, n.y+dy*s];
+}
+for(const k in NODES){
+  const n=NODES[k];
+  const g=mk('g',{class:'node ghost z-'+n.z+(n.hub?' hub':''),transform:'translate('+n.x+','+n.y+')','data-k':k},gN);
+  const nb=mk('g',{class:'nb'},g);
+  mk('rect',{class:'halo',x:-W/2,y:-H/2,width:W,height:H,rx:10},nb);
+  mk('rect',{class:'box',x:-W/2,y:-H/2,width:W,height:H,rx:10},nb);
+  const tx=mk('text',{},nb); tx.textContent=k;
+  const tt=mk('title',{},g); tt.textContent=k+' ('+ZN[n.z]+')\n'+n.p.map(p=>p[0]+(p[2]==='U'?' (U)':p[2]?'?':'')+': '+p[1]).join('\n');
+  n.el=g;
+}
+for(const k of ORDER){
+  const e=EDGES[k], a=NODES[e.f], b=NODES[e.t];
+  let d, lx, ly;
+  if(e.curve){ d=e.curve; }
+  else { const p1=border(a,b.x,b.y,0), p2=border(b,a.x,a.y,3); d='M '+p1[0].toFixed(1)+' '+p1[1].toFixed(1)+' L '+p2[0].toFixed(1)+' '+p2[1].toFixed(1);
+         lx=(p1[0]+p2[0])/2; ly=(p1[1]+p2[1])/2; }
+  if(e.lx!=null) lx=e.lx; if(e.ly!=null) ly=e.ly;
+  if(lx==null) lx=(a.x+b.x)/2;
+  const g=mk('g',{class:'edge off','data-k':k},gE);
+  const ln=mk('path',{class:'ln',d:d},g);
+  const lb=mk('rect',{class:'lb'},g);
+  const t=mk('text',{x:lx,y:ly},g); t.textContent=e.n;
+  e.fit=()=>{const bb=t.getBBox(); lb.setAttribute('x',bb.x-4); lb.setAttribute('y',bb.y-1); lb.setAttribute('width',bb.width+8); lb.setAttribute('height',bb.height+2); lb.setAttribute('rx',3);}; e.fit();
+  if(e.rot){ t.setAttribute('transform','rotate('+e.rot+' '+lx+' '+ly+')'); lb.setAttribute('transform','rotate('+e.rot+' '+lx+' '+ly+')'); }
+  e.el=g; e.ln=ln; e.len=ln.getTotalLength(); e.shown=false;
+}
+
+/* ---------- estado y animación ---------- */
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let cur=0, gen=0;
+const timers=[];
+const later=(fn,ms)=>{timers.push(setTimeout(fn,reduce?0:ms))};
+
+function drawEdge(e,delay,hot){
+  const myGen=gen;
+  e.el.classList.remove('off'); e.el.classList.add('drawing');
+  e.ln.removeAttribute('marker-end');
+  e.ln.style.transition='none';
+  e.ln.style.strokeDasharray=e.len; e.ln.style.strokeDashoffset=e.len;
+  e.ln.getBoundingClientRect();
+  later(()=>{ if(myGen!==gen) return;
+    e.ln.style.transition='stroke-dashoffset '+(reduce?0.01:Math.min(.9,.35+e.len/1600))+'s ease-in-out, stroke .4s, stroke-width .3s';
+    e.ln.style.strokeDashoffset=0;
+  },delay);
+  later(()=>{ if(myGen!==gen) return; finishEdge(e,hot); }, delay + (reduce?0:Math.min(900,350+e.len/1.6)) + 30);
+}
+function finishEdge(e,hot){
+  e.ln.style.transition=''; e.ln.style.strokeDasharray=''; e.ln.style.strokeDashoffset='';
+  e.el.classList.remove('drawing');
+  e.ln.setAttribute('marker-end', hot||e.el.classList.contains('new')||e.el.classList.contains('hot') ? 'url(#ah)' : 'url(#an)');
+}
+function setMarker(e){ if(!e.el.classList.contains('drawing')) e.ln.setAttribute('marker-end', (e.el.classList.contains('new')||e.el.classList.contains('hot'))?'url(#ah)':'url(#an)'); }
+
+function render(i,dir){
+  gen++; timers.splice(0).forEach(clearTimeout);
+  document.getElementById('pulse').setAttribute('opacity',0);
+  const s=STEPS[i];
+  // nodos y relaciones visibles hasta este paso
+  const built=new Set(), shown=new Set();
+  STEPS.slice(0,i+1).forEach(t=>{(t.build||[]).forEach(n=>built.add(n));(t.e||[]).forEach(x=>shown.add(x));});
+  if(s.all){Object.keys(NODES).forEach(n=>built.add(n));ORDER.forEach(x=>shown.add(x));}
+  const newN=new Set(s.build||[]), newE=new Set(s.e||[]);
+
+  let k=0;
+  for(const name in NODES){
+    const el=NODES[name].el, was=el.classList.contains('on'), now=built.has(name);
+    el.classList.remove('new','dim','pop');
+    el.classList.toggle('on',now); el.classList.toggle('ghost',!now);
+    if(now && !was){ el.getBoundingClientRect(); const d=k++*160; el.querySelector('.nb').style.animationDelay=(reduce?0:d)+'ms'; el.classList.add('pop'); }
+    if(newN.has(name) && dir>=0) el.classList.add('new');
+    if(newN.has(name) && dir<0) el.classList.add('new');
+  }
+  const nodeDelay = reduce?0: 160*Math.max(k,0) + 250;
+  let j=0;
+  for(const key of ORDER){
+    const e=EDGES[key], now=shown.has(key);
+    e.el.classList.remove('new','dim','hot');
+    if(!now){ e.el.classList.add('off'); e.shown=false; e.el.classList.remove('drawing'); e.ln.style.strokeDasharray=''; e.ln.style.strokeDashoffset=''; continue; }
+    if(newN.size||newE.size){ if(newE.has(key)) e.el.classList.add('new'); }
+    if(!e.shown){ e.shown=true; drawEdge(e, nodeDelay + j++*260); }
+    else { e.el.classList.remove('off','drawing'); e.ln.style.strokeDasharray=''; e.ln.style.strokeDashoffset=''; setMarker(e); }
+  }
+
+  if(s.rules){ for(const n of RULE_NODES) NODES[n].el.classList.add('new'); }
+  if(s.path) runPath(nodeDelay + j*260 + 300);
+
+  // fases
+  const ph=document.getElementById('phases');
+  [...ph.children].forEach((li,x)=>{li.classList.toggle('cur',x===s.ph);li.classList.toggle('done',x<s.ph)});
+  // panel
+  const pin=document.getElementById('pin');
+  let h='<div class="eyebrow">'+s.eb+'</div><h2>'+s.t+'</h2>'+s.html;
+  if((s.build||[]).length){
+    h+='<h3>Nodos nuevos</h3><div class="cards">'+s.build.map(n=>{const d=NODES[n];return '<div class="card z-'+d.z+'"><div class="nm">'+n+'</div><div>'+d.d+'</div><ul class="props">'+d.p.map(p=>'<li>'+p[0]+' <i>'+p[1]+'</i>'+(p[2]==='U'?' <b>U</b>':p[2]==='?'?' <b>?</b>':p[2]==='?p'?' <b>?</b> <i>propuesta</i>':'')+'</li>').join('')+'</ul></div>'}).join('')+'</div>';
+  }
+  if((s.e||[]).length){
+    h+='<h3>Relaciones nuevas</h3><ul class="rels">'+s.e.map(x=>{const e=EDGES[x];return '<li><span class="pat">('+e.f+')-[:<em>'+e.n+'</em>]->('+e.t+')</span><span class="cd">Cardinalidad '+e.c+'</span><span class="ds">'+e.d+'</span></li>'}).join('')+'</ul>';
+  }
+  pin.innerHTML=h;
+  pin.classList.remove('enter-f','enter-b'); void pin.offsetWidth; pin.classList.add(dir<0?'enter-b':'enter-f');
+
+  // controles
+  document.getElementById('prev').disabled = i===0;
+  const nx=document.getElementById('next');
+  nx.disabled = i===STEPS.length-1;
+  nx.querySelector('.tx').textContent = i===STEPS.length-1 ? 'Fin' : 'Siguiente';
+  document.getElementById('lbl').innerHTML='Paso <b>'+(i+1)+'</b> de '+STEPS.length+' · '+s.t;
+  [...document.getElementById('dots').children].forEach((b,x)=>{b.classList.toggle('cur',x===i);b.classList.toggle('done',x<i);b.setAttribute('aria-current',x===i?'step':'false')});
+  try{ history.replaceState(null,'','#paso-'+(i+1)); }catch(_){ }
+}
+
+function runPath(start){
+  const myGen=gen;
+  for(const n in NODES) if(!PATH_NODES.includes(n)) NODES[n].el.classList.add('dim');
+  const used=new Set(PATH_SEQ.flat());
+  for(const k of ORDER) if(!used.has(k)) EDGES[k].el.classList.add('dim');
+  const mini=()=>document.querySelectorAll('#mini li');
+  PATH_SEQ.forEach((grp,ix)=>{
+    later(()=>{ if(myGen!==gen) return;
+      grp.forEach(k=>{const e=EDGES[k]; e.el.classList.add('hot'); drawEdge(e,0,true); movePulse(e,myGen);});
+      const li=mini()[ix]; if(li) li.classList.add('lit');
+      grp.forEach(k=>{const e=EDGES[k]; NODES[e.f].el.classList.add('new'); NODES[e.t].el.classList.add('new');});
+    }, start + ix*950);
+  });
+}
+function movePulse(e,myGen){
+  if(reduce) return;
+  const c=document.getElementById('pulse'), L=e.len, t0=performance.now(), dur=700;
+  c.setAttribute('opacity',1);
+  (function f(now){ if(myGen!==gen){c.setAttribute('opacity',0);return;}
+    const p=Math.min(1,(now-t0)/dur), pt=e.ln.getPointAtLength(L*p);
+    c.setAttribute('cx',pt.x); c.setAttribute('cy',pt.y);
+    if(p<1) requestAnimationFrame(f); else c.setAttribute('opacity',0);
+  })(t0);
+}
+
+/* ---------- controles ---------- */
+const ph=document.getElementById('phases');
+PHASES.forEach(t=>{const li=document.createElement('li');li.textContent=t;ph.appendChild(li)});
+const dots=document.getElementById('dots');
+STEPS.forEach((s,x)=>{const b=document.createElement('button');b.type='button';b.setAttribute('aria-label','Ir al paso '+(x+1)+': '+s.t);b.title=(x+1)+'. '+s.t;b.onclick=()=>go(x);dots.appendChild(b)});
+function go(i){ if(i<0||i>=STEPS.length||i===cur&&dotsReady) return; const d=i>cur?1:-1; cur=i; render(i,d); }
+let dotsReady=false;
+document.getElementById('next').onclick=()=>go(cur+1);
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.addEventListener('keydown',ev=>{
+  if(ev.target.closest && ev.target.closest('input,textarea')) return;
+  if(ev.key==='ArrowRight'||ev.key==='PageDown'){ev.preventDefault();go(cur+1)}
+  if(ev.key==='ArrowLeft'||ev.key==='PageUp'){ev.preventDefault();go(cur-1)}
+});
+function fromHash(){const m=/^#paso-(\d+)$/.exec(location.hash||'');return m?Math.min(STEPS.length,Math.max(1,+m[1]))-1:0}
+window.addEventListener('hashchange',()=>{const i=fromHash(); if(i!==cur) go(i)});
+cur=fromHash(); render(cur,1); dotsReady=true;
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(()=>ORDER.forEach(k=>EDGES[k].fit()));
+})();
+</script>
+</body>
+</html>
