@@ -7,6 +7,7 @@ Repositorio de entregables de la unidad 3 (BDLN) para el proyecto **QATO'K**. El
 - El estado de los entregables de la actividad se lleva en `PROGRESS.md` (enunciado en `docs/actividad.jpg`). **Actualizar `PROGRESS.md` (estado, checklist y bitácora) cada vez que se avance o corrija un entregable.**
 
 - Idioma: **español**.
+- Formato de trabajo: **Markdown (.md)** mientras se modela. Al terminar, cada entregable se convertirá al formato final que le corresponda (p. ej. .docx para tablas/documentos; otro formato si el entregable lo requiere, como un diagrama). Escribir el .md pensando en que se convertirá: tablas Markdown estándar, encabezados claros, sin HTML.
 - Distinguir siempre entre decisiones **confirmadas** (ACCEPTED), **preliminares** (PRELIMINARY) y **pendientes** (P-xx). No presentar como decidido lo que está pendiente; si un entregable necesita una propuesta sobre un tema pendiente, marcarla explícitamente como *propuesta*.
 - Arquitectura vigente: **Neo4j principal + PostgreSQL complementaria**. La recomendación antigua (PostgreSQL principal) está **SUPERSEDED**: no usarla.
 - **MongoDB fue evaluado y NO seleccionado**: solo mencionarlo como alternativa descartada.

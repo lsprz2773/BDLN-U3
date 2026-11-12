@@ -110,10 +110,23 @@ Cada actividad tiene requisitos propios que deben cumplirse aunque su resultado 
 ## Observaciones generales
 - Respetar las reglas de `CLAUDE.md`: español, IDs exactos, marcar como *propuesta* todo lo que dependa de decisiones pendientes (P-xx).
 - C-05 pide evolución en el tiempo, pero el modelo actual solo tiene un `Progreso` consolidado (RI-13, P-07 pendiente): señalarlo como limitación conocida.
-- Pendiente definir el formato final de entrega (Markdown, Word, PDF, presentación).
+- **Formato:** se trabaja todo en `.md` durante el modelado. Al final cada entregable se convierte al formato que le corresponda (.docx u otro, según el entregable). Ver checklist "Conversión final" abajo.
+
+## Conversión final (al terminar el modelado)
+
+| # | Entregable | Formato final | Estado |
+|---|---|---|---|
+| 1 | Tabla de requerimientos y consultas | .docx (por confirmar) | ⬜ Pendiente |
+| 2 | Diccionario de entidades y propiedades | .docx (por confirmar) | ⬜ Pendiente |
+| 3 | Catálogo de relaciones | .docx (por confirmar) | ⬜ Pendiente |
+| 4 | Tabla de restricciones de integridad | .docx (por confirmar) | ⬜ Pendiente |
+| 5 | Tabla de cardinalidades | .docx (por confirmar) | ⬜ Pendiente |
+| 6 | Diagrama del modelo lógico | Imagen/PDF (por confirmar) | ⬜ Pendiente |
+| 7 | Conclusiones | .docx (por confirmar) | ⬜ Pendiente |
 
 ## Bitácora
 | Fecha | Cambio |
 |---|---|
 | 2026-11-12 | Creación de PROGRESS.md con los 6 entregables + conclusiones; todos pendientes. |
 | 2026-11-12 | Se añaden explícitamente las actividades A1–A6 de la columna izquierda del enunciado, con sus requisitos y el entregable donde se presentan. |
+| 2026-11-12 | Decisión de formato: todo en .md durante el modelado; conversión al formato final de cada entregable al terminar. |
