@@ -47,3 +47,15 @@ Se recorrieron C-01..C-05 sobre el diagrama por tres lecturas distintas: (1) la 
 
 ### Ronda 2
 - Sin cambios. **Corrección cerrada.**
+
+## Corrección en F9 (conversión a .docx)
+
+### Ronda 1
+- **Origen:** el usuario pidió que los documentos no usen texto ni colores azules. La zona "Contenido" del diagrama usaba relleno y borde azules.
+- **ToT:** A. gris neutro para la zona de contenido, conservando naranja y verde · B. todo en escala de grises · C. otro color (morado). → **A**: mantiene la distinción entre las tres zonas sin usar azul; C se acerca demasiado al azul.
+- **CoVe:** se cambiaron `classDef contenido` y las dos menciones "azul" del texto (leyenda y sección 3). Se re-renderizó con el tema `neutral` de Mermaid; la imagen no contiene azul (revisada visualmente). `verificar.py` → 0 fallos.
+- **SC:** el diagrama, la leyenda y la sección 3 usan el mismo nombre de color ("gris"). 3/3.
+- **Cambios:** 1.
+
+### Ronda 2
+- Sin cambios. **Corrección cerrada.**

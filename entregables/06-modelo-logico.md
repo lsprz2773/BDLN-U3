@@ -44,7 +44,7 @@ flowchart LR
     Evidencia -- "DEMUESTRA [1..N / 0..N]" --> Habilidad
     Evidencia -- "TIENE_COMPARTICION [0..N / 1..1]" --> Comparticion
 
-    classDef contenido fill:#E3F2FD,stroke:#1565C0,color:#0D2A4A
+    classDef contenido fill:#EEEEEE,stroke:#616161,color:#212121
     classDef ejecucion fill:#FFF3E0,stroke:#E65100,color:#4A2300
     classDef resultado fill:#E8F5E9,stroke:#2E7D32,color:#123D16
     class Simulacion,Paso,Opcion,Consecuencia,Habilidad contenido
@@ -63,7 +63,7 @@ flowchart LR
 | Flecha | Relación dirigida, del origen al destino |
 | `TIPO {p1, p2}` | Tipo de relación y, entre llaves, sus propiedades |
 | `[a / b]` | Cardinalidades: `a` = destinos por cada origen; `b` = orígenes por cada destino (entregable 5) |
-| Azul | **Contenido** de las simulaciones: Simulacion, Paso, Opcion, Consecuencia, Habilidad |
+| Gris | **Contenido** de las simulaciones: Simulacion, Paso, Opcion, Consecuencia, Habilidad |
 | Naranja | **Ejecución** por parte del usuario: Usuario, Intento, Respuesta, Retroalimentacion |
 | Verde | **Resultados** del aprendizaje: Progreso, Evidencia, Comparticion |
 
@@ -71,7 +71,7 @@ flowchart LR
 
 El grafo se organiza en tres zonas conectadas:
 
-1. **Contenido (azul).** Una `Simulacion` CONTIENE pasos. Cada `Paso` OFRECE opciones, cada `Opcion` GENERA consecuencias y CONDUCE_A otro paso. Así se forman las ramificaciones (MD-03). Una opción sin CONDUCE_A es terminal y cierra la ruta. El paso inicial es el de `orden = 1`. La simulación DESARROLLA habilidades con un `peso` y un `nivel_esperado` (MD-01).
+1. **Contenido (gris).** Una `Simulacion` CONTIENE pasos. Cada `Paso` OFRECE opciones, cada `Opcion` GENERA consecuencias y CONDUCE_A otro paso. Así se forman las ramificaciones (MD-03). Una opción sin CONDUCE_A es terminal y cierra la ruta. El paso inicial es el de `orden = 1`. La simulación DESARROLLA habilidades con un `peso` y un `nivel_esperado` (MD-01).
 2. **Ejecución (naranja).** Un `Usuario` REALIZA un `Intento` de una simulación (TIENE). El intento REGISTRA cada `Respuesta`, que CORRESPONDE_A un paso y SELECCIONA una opción. Así queda el recorrido exacto del usuario, ordenado por `secuencia` (MD-04). Cada respuesta puede generar (GENERA) `Retroalimentacion`.
 3. **Resultados (verde).** El usuario TIENE_PROGRESO en cada habilidad (MD-02). Sus intentos PRODUCEN `Evidencia` que DEMUESTRA habilidades. Cada evidencia puede compartirse mediante `Comparticion` (MD-05).
 

@@ -79,17 +79,19 @@ Seguimiento de los entregables de la actividad (ver `docs/actividad.jpg`). Proye
 - Todo se trabajó en `.md`, como se acordó. Los temas que dependen de decisiones pendientes (P-xx) están marcados como *propuesta* en cada entregable.
 - **Pendiente de revisión del usuario:** las *propuestas* (catálogos, rangos, `Comparticion.destinatario`, RI-24, RI-25) y las decisiones DEC-01..DEC-23.
 
-## Conversión final (F9 — pendiente de aprobación del usuario)
+## Conversión final (F9)
+
+Generada con `node scripts/md2docx.js` → `entregables/docx/`. Estilo sobrio: texto negro, encabezados de tabla en gris y sin azul (también se neutralizaron los estilos azules que la plantilla trae pero no usa). Los 7 archivos pasaron la validación de esquema y se revisaron visualmente renderizados a PDF.
 
 | # | Entregable | Formato final | Estado |
 |---|---|---|---|
-| 1 | Tabla de requerimientos y consultas | .docx (por confirmar) | ⬜ Pendiente |
-| 2 | Diccionario de entidades y propiedades | .docx (por confirmar) | ⬜ Pendiente |
-| 3 | Catálogo de relaciones | .docx (por confirmar) | ⬜ Pendiente |
-| 4 | Tabla de restricciones de integridad | .docx (por confirmar) | ⬜ Pendiente |
-| 5 | Tabla de cardinalidades | .docx (por confirmar) | ⬜ Pendiente |
-| 6 | Diagrama del modelo lógico | PNG ya generado; .docx o PDF (por confirmar) | 🟨 Imagen lista |
-| 7 | Conclusiones | .docx (por confirmar) | ⬜ Pendiente |
+| 1 | Tabla de requerimientos y consultas | `entregables/docx/01-requerimientos-consultas.docx` (horizontal) | ✅ |
+| 2 | Diccionario de entidades y propiedades | `entregables/docx/02-diccionario-entidades.docx` (horizontal) | ✅ |
+| 3 | Catálogo de relaciones | `entregables/docx/03-catalogo-relaciones.docx` (horizontal) | ✅ |
+| 4 | Tabla de restricciones de integridad | `entregables/docx/04-restricciones-integridad.docx` (horizontal) | ✅ |
+| 5 | Tabla de cardinalidades | `entregables/docx/05-cardinalidades.docx` (horizontal) | ✅ |
+| 6 | Diagrama del modelo lógico | `entregables/docx/06-modelo-logico.docx` + `entregables/06-modelo-logico.png` | ✅ |
+| 7 | Conclusiones | `entregables/docx/07-conclusiones.docx` (vertical) | ✅ |
 
 ## Bitácora
 | Fecha | Cambio |
@@ -109,3 +111,4 @@ Seguimiento de los entregables de la actividad (ver `docs/actividad.jpg`). Proye
 | 2026-11-12 | F6: entregable 6 (2 rondas); diagrama renderizado con mermaid-cli. |
 | 2026-11-12 | F7: entregable 7 (3 rondas). |
 | 2026-11-12 | F8: coherencia global (2 rondas); 5 correcciones en E3, E4, E6 y E7, cada una con su ciclo de verificación. |
+| 2026-11-12 | F9: conversión a .docx sin azul; diagrama re-renderizado en gris/naranja/verde (corrección registrada en `verificacion/06-modelo-logico.md`). |
