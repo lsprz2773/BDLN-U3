@@ -295,6 +295,19 @@ def e5(md):
         check(limpiar(f["Destino → origen"]).split(" ")[0] == r["target_cardinality"], f"[E5] {f['ID']}: cardinalidad destino→origen = KG ({r['target_cardinality']})")
     preguntas = tabla_con(md, "¿Una o muchas?")[0][1]
     check(len(preguntas) == 17 and all(f["¿Una o muchas?"] and f["Mínimo"] and f["Máximo"] for f in preguntas), "[E5] las 3 preguntas respondidas en las 17 relaciones")
+    # coherencia con el diccionario: una entidad tiene relaciones obligatorias si y solo si su lado tiene mínimo 1
+    obligatorias = {e: set() for e in ENTIDADES}
+    for r in RELS:
+        if r["source_cardinality"].startswith("1"):
+            obligatorias[r["source"]].add(r["type"])
+        if r["target_cardinality"].startswith("1"):
+            obligatorias[r["target"]].add(r["type"])
+    for f in tabla_con(md, "¿Puede existir sin relacionarse?")[0][1]:
+        e = limpiar(f["Entidad"])
+        independiente = limpiar(f["¿Puede existir sin relacionarse?"]).startswith("Sí")
+        check(independiente == (not obligatorias[e]), f"[E5] {e}: existencia sin relaciones coherente con las cardinalidades")
+        for t in obligatorias[e]:
+            check(t in f["Relaciones obligatorias"], f"[E5] {e}: {t} figura como obligatoria")
     aisl = tabla_con(md, "¿Puede existir sin relacionarse?")[0][1]
     check(sorted(limpiar(f["Entidad"]) for f in aisl) == sorted(ENTIDADES), "[E5] tabla de existencia sin relaciones cubre las 12 entidades")
 
