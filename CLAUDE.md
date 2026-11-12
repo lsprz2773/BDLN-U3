@@ -4,6 +4,8 @@ Repositorio de entregables de la unidad 3 (BDLN) para el proyecto **QATO'K**. El
 
 ## Reglas de trabajo para los entregables
 
+- El estado de los entregables de la actividad se lleva en `PROGRESS.md` (enunciado en `docs/actividad.jpg`). **Actualizar `PROGRESS.md` (estado, checklist y bitácora) cada vez que se avance o corrija un entregable.**
+
 - Idioma: **español**.
 - Distinguir siempre entre decisiones **confirmadas** (ACCEPTED), **preliminares** (PRELIMINARY) y **pendientes** (P-xx). No presentar como decidido lo que está pendiente; si un entregable necesita una propuesta sobre un tema pendiente, marcarla explícitamente como *propuesta*.
 - Arquitectura vigente: **Neo4j principal + PostgreSQL complementaria**. La recomendación antigua (PostgreSQL principal) está **SUPERSEDED**: no usarla.
