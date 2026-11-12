@@ -1,0 +1,27 @@
+<section id="integridad" data-transition="fade" style="background:#F6F4EF;color:#22201C;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:48px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1;color:#22201C">Quién garantiza cada regla</h2>
+<div style="display:flex;gap:40px">
+<div style="flex:1;display:flex;flex-direction:column;gap:20px;background:#ECE8DF;padding:48px;border-radius:20px">
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:36px;font-weight:600;color:#22201C">Neo4j, de forma nativa</h3>
+<ul style="font-size:28px;line-height:1.4;color:#22201C">
+<li>Identificadores únicos en las 12 etiquetas</li>
+<li>Correo, nombre de habilidad y token únicos</li>
+<li>Solo en Enterprise: propiedades obligatorias y tipos</li>
+</ul>
+</div>
+<div style="flex:1;display:flex;flex-direction:column;gap:20px;background:#ECE8DF;padding:48px;border-radius:20px">
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:36px;font-weight:600;color:#22201C">La aplicación, en cada transacción</h3>
+<ul style="font-size:28px;line-height:1.4;color:#22201C">
+<li>Rangos y valores permitidos (no hay CHECK)</li>
+<li>Relaciones obligatorias: sin nodos huérfanos</li>
+<li>Consistencia: la opción pertenece al paso respondido</li>
+</ul>
+</div>
+<div style="width:360px;display:flex;flex-direction:column;justify-content:center;gap:8px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:120px;font-weight:700;line-height:1;color:#B8541E">23/25</p>
+<p style="font-size:28px;line-height:1.4;color:#4A4640">restricciones necesitan validación en la aplicación</p>
+</div>
+</div>
+<p style="font-size:28px;line-height:1.4;color:#4A4640">Las cardinalidades dicen qué crear junto: 3 entidades pueden existir solas y 9 nacen en la misma transacción que sus relaciones obligatorias.</p>
+<aside>Entregables 4 y 5. Neo4j garantiza la unicidad en cualquier edición; la existencia y el tipo de las propiedades solo en la edición Enterprise. No tiene restricciones CHECK ni relaciones obligatorias, así que 23 de las 25 restricciones necesitan validación en la aplicación, dentro de la misma transacción que la escritura. Por ejemplo, una respuesta solo se crea si la opción pertenece al paso y el paso a la simulación del intento.</aside>
+</section>

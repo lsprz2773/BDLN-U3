@@ -1,0 +1,14 @@
+<section id="consulta" data-transition="fade" style="background:#F6F4EF;color:#22201C;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:48px">
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:72px;font-weight:600;line-height:1.1;color:#22201C">Una consulta, un recorrido</h2>
+<div style="display:flex;gap:64px;align-items:center">
+<div style="flex:1;display:flex;flex-direction:column;gap:16px;background:#22201C;padding:48px;border-radius:20px">
+<p style="font-size:24px;color:#E08A55">C-03 · ¿Qué decidió el usuario, qué pasó y qué retroalimentación recibió?</p>
+<p style="font-family:'Courier New', monospace;font-size:26px;line-height:1.5;color:#F6F4EF">MATCH (u:Usuario)-[:REALIZA]-&gt;(i:Intento)<br>MATCH (i)-[:REGISTRA]-&gt;(r:Respuesta)<br>MATCH (r)-[:CORRESPONDE_A]-&gt;(p:Paso)<br>MATCH (r)-[:SELECCIONA]-&gt;(o:Opcion)<br>OPTIONAL MATCH (o)-[:GENERA]-&gt;(c:Consecuencia)<br>OPTIONAL MATCH (r)-[:GENERA]-&gt;(f:Retroalimentacion)<br>RETURN r.secuencia, p.titulo, o.descripcion, c, f</p>
+</div>
+<div style="width:440px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:4px"><p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:96px;font-weight:700;line-height:1;color:#B8541E">7</p><p style="font-size:28px;color:#4A4640">entidades en un solo patrón</p></div>
+<div style="display:flex;flex-direction:column;gap:4px"><p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:96px;font-weight:700;line-height:1;color:#22201C">6</p><p style="font-size:28px;color:#4A4640">JOIN para lo mismo en SQL</p></div>
+</div>
+</div>
+<aside>Ejemplo con la consulta C-03: reconstruir las decisiones de un usuario. En Neo4j se escribe como un patrón que recorre siete entidades, de usuario a retroalimentación. En una base relacional serían seis JOIN entre siete tablas. La propiedad secuencia ordena las decisiones del intento. En el entregable 1 están las cinco consultas escritas en Cypher y verificadas contra el modelo.</aside>
+</section>

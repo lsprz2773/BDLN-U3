@@ -182,7 +182,7 @@ OBS-01 simulación con múltiples pasos · OBS-02 paso con múltiples opciones �
 
 ## Estado de la actividad
 
-Los 7 entregables están terminados y verificados en `entregables/` (ver `PROGRESS.md`). La verificación automática se ejecuta con `python3 scripts/verificar.py` y debe dar 0 fallos después de cualquier cambio. Pendiente: revisión del usuario y conversión al formato final (F9).
+Los 7 entregables están terminados y verificados en `entregables/` (ver `PROGRESS.md`). La verificación automática se ejecuta con `python3 scripts/verificar.py` y debe dar 0 fallos después de cualquier cambio. Conversión a .docx hecha (`entregables/docx/`, `node scripts/md2docx.js`). Material de presentación en `presentacion/` (guía de estudio y diapositivas; ver su README). Los documentos y diapositivas no usan colores azules, por petición del usuario.
 
 ## Estado general
 
