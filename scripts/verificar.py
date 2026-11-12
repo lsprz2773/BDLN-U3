@@ -215,6 +215,13 @@ def e2(md):
         for fk in fks:
             check(fk in cuerpo, f"[E2] {nom}: FK {fk} explicada como relación")
     check(sorted(vistos) == sorted(ENTIDADES), f"[E2] 12 entidades documentadas ({len(vistos)})")
+    resumen = {limpiar(f["Entidad"]): f for f in tabla_con(md, "Propiedades almacenadas")[0][1]}
+    for e in ENTIDADES:
+        ps = props_no_fk(e)
+        esperado = (len(ps), sum(not p.get("nullable") for p in ps), sum(bool(p.get("nullable")) for p in ps), sum(bool(p.get("unique") or p.get("primary_key")) for p in ps))
+        f = resumen.get(e, {})
+        dado = tuple(int(f.get(c, -1)) for c in ("Propiedades almacenadas", "Obligatorias", "Opcionales", "Únicas"))
+        check(dado == esperado, f"[E2] resumen de {e} = {esperado}")
     for r in RELS:
         for p in r.get("relationship_property_definitions", []):
             check(re.search(rf"\|\s*`?{p['name']}`?\s*\|\s*{re.escape(p['type'])}", md) is not None, f"[E2] propiedad de relación {r['type']}.{p['name']} documentada con tipo {p['type']}")
