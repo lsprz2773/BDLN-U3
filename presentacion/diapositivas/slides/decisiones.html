@@ -5,8 +5,8 @@
 <tr><td>Respuesta como nodo</td><td>Cada decisión es un nodo ligado a intento, paso, opción y retroalimentación</td><td>Una relación solo une dos nodos; la decisión toca cuatro</td></tr>
 <tr><td>DESARROLLA con propiedades</td><td>Relación directa con peso y nivel esperado</td><td>Evita un nodo intermedio</td></tr>
 <tr><td>Opción terminal</td><td>Una opción sin CONDUCE_A cierra el intento</td><td>El desenlace queda registrado en una respuesta</td></tr>
-<tr><td>Toda opción con consecuencia</td><td>R06 pasa de 0..N a 1..N</td><td>Corrige una contradicción del KG</td></tr>
+<tr><td>Toda opción con consecuencia</td><td>Opción → Consecuencia con cardinalidad 1..N</td><td>Cada decisión debe mostrar al menos un resultado</td></tr>
 </table>
-<p style="font-size:28px;line-height:1.4;color:#4A4640">23 decisiones documentadas, cada una comparando alternativas y verificada contra el KG.</p>
-<aside>Las decisiones que más preguntan. Respuesta es un nodo porque se conecta con cuatro cosas a la vez. DESARROLLA lleva sus propiedades en la relación. Las simulaciones terminan en una opción terminal, así el final queda registrado. Y corregimos una contradicción del KG: toda opción debe tener al menos una consecuencia. Las 23 decisiones están en docs/decisiones-modelado.md.</aside>
+<p style="font-size:28px;line-height:1.4;color:#4A4640">Cada decisión se tomó comparando alternativas frente a las consultas que el sistema debe responder.</p>
+<aside>Cuatro decisiones de modelado. Respuesta es un nodo porque se conecta con cuatro cosas a la vez. DESARROLLA lleva sus propiedades en la relación. Las simulaciones terminan en una opción terminal, así el final queda registrado. Y toda opción debe tener al menos una consecuencia, porque una decisión sin resultado contradiría la idea central de la plataforma.</aside>
 </section>

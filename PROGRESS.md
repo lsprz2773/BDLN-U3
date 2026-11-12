@@ -122,3 +122,4 @@ Generada con `node scripts/md2docx.js` → `entregables/docx/`. Estilo sobrio: t
 | 2026-11-12 | PDF de la guía de estudio (`presentacion/guia-estudio.pdf`, 5 páginas) y de las diapositivas (`presentacion/diapositivas.pdf`, 12 páginas). |
 | 2026-11-12 | F10: implementación en Neo4j (restricciones, índices, datos de ejemplo, pruebas de humo, limpieza). 76 pruebas, 0 fallos; se corrigieron 12 pruebas que pasaban sin comprobar nada. |
 | 2026-11-12 | Documento «QATO'K explicado» (Claude Docs) y su copia en `presentacion/qatok-explicado.md`/.docx/.pdf. |
+| 2026-11-12 | Diapositivas formalizadas: sin códigos internos (C-03, R06, RF), referencias al KG, al script ni a documentos internos; notas del orador en lenguaje formal. PDF regenerado. |
