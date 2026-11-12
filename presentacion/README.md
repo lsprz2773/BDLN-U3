@@ -8,6 +8,7 @@ Material para preparar y dar la presentación. Todo se basa en los entregables d
 | Diapositivas (13) | `diapositivas.pdf` (13 páginas, 16:9), `diapositivas.pptx` y `diapositivas/` (fuente: `deck.json` + una página HTML por diapositiva, con notas del orador en `<aside>`) | [Propuesta QATO'K — diapositivas](https://claude.ai/artifact/KSFF9u4bSJv8uy3BfmBbG1) |
 | Explicación sencilla del proyecto (qué hace, cómo funciona una simulación, qué significan RF, C-01…C-05, RI, etc.) | `qatok-explicado.pdf`, `qatok-explicado.docx` y `qatok-explicado.md` (+ `simulacion-ramas.png`) | [QATO'K explicado](https://claude.ai/artifact/SdgJZVNVamMfLJSwNDKZcy) (documento de Claude Docs) |
 | Guion de exposición (máximo 10 minutos, dos expositores) | `guion-exposicion.pdf`, `guion-exposicion.docx` y `guion-exposicion.md` | [Guion de exposición — QATO'K](https://claude.ai/artifact/AZXz7mngDdLzMrFgSCUXZJ) (documento de Claude Docs) |
+| Modelo lógico interactivo (12 pasos animados con botones Anterior y Siguiente; también responde a las flechas del teclado) | `modelo-logico-interactivo.html` (se abre con doble clic en cualquier navegador) | [Modelo lógico QATO'K](https://claude.ai/artifact/Pw4RHJs8ey19vbNXwH5VAB) |
 | Diagrama de las tres zonas | `modelo-tres-zonas.png` | — |
 
 **Regenerar los PDF y el PPTX:** `node scripts/diapositivas2pdf.js` y `node scripts/diapositivas2pptx.js` (diapositivas, con Playwright y pptxgenjs; en el PPTX cada diapositiva es una imagen, con las notas del orador) y LibreOffice sobre `guia-estudio.docx` (guía).
