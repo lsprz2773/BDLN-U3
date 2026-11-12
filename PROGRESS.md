@@ -1,6 +1,6 @@
 # PROGRESS.md — Actividad: Diseño del modelo lógico de una aplicación basada en grafos
 
-Seguimiento de los entregables de la actividad (ver `docs/actividad.jpg`). Proyecto: **QATO'K**. Fuente de datos: `docs/KG.json` / `CLAUDE.md`.
+Seguimiento de los entregables de la actividad (ver `docs/actividad.jpg`). Proyecto: **QATO'K**. Fuente de datos: `docs/KG.json` / `CLAUDE.md`. Plan de trabajo y protocolo de verificación: `PLAN.md`.
 
 **Estados:** ⬜ Pendiente · 🟨 En progreso · 🟧 Por corregir · ✅ Terminado
 
@@ -130,3 +130,4 @@ Cada actividad tiene requisitos propios que deben cumplirse aunque su resultado 
 | 2026-11-12 | Creación de PROGRESS.md con los 6 entregables + conclusiones; todos pendientes. |
 | 2026-11-12 | Se añaden explícitamente las actividades A1–A6 de la columna izquierda del enunciado, con sus requisitos y el entregable donde se presentan. |
 | 2026-11-12 | Decisión de formato: todo en .md durante el modelado; conversión al formato final de cada entregable al terminar. |
+| 2026-11-12 | Creación de PLAN.md: fases F0–F9 y protocolo de verificación ToT + CoVe + self-consistency por cada creación y corrección. |
