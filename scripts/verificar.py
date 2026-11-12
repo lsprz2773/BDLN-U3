@@ -329,8 +329,10 @@ def e6(md):
     for e in ENTIDADES:
         m = re.search(rf"^\s*{e}\[(.*?)\]\s*$", bloque, re.M)
         if m:
+            lineas = {re.sub(r"<[^>]+>", "", x).strip().strip("\"") for x in m.group(1).split("<br/>")}
             for p in props_no_fk(e):
-                check(p["name"] in m.group(1), f"[E6] nodo {e} muestra {p['name']}")
+                marca = p["name"] + (" (U)" if p.get("unique") or p.get("primary_key") else "") + ("?" if p.get("nullable") else "")
+                check(marca in lineas, f"[E6] nodo {e} muestra {marca}")
 
 
 # ---------------------------------------------------------------- E7
