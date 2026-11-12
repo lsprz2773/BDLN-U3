@@ -28,7 +28,7 @@
 | R14 | Usuario | GENERA | Evidencia | Un usuario genera sus evidencias y es su dueño: decide si las comparte. | — | C-04, RI-14 |
 | R15 | Intento | PRODUCE | Evidencia | Un intento produce la evidencia de lo que el usuario demostró en él. Vincula cada evidencia con la experiencia que la originó. | — | C-04, RI-14, RI-20, RI-25 |
 | R16 | Evidencia | DEMUESTRA | Habilidad | Una evidencia demuestra una o varias habilidades profesionales. | — | C-04, RI-20 |
-| R17 | Evidencia | TIENE_COMPARTICION | Comparticion | Una evidencia tiene comparticiones (enlaces o permisos) que controlan quién puede consultarla y hasta cuándo. | — | C-04, RF-09, RI-15, RI-21 |
+| R17 | Evidencia | TIENE_COMPARTICION | Comparticion | Una evidencia tiene comparticiones (enlaces o permisos) que controlan quién puede consultarla y hasta cuándo. | — | C-04, RF-09, RI-15 |
 
 **Totales:** 17 relaciones de 14 tipos distintos. Una relación tiene propiedades (DESARROLLA).
 

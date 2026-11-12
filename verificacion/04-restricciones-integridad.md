@@ -39,3 +39,16 @@ Archivo: `entregables/04-restricciones-integridad.md` · Fuente: KG v1.1 · Herr
 - **CoVe:** coherencia de RI-15 con `Evidencia.visibilidad` del entregable 2 ("accesible para su dueño o mediante una compartición vigente") ✔. `verificar.py 1-4` → **0 fallos**.
 - **SC:** sin cambios.
 - **Resultado:** **ronda limpia → entregable cerrado.**
+
+
+## Corrección en F8 (revisión de coherencia global)
+
+### Ronda 1
+- **Origen:** el cruce automático E3↔E4 detectó relaciones que faltaban en "Elementos afectados": RI-15 no incluía TIENE_COMPARTICION (R17) y RI-23 no incluía REGISTRA (R08).
+- **ToT:** A. añadirlas en E4 · B. quitarlas de E3. → **A**: RI-15 necesita recorrer Evidencia→Comparticion para comprobar la vigencia (como hace C-04), y RI-23 evalúa la respuesta registrada en el intento.
+- **CoVe:** `verificar.py` → 0 fallos; el cruce F8 queda incorporado al script.
+- **SC:** texto de la RI, Cypher de C-04 y catálogo E3 coinciden. 3/3.
+- **Cambios:** 2.
+
+### Ronda 2
+- Sin cambios. **Corrección cerrada.**

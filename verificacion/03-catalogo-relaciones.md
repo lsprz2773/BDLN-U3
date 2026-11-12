@@ -43,3 +43,16 @@ Sin discrepancias en las 17 relaciones.
 - **CoVe:** se revisaron las 5 notas una por una contra el KG (deducibilidad de R09 = R10 + R05 y de R14 = R01 + R15; conteo de tipos reutilizados). `verificar.py 1 2 3` → **0 fallos**.
 - **SC:** sin cambios.
 - **Resultado:** **ronda limpia → entregable cerrado.**
+
+
+## Corrección en F8 (revisión de coherencia global)
+
+### Ronda 1
+- **Origen:** el cruce automático E3↔E4 detectó que R17 listaba RI-21. RI-21 solo compara dos fechas de `Comparticion` y no recorre la relación.
+- **ToT:** A. quitar RI-21 de R17 · B. añadir R17 a RI-21 en E4. → **A**: RI-21 no usa la relación.
+- **CoVe:** `verificar.py` (incluye el cruce F8) → 0 fallos.
+- **SC:** el texto de RI-21, el mecanismo [A] (validación de dominio) y su ausencia en las consultas coinciden: no usa R17. 3/3.
+- **Cambios:** 1.
+
+### Ronda 2
+- Sin cambios. **Corrección cerrada.**

@@ -341,6 +341,22 @@ def e7(md):
     check("consultas, las restricciones de integridad y las cardinalidades" in md, "[E7] responde la pregunta 2")
 
 
+def coherencia_global():
+    """F8: cruces entre entregables que ningún entregable comprueba por sí solo."""
+    e3 = ENT / "03-catalogo-relaciones.md"
+    e4 = ENT / "04-restricciones-integridad.md"
+    if e3.exists() and e4.exists():
+        ri_e3, ri_e4 = {}, {}
+        for f in tabla_con(e3.read_text(encoding="utf-8"), "Relación")[0][1]:
+            for ri in re.findall(r"RI-\d{2}", f["Consultas y reglas que la usan"]):
+                ri_e3.setdefault(ri, set()).add(f["ID"])
+        for f in tabla_con(e4.read_text(encoding="utf-8"), "Mecanismo en Neo4j")[0][1]:
+            ri_e4[limpiar(f["ID"])] = set(re.findall(r"R\d{2}", f["Elementos afectados"]))
+        for ri in sorted(set(ri_e3) | {k for k, v in ri_e4.items() if v}):
+            a, b = ri_e3.get(ri, set()), ri_e4.get(ri, set())
+            check(a == b, f"[F8] {ri}: relaciones en E3 = relaciones afectadas en E4" + ("" if a == b else f" (E3 {sorted(a)} vs E4 {sorted(b)})"))
+
+
 ARCHIVOS = {
     1: ("01-requerimientos-consultas.md", e1),
     2: ("02-diccionario-entidades.md", e2),
@@ -366,6 +382,8 @@ def main():
             fn(md)
         except Exception as ex:  # una estructura inesperada es un fallo, no un crash
             falla(f"[E{n}] error al analizar: {ex!r}")
+    if not sys.argv[1:]:
+        coherencia_global()
     for a in avisos:
         print("AVISO ", a)
     for f in fallos:

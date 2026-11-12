@@ -44,3 +44,16 @@ Argumentos presentes en al menos 2 de 3 tesis (se conservan): relaciones con dir
 - **CoVe:** se releyeron todas las afirmaciones numéricas; `verificar.py` (E1–E7) → **0 fallos**.
 - **SC:** la tesis y los argumentos se mantienen.
 - **Resultado:** **ronda limpia → entregable cerrado.**
+
+
+## Corrección en F8 (revisión de coherencia global)
+
+### Ronda 1
+- **Origen:** al revisar el marcado de *propuestas* en todos los entregables, el ejemplo de `Comparticion.estado` presentaba como hecho un catálogo que es *propuesta* (DEC-09, P-06).
+- **ToT:** A. marcarlo como propuesto en el texto · B. cambiar de ejemplo. → **A**: el ejemplo sigue siendo válido como razonamiento de modelado.
+- **CoVe:** E2 y el KG lo marcan como PROPOSED ✔. `verificar.py` → 0 fallos.
+- **SC:** E2, E4 (RI-24) y el KG coinciden. 3/3.
+- **Cambios:** 1.
+
+### Ronda 2
+- Sin cambios. **Corrección cerrada.**

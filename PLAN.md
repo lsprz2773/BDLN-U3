@@ -77,16 +77,16 @@ Cada ronda se registra en `verificacion/NN-*.md`: versión, ramas ToT y elecció
 
 | Fase | Entregable | Depende de | Actividad del enunciado |
 |---|---|---|---|
-| F0 | Preparación: estructura de carpetas y `scripts/verificar.py` | — | — |
+| F0 | Preparación: estructura de carpetas y `scripts/verificar.py` ✅ | — | — |
 | F0.5 | Auditoría del KG (`verificacion/00-auditoria-kg.md`) y decisiones (`docs/decisiones-modelado.md`, KG v1.1) ✅ | KG | Todas |
-| F1 | 1. Tabla de requerimientos y consultas | KG | A1 |
-| F2 | 2. Diccionario de entidades y propiedades | F1 | A2 |
-| F3 | 3. Catálogo de relaciones | F1, F2 | A2 |
-| F4 | 4. Tabla de restricciones de integridad | F2, F3 | A3 |
-| F5 | 5. Tabla de cardinalidades | F3, F4 | A4 |
-| F6 | 6. Diagrama del modelo lógico | F2–F5 | A5 |
-| F7 | 7. Conclusiones | F1–F6 | A6 |
-| F8 | Revisión de coherencia global | F1–F7 | Todas |
+| F1 | 1. Tabla de requerimientos y consultas ✅ | KG | A1 |
+| F2 | 2. Diccionario de entidades y propiedades ✅ | F1 | A2 |
+| F3 | 3. Catálogo de relaciones ✅ | F1, F2 | A2 |
+| F4 | 4. Tabla de restricciones de integridad ✅ | F2, F3 | A3 |
+| F5 | 5. Tabla de cardinalidades ✅ | F3, F4 | A4 |
+| F6 | 6. Diagrama del modelo lógico ✅ | F2–F5 | A5 |
+| F7 | 7. Conclusiones ✅ | F1–F6 | A6 |
+| F8 | Revisión de coherencia global ✅ | F1–F7 | Todas |
 | F9 | Conversión al formato final (.docx u otro) | F8 + aprobación | — |
 
 **Ritmo:** una fase a la vez. Al terminar cada fase se presenta un resumen (qué se hizo, qué se cambió en la verificación, qué queda como *propuesta* o pregunta) y **se espera la aprobación del usuario** antes de pasar a la siguiente.

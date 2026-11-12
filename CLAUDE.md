@@ -180,6 +180,10 @@ NOT_SELECTED: D-10 MongoDB. SUPERSEDED: D-13 PostgreSQL como fuente de verdad. A
 
 OBS-01 simulación con múltiples pasos · OBS-02 paso con múltiples opciones · OBS-03 opción con una o más consecuencias (ahora coherente con R06 1..N) · OBS-04 opción conduce a otro paso o termina la ruta · OBS-05 usuario con múltiples intentos · OBS-06 respuesta ligada a intento, paso y opción · OBS-07 respuesta puede generar retroalimentación · OBS-08 Simulacion–Habilidad N:M · OBS-09 evidencia demuestra una o varias habilidades · OBS-10 usuario nuevo sin intentos/progreso/evidencias · OBS-11 simulación BORRADOR puede no tener pasos; PUBLICADA necesita contenido · OBS-12 progreso actual ≠ historial de evolución.
 
+## Estado de la actividad
+
+Los 7 entregables están terminados y verificados en `entregables/` (ver `PROGRESS.md`). La verificación automática se ejecuta con `python3 scripts/verificar.py` y debe dar 0 fallos después de cualquier cambio. Pendiente: revisión del usuario y conversión al formato final (F9).
+
 ## Estado general
 
 Definido: proyecto, público, necesidades, consultas del sistema. Preliminar: requerimientos, entidades, relaciones, restricciones, modelo lógico. Seleccionado: Neo4j (principal), PostgreSQL (complementaria). Pendiente: distribución de responsabilidades entre BD y sincronización. Implementación: no definida aún.

@@ -34,3 +34,16 @@ Se recorrieron C-01..C-05 sobre el diagrama por tres lecturas distintas: (1) la 
 - **CoVe:** `verificar.py` (E1–E6) → **0 fallos**; imagen revisada visualmente.
 - **SC:** sin cambios.
 - **Resultado:** **ronda limpia → entregable cerrado.**
+
+
+## Corrección en F8 (revisión de coherencia global)
+
+### Ronda 1
+- **Origen:** la regla de `CLAUDE.md` exige marcar las *propuestas*. El diagrama mostraba `destinatario?` sin indicar que es una propuesta (P-06).
+- **ToT:** A. quitarla del diagrama · B. mantenerla y marcarla en la leyenda. → **B**: E2 la documenta y el diagrama debe coincidir con E2.
+- **CoVe:** el resto de los elementos del diagrama son ADOPTADOS (las propiedades de DESARROLLA existen por MD-01; solo sus rangos son propuesta y no aparecen en el diagrama). `verificar.py` → 0 fallos.
+- **SC:** E2, E6 y el KG (`status: PROPOSED`) coinciden. 3/3.
+- **Cambios:** 1 (leyenda).
+
+### Ronda 2
+- Sin cambios. **Corrección cerrada.**

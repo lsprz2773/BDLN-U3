@@ -59,6 +59,7 @@ flowchart LR
 | Caja | Nodo con su etiqueta (entidad) y sus propiedades almacenadas |
 | `(U)` | Propiedad única (restricción de unicidad nativa en Neo4j) |
 | `?` | Propiedad opcional; las demás son obligatorias |
+| `destinatario?` en Comparticion | Propiedad *propuesta* (P-06); el resto de los elementos del diagrama forma parte del modelo adoptado |
 | Flecha | Relación dirigida, del origen al destino |
 | `TIPO {p1, p2}` | Tipo de relación y, entre llaves, sus propiedades |
 | `[a / b]` | Cardinalidades: `a` = destinos por cada origen; `b` = orígenes por cada destino (entregable 5) |

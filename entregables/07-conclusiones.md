@@ -40,7 +40,7 @@ Las restricciones obligan a decidir qué garantiza la base de datos y qué debe 
 
 - **Neo4j garantiza poco de forma nativa.** La unicidad de propiedades está disponible en cualquier edición. La existencia y el tipo de las propiedades solo en la edición Enterprise. Las restricciones CHECK, las relaciones obligatorias y la unicidad de pares de nodos no existen. Por eso 17 de las 25 restricciones se validan solo en la aplicación y otras 6 combinan una restricción nativa con validación en la aplicación; Neo4j garantiza por completo solo RI-03 en cualquier edición, y RI-01 únicamente en la edición Enterprise, que permite exigir la existencia del identificador. La validación se hace dentro de la misma transacción que la escritura. Por ejemplo, una respuesta solo se crea si el patrón intento–simulación–paso–opción existe completo (RI-10, entregable 4).
 - **Tienen un costo que se negocia con las consultas.** Mantener relaciones redundantes como R09 y R14 acelera C-03 y C-04, pero obliga a añadir RI-10 y RI-14 para que no se contradigan con el camino largo.
-- **Moldean las propiedades.** Para evitar contradicciones, `Comparticion.estado` no incluye un valor EXPIRADA. La expiración se calcula a partir de `fecha_expiracion` (DEC-09), así no existen dos fuentes de verdad para el mismo hecho. Del mismo modo, RI-08 y RI-13 llevan a crear relaciones con `MERGE` en lugar de `CREATE`.
+- **Moldean las propiedades.** Para evitar contradicciones, el catálogo propuesto para `Comparticion.estado` no incluye un valor EXPIRADA. La expiración se calcula a partir de `fecha_expiracion` (DEC-09), así no existen dos fuentes de verdad para el mismo hecho. Del mismo modo, RI-08 y RI-13 llevan a crear relaciones con `MERGE` en lugar de `CREATE`.
 
 ### Las cardinalidades
 
