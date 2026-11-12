@@ -113,3 +113,4 @@ Generada con `node scripts/md2docx.js` → `entregables/docx/`. Estilo sobrio: t
 | 2026-11-12 | F8: coherencia global (2 rondas); 5 correcciones en E3, E4, E6 y E7, cada una con su ciclo de verificación. |
 | 2026-11-12 | F9: conversión a .docx sin azul; diagrama re-renderizado en gris/naranja/verde (corrección registrada en `verificacion/06-modelo-logico.md`). |
 | 2026-11-12 | Presentación: guía de estudio (Claude Docs + `presentacion/guia-estudio.md`/.docx) y deck de 12 diapositivas (fuente en `presentacion/diapositivas/`). Ver `presentacion/README.md`. |
+| 2026-11-12 | PDF de la guía de estudio (`presentacion/guia-estudio.pdf`, 5 páginas) y de las diapositivas (`presentacion/diapositivas.pdf`, 12 páginas). |

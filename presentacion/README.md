@@ -4,9 +4,11 @@ Material para preparar y dar la presentación. Todo se basa en los entregables d
 
 | Material | Archivo en el repo | Versión en línea |
 |---|---|---|
-| Guía de estudio | `guia-estudio.md` y `guia-estudio.docx` | [Guía de estudio — Propuesta QATO'K](https://claude.ai/artifact/AAsS7EuZKUoT39dzWBzM2X) (documento editable de Claude Docs) |
-| Diapositivas (12) | `diapositivas/` (fuente: `deck.json` + una página HTML por diapositiva, con notas del orador en `<aside>`) | [Propuesta QATO'K — diapositivas](https://claude.ai/artifact/KSFF9u4bSJv8uy3BfmBbG1) |
+| Guía de estudio | `guia-estudio.pdf`, `guia-estudio.docx` y `guia-estudio.md` | [Guía de estudio — Propuesta QATO'K](https://claude.ai/artifact/AAsS7EuZKUoT39dzWBzM2X) (documento editable de Claude Docs) |
+| Diapositivas (12) | `diapositivas.pdf` (12 páginas, 16:9) y `diapositivas/` (fuente: `deck.json` + una página HTML por diapositiva, con notas del orador en `<aside>`) | [Propuesta QATO'K — diapositivas](https://claude.ai/artifact/KSFF9u4bSJv8uy3BfmBbG1) |
 | Diagrama de las tres zonas | `modelo-tres-zonas.png` | — |
+
+**Regenerar los PDF:** `node scripts/diapositivas2pdf.js` (diapositivas, con Playwright) y LibreOffice sobre `guia-estudio.docx` (guía).
 
 **Importante:** los enlaces en línea son privados hasta que su dueño los comparta desde el menú *Share* de cada página. Para presentar sin conexión, las diapositivas se descargan como PowerPoint o PDF desde el menú *Share › Export* de la página del deck.
 
