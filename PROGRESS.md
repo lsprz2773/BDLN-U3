@@ -1,123 +1,85 @@
 # PROGRESS.md — Actividad: Diseño del modelo lógico de una aplicación basada en grafos
 
-Seguimiento de los entregables de la actividad (ver `docs/actividad.jpg`). Proyecto: **QATO'K**. Fuente de datos: `docs/KG.json` / `CLAUDE.md`. Plan de trabajo y protocolo de verificación: `PLAN.md`.
+Seguimiento de los entregables de la actividad (ver `docs/actividad.jpg`). Proyecto: **QATO'K**.
+- **Fuente de datos:** `docs/KG.json` v1.1 / `CLAUDE.md`.
+- **Decisiones:** `docs/decisiones-modelado.md` (DEC-01..DEC-23).
+- **Plan y protocolo de verificación:** `PLAN.md`.
+- **Verificación automática:** `python3 scripts/verificar.py`.
 
 **Estados:** ⬜ Pendiente · 🟨 En progreso · 🟧 Por corregir · ✅ Terminado
 
 ## Auditoría previa del KG
 
-✅ Realizada → `verificacion/00-auditoria-kg.md`. 20 hallazgos (1 🔴, 6 🟠, 7 🟡, 6 ⚪).
-✅ Resuelta → `docs/decisiones-modelado.md` (DEC-01..DEC-22, decididas por Claude por delegación del usuario, verificadas con ToT/CoVe/SC en 2 rondas). Aplicadas en `docs/KG.json` v1.1.
+- ✅ Realizada → `verificacion/00-auditoria-kg.md`. 20 hallazgos (1 🔴, 6 🟠, 7 🟡, 6 ⚪).
+- ✅ Resuelta → `docs/decisiones-modelado.md` (DEC-01..DEC-22 en F0.5, DEC-23 surgida en F1). Decisiones tomadas por Claude por delegación del usuario y verificadas con ToT, CoVe y SC. Aplicadas en `docs/KG.json` v1.1.
 
 ## Resumen
 
-| # | Entregable | Estado | Archivo | Insumo en el KG |
-|---|---|---|---|---|
-| 1 | Tabla de requerimientos y consultas | ⬜ Pendiente | `entregables/01-requerimientos-consultas.md` | RF-01..RF-10, C-01..C-05 (C-02/C-04 con Simulacion) |
-| 2 | Diccionario de entidades y propiedades | ⬜ Pendiente | `entregables/02-diccionario-entidades.md` | E01..E12, `value_catalogs` |
-| 3 | Catálogo de relaciones | ⬜ Pendiente | `entregables/03-catalogo-relaciones.md` | R01..R17 (sin descripción), `modeling_notes` |
-| 4 | Tabla de restricciones de integridad | ⬜ Pendiente | `entregables/04-restricciones-integridad.md` | RI-01..RI-25, `neo4j_constraint_support` |
-| 5 | Tabla de cardinalidades | ⬜ Pendiente | `entregables/05-cardinalidades.md` | R01..R17, `cardinality_convention` |
-| 6 | Diagrama del modelo lógico | ⬜ Pendiente | `entregables/06-modelo-logico.md` | `logical_graph_model`, MD-01..MD-05 |
-| 7 | Conclusiones (2 preguntas) | ⬜ Pendiente | `entregables/07-conclusiones.md` | `known_limitations`, DEC-xx |
+| # | Entregable | Estado | Archivo | Rondas | Verificación |
+|---|---|---|---|---|---|
+| 1 | Tabla de requerimientos y consultas | ✅ Terminado | `entregables/01-requerimientos-consultas.md` | 2 | `verificacion/01-requerimientos-consultas.md` |
+| 2 | Diccionario de entidades y propiedades | ✅ Terminado | `entregables/02-diccionario-entidades.md` | 2 | `verificacion/02-diccionario-entidades.md` |
+| 3 | Catálogo de relaciones | ✅ Terminado | `entregables/03-catalogo-relaciones.md` | 3 + corrección F8 | `verificacion/03-catalogo-relaciones.md` |
+| 4 | Tabla de restricciones de integridad | ✅ Terminado | `entregables/04-restricciones-integridad.md` | 2 + corrección F8 | `verificacion/04-restricciones-integridad.md` |
+| 5 | Tabla de cardinalidades | ✅ Terminado | `entregables/05-cardinalidades.md` | 2 | `verificacion/05-cardinalidades.md` |
+| 6 | Diagrama del modelo lógico | ✅ Terminado | `entregables/06-modelo-logico.md` + `.png` | 2 + corrección F8 | `verificacion/06-modelo-logico.md` |
+| 7 | Conclusiones (2 preguntas) | ✅ Terminado | `entregables/07-conclusiones.md` | 3 + corrección F8 | `verificacion/07-conclusiones.md` |
+| — | Coherencia global (F8) | ✅ Terminado | — | 2 | `verificacion/08-coherencia-global.md` |
+
+**Estado de la verificación automática:** 832 comprobaciones OK, 0 fallos.
 
 ---
 
 ## Actividades del enunciado (columna izquierda)
 
-Cada actividad tiene requisitos propios que deben cumplirse aunque su resultado se presente dentro de un entregable de la tabla.
-
 | # | Actividad | Requisitos | Estado | Se entrega en |
 |---|---|---|---|---|
-| A1 | **Analizar los requerimientos de la aplicación** | A1.1 Identificar ≥8 requerimientos funcionales · A1.2 Formular 5 consultas que el sistema debe resolver · A1.3 ≥2 consultas involucran relaciones entre 3+ entidades | ⬜ Pendiente | Entregable 1 |
-| A2 | **Identificar entidades, propiedades y relaciones** | A2.1 Identificar las entidades necesarias para el dominio · A2.2 ≥3 propiedades por entidad con nombre, tipo de dato, obligatoria/opcional, única · A2.3 Tabla de relaciones con entidad origen, nombre, entidad destino y descripción | ⬜ Pendiente | Entregables 2 y 3 |
-| A3 | **Establecer restricciones de integridad** | A3.1 Definir ≥8 restricciones · A3.2 Cubrir: unicidad de identificadores, propiedades obligatorias, valores permitidos, consistencia entre entidades, reglas de negocio | ⬜ Pendiente | Entregable 4 |
-| A4 | **Determinar las cardinalidades** | A4.1 Usar la tabla Relación–Origen–Destino · A4.2 ¿Puede existir una entidad sin relacionarse? · A4.3 ¿Se relaciona con una o muchas? · A4.4 Mínimo y máximo permitido | ⬜ Pendiente | Entregable 5 |
-| A5 | **Construcción del modelo lógico** | A5.1 Integrar entidades, propiedades, relaciones, restricciones y cardinalidades en el modelo de grafos | ⬜ Pendiente | Entregable 6 |
-| A6 | **Conclusiones** | A6.1 ¿Por qué no basta identificar entidades para construir una BD de grafos? · A6.2 Cómo influyen consultas, restricciones y cardinalidades en el modelado | ⬜ Pendiente | Sección de conclusiones |
+| A1 | **Analizar los requerimientos de la aplicación** | ✅ A1.1 10 RF (≥8) · ✅ A1.2 5 consultas · ✅ A1.3 5 consultas con 3+ entidades (≥2) | ✅ | Entregable 1 |
+| A2 | **Identificar entidades, propiedades y relaciones** | ✅ A2.1 12 entidades · ✅ A2.2 3–6 propiedades por entidad con nombre, tipo, obligatoria y única · ✅ A2.3 17 relaciones con origen, nombre, destino y descripción | ✅ | Entregables 2 y 3 |
+| A3 | **Establecer restricciones de integridad** | ✅ A3.1 25 restricciones (≥8) · ✅ A3.2 las 5 categorías cubiertas | ✅ | Entregable 4 |
+| A4 | **Determinar las cardinalidades** | ✅ A4.1 tabla Relación–Origen–Destino · ✅ A4.2 existencia sin relaciones (por relación y por entidad) · ✅ A4.3 una o muchas · ✅ A4.4 mínimo y máximo | ✅ | Entregable 5 |
+| A5 | **Construcción del modelo lógico** | ✅ A5.1 diagrama con nodos, propiedades, relaciones y cardinalidades, verificado contra el KG | ✅ | Entregable 6 |
+| A6 | **Conclusiones** | ✅ A6.1 · ✅ A6.2 | ✅ | Entregable 7 |
 
 ---
 
 ## Detalle por entregable
 
-### 1. Tabla de requerimientos y consultas — ⬜ Pendiente
-**Criterios de la actividad**
-- [ ] Al menos **8 requerimientos funcionales**.
-- [ ] **5 consultas** que el sistema debe resolver.
-- [ ] Al menos **2 consultas** involucran relaciones entre **3 o más entidades**.
+### 1. Tabla de requerimientos y consultas — ✅
+- [x] ≥8 RF (10, descripción literal del KG + necesidad que atiende + entidades).
+- [x] 5 consultas (texto literal del KG).
+- [x] ≥2 consultas con 3+ entidades (las 5: 4–8 entidades).
+- **Extra:** recorrido Cypher de cada consulta, verificado contra el modelo; matriz RF↔consultas.
+- **Observaciones:** limitaciones documentadas: C-02 atribuye el desempeño por simulación (LIM-01); C-05 es una aproximación (LIM-02, P-07).
 
-**Observaciones**
-- El KG tiene 10 RF (cumple ≥8) y 5 consultas; todas involucran 4–7 entidades (cumple holgadamente).
-- Conviene mostrar en la tabla las entidades involucradas por consulta y, opcionalmente, el RF que atiende cada consulta.
+### 2. Diccionario de entidades y propiedades — ✅
+- [x] 12 entidades. [x] ≥3 propiedades por entidad. [x] Nombre, tipo SQL y Neo4j, obligatoria/opcional, única.
+- **Observaciones:** las FK se explican como relaciones. Se agregan las propiedades de DESARROLLA y una tabla de catálogos. Los valores *propuestos* están marcados.
 
-### 2. Diccionario de entidades y propiedades — ⬜ Pendiente
-**Criterios de la actividad**
-- [ ] Todas las entidades necesarias para representar el dominio.
-- [ ] Al menos **3 propiedades** por entidad.
-- [ ] Por propiedad: **nombre, tipo de dato, obligatoria/opcional, única**.
+### 3. Catálogo de relaciones — ✅
+- [x] Origen, nombre, destino y descripción de las 17 relaciones, con sus propiedades y las consultas y reglas que las usan.
 
-**Observaciones**
-- Las 12 entidades tienen ≥4 propiedades (cumple).
-- Obligatoriedad: el KG solo marca `nullable: true` en algunas; el resto se asume obligatorio (RI-04). Hay que explicitarlo columna por columna.
-- Las propiedades FK (`id_simulacion`, `id_paso`, …) son herencia del modelo relacional; en Neo4j se representan como relaciones. Decidir si se listan en el diccionario (marcándolas como "representada por relación") o se omiten.
-- Tipos: el KG usa tipos SQL (VARCHAR, DECIMAL). Considerar añadir el tipo equivalente en Neo4j (String, Float, Integer, DateTime).
+### 4. Tabla de restricciones de integridad — ✅
+- [x] 25 restricciones (≥8). [x] 5 categorías.
+- **Extra:** mecanismo en Neo4j ([N]/[E]/[A]), DDL de constraints y validaciones transaccionales de referencia.
+- **Observaciones:** RI-24 y RI-25 son *propuestas*. Los ciclos entre pasos quedan pendientes (P-04).
 
-### 3. Catálogo de relaciones — ⬜ Pendiente
-**Criterios de la actividad**
-- [ ] Tabla con: **entidad origen, nombre de la relación, entidad destino, descripción de su significado**.
+### 5. Tabla de cardinalidades — ✅
+- [x] Las 3 preguntas del enunciado para las 17 relaciones. [x] Tabla de existencia por entidad. [x] Cardinalidades condicionadas.
 
-**Observaciones**
-- El KG **no incluye descripciones** de las relaciones: hay que redactarlas.
-- Incluir las propiedades de `DESARROLLA` (`peso`, `nivel_esperado`) según MD-01.
-- `GENERA` y `CORRESPONDE_A` se usan con distintos pares de etiquetas; aclararlo en la descripción.
-- `TIENE` (Simulacion→Intento) es un nombre genérico; se puede justificar o proponer otro nombre (marcándolo como *propuesta*).
+### 6. Diagrama del modelo lógico — ✅
+- [x] Diagrama en Mermaid renderizado a PNG, con 12 nodos, 55 propiedades, 17 relaciones y cardinalidades. [x] Lectura del modelo y comprobación de las 5 consultas sobre el diagrama.
 
-### 4. Tabla de restricciones de integridad — ⬜ Pendiente
-**Criterios de la actividad**
-- [ ] Al menos **8 restricciones**.
-- [ ] Considerar: unicidad de identificadores, propiedades obligatorias, valores permitidos, consistencia entre entidades, reglas de negocio.
-
-**Observaciones**
-- El KG tiene 15 (RI-01..RI-15) y cubre las 5 categorías. Clasificar cada una por categoría en la tabla.
-- Indicar cómo se implementa en Neo4j (constraint de unicidad, existencia de propiedad, validación en aplicación) vs. lo que requiere lógica de aplicación (RI-10, RI-11, RI-14).
-- Faltan catálogos de valores para algunas propiedades (`Usuario.estado`, `Evidencia.visibilidad`, `Comparticion.estado`, `Consecuencia.impacto/tipo`, `Paso.tipo`). Si se proponen, marcarlos como *propuesta*.
-
-### 5. Tabla de cardinalidades — ⬜ Pendiente
-**Criterios de la actividad** (usando la tabla Relación–Origen–Destino)
-- [ ] ¿Puede existir una entidad sin relacionarse?
-- [ ] ¿Puede relacionarse con una o muchas entidades?
-- [ ] ¿Cuál es el mínimo y máximo permitido?
-
-**Observaciones**
-- El KG da cardinalidades para R01..R17; hay que traducirlas a respuestas explícitas a las 3 preguntas.
-- ✅ R06 resuelta: **1..N** (DEC-02).
-- R03 `Simulacion-CONTIENE->Paso` 0..N es coherente con OBS-11 (borrador sin pasos), pero una simulación PUBLICADA requiere ≥1 paso: mencionarlo como regla condicionada al estado.
-- ✅ R05 resuelta: se mantiene 1..N; las rutas terminan en opción terminal (DEC-03).
-
-### 6. Diagrama del modelo lógico — ⬜ Pendiente
-**Criterios de la actividad**
-- [ ] Construcción del modelo lógico orientado a grafos (nodos, relaciones, propiedades).
-
-**Observaciones**
-- 12 etiquetas y 17 relaciones. Incluir propiedades clave en nodos y las propiedades de `DESARROLLA`.
-- Definir formato (Mermaid, Arrows.app, draw.io, SVG/PNG).
-- Debe ser coherente con los entregables 2, 3 y 5.
-
-### 7. Conclusiones — ⬜ Pendiente
-- [ ] ¿Por qué no es suficiente identificar las entidades de una aplicación para construir una base de datos orientada a grafos?
-- [ ] Explica cómo las consultas, las restricciones de integridad y las cardinalidades influyen en las decisiones de modelado.
-
-**Observaciones**
-- Apoyarse en ejemplos concretos del proyecto: MD-01..MD-05, C-03 (recorrido de decisiones), C-05 (evolución → P-07, un único `Progreso` consolidado no basta para el historial), RI-10/RI-11 (consistencia que el grafo no garantiza solo).
+### 7. Conclusiones — ✅
+- [x] Pregunta 1. [x] Pregunta 2. Todas las afirmaciones están verificadas contra los entregables.
 
 ---
 
 ## Observaciones generales
-- Respetar las reglas de `CLAUDE.md`: español, IDs exactos, marcar como *propuesta* todo lo que dependa de decisiones pendientes (P-xx).
-- C-05 pide evolución en el tiempo, pero el modelo actual solo tiene un `Progreso` consolidado (RI-13, P-07 pendiente): señalarlo como limitación conocida.
-- **Formato:** se trabaja todo en `.md` durante el modelado. Al final cada entregable se convierte al formato que le corresponda (.docx u otro, según el entregable). Ver checklist "Conversión final" abajo.
+- Todo se trabajó en `.md`, como se acordó. Los temas que dependen de decisiones pendientes (P-xx) están marcados como *propuesta* en cada entregable.
+- **Pendiente de revisión del usuario:** las *propuestas* (catálogos, rangos, `Comparticion.destinatario`, RI-24, RI-25) y las decisiones DEC-01..DEC-23.
 
-## Conversión final (al terminar el modelado)
+## Conversión final (F9 — pendiente de aprobación del usuario)
 
 | # | Entregable | Formato final | Estado |
 |---|---|---|---|
@@ -126,15 +88,24 @@ Cada actividad tiene requisitos propios que deben cumplirse aunque su resultado 
 | 3 | Catálogo de relaciones | .docx (por confirmar) | ⬜ Pendiente |
 | 4 | Tabla de restricciones de integridad | .docx (por confirmar) | ⬜ Pendiente |
 | 5 | Tabla de cardinalidades | .docx (por confirmar) | ⬜ Pendiente |
-| 6 | Diagrama del modelo lógico | Imagen/PDF (por confirmar) | ⬜ Pendiente |
+| 6 | Diagrama del modelo lógico | PNG ya generado; .docx o PDF (por confirmar) | 🟨 Imagen lista |
 | 7 | Conclusiones | .docx (por confirmar) | ⬜ Pendiente |
 
 ## Bitácora
 | Fecha | Cambio |
 |---|---|
 | 2026-11-12 | Creación de PROGRESS.md con los 6 entregables + conclusiones; todos pendientes. |
-| 2026-11-12 | Se añaden explícitamente las actividades A1–A6 de la columna izquierda del enunciado, con sus requisitos y el entregable donde se presentan. |
-| 2026-11-12 | Decisión de formato: todo en .md durante el modelado; conversión al formato final de cada entregable al terminar. |
-| 2026-11-12 | Creación de PLAN.md: fases F0–F9 y protocolo de verificación ToT + CoVe + self-consistency por cada creación y corrección. |
-| 2026-11-12 | Auditoría del KG (2 rondas de verificación): estructura coherente; 20 hallazgos de significado y completitud con resoluciones propuestas. |
-| 2026-11-12 | Decisiones DEC-01..DEC-22 (`docs/decisiones-modelado.md`) y KG v1.1. Carpeta única de entregables: `entregables/`. |
+| 2026-11-12 | Se añaden explícitamente las actividades A1–A6 de la columna izquierda del enunciado. |
+| 2026-11-12 | Decisión de formato: todo en .md durante el modelado; conversión al formato final al terminar. |
+| 2026-11-12 | Creación de PLAN.md: fases F0–F9 y protocolo de verificación ToT + CoVe + self-consistency. |
+| 2026-11-12 | Auditoría del KG: estructura coherente; 20 hallazgos con resoluciones propuestas. |
+| 2026-11-12 | Decisiones DEC-01..DEC-22 y KG v1.1. Carpeta única de entregables: `entregables/`. |
+| 2026-11-12 | F0: `scripts/verificar.py` (probado introduciendo errores a propósito). |
+| 2026-11-12 | F1: entregable 1 (2 rondas). Surge DEC-23 (Simulacion en C-03). |
+| 2026-11-12 | F2: entregable 2 (2 rondas). |
+| 2026-11-12 | F3: entregable 3 (3 rondas). |
+| 2026-11-12 | F4: entregable 4 (2 rondas); ediciones de Neo4j confirmadas por búsqueda. RI-24 actualizada en el KG. |
+| 2026-11-12 | F5: entregable 5 (2 rondas). |
+| 2026-11-12 | F6: entregable 6 (2 rondas); diagrama renderizado con mermaid-cli. |
+| 2026-11-12 | F7: entregable 7 (3 rondas). |
+| 2026-11-12 | F8: coherencia global (2 rondas); 5 correcciones en E3, E4, E6 y E7, cada una con su ciclo de verificación. |
