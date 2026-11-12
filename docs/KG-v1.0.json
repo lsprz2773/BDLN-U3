@@ -1,0 +1,1466 @@
+{
+  "knowledge_graph": {
+    "metadata": {
+      "project": "QATO'K",
+      "version": "1.0",
+      "language": "es",
+      "type": "Knowledge Graph",
+      "description": "Grafo de conocimiento integral del proyecto QATO'K, que representa su dominio, objetivos, stakeholders, necesidades, requerimientos, modelo de datos, relaciones, restricciones, decisiones arquitectónicas y tecnologías evaluadas.",
+      "last_updated": "2026-11-09",
+      "architecture_status": "Neo4j como base de datos principal y PostgreSQL como base de datos complementaria.",
+      "information_policy": "Se distinguen las decisiones confirmadas, las propuestas preliminares y los aspectos pendientes. No se consideran confirmadas las decisiones que todavía no han sido definidas."
+    },
+    "project": {
+      "id": "PROJECT_QATOK",
+      "name": "QATO'K",
+      "title": "Sistema de simulación y aprendizaje de habilidades profesionales mediante experiencias interactivas",
+      "category": "Plataforma educativa y de simulación profesional",
+      "description": "Aplicación que permite a estudiantes universitarios y recién egresados desarrollar y demostrar habilidades profesionales mediante escenarios interactivos que representan situaciones del entorno laboral.",
+      "main_objective": "Reducir la brecha entre la formación académica y las exigencias del entorno laboral mediante experiencias prácticas de simulación.",
+      "target_audience": [
+        "Estudiantes universitarios próximos a egresar",
+        "Recién egresados",
+        "Personas con formación académica pero poca experiencia laboral formal"
+      ],
+      "value_proposition": [
+        "Practicar situaciones laborales antes de enfrentarlas en un empleo real.",
+        "Desarrollar habilidades profesionales mediante decisiones y consecuencias.",
+        "Recibir retroalimentación concreta y orientada a la mejora.",
+        "Identificar fortalezas y áreas de oportunidad.",
+        "Generar evidencias que permitan demostrar habilidades ante empleadores."
+      ],
+      "core_concept": "Aprender mediante simulaciones de experiencias profesionales, decisiones contextualizadas, consecuencias y retroalimentación."
+    },
+    "stakeholders": [
+      {
+        "id": "STAKEHOLDER_01",
+        "type": "Usuario objetivo",
+        "profile": "Estudiante universitario próximo a egresar.",
+        "characteristics": {
+          "academic_stage": "Último semestre universitario",
+          "formal_work_experience": false,
+          "internship_experience": false,
+          "resume_status": "CV corto",
+          "linkedin_status": "Perfil incompleto",
+          "academic_experience": [
+            "Proyectos escolares",
+            "Exposiciones",
+            "Actividades académicas"
+          ]
+        },
+        "problems": [
+          "No sabe si sus experiencias académicas representan adecuadamente las exigencias del mundo laboral.",
+          "Tiene dificultades para demostrar sus habilidades profesionales.",
+          "No sabe comunicar con claridad lo que sabe hacer.",
+          "Experimenta inseguridad ante entrevistas y situaciones laborales desconocidas.",
+          "Tiene poca experiencia enfrentando problemas reales de trabajo."
+        ],
+        "needs": [
+          "Practicar situaciones laborales realistas.",
+          "Tomar decisiones con información incompleta.",
+          "Enfrentar tareas ambiguas y fechas límite.",
+          "Practicar comunicación y resolución de conflictos.",
+          "Recibir retroalimentación específica.",
+          "Visualizar su progreso.",
+          "Identificar fortalezas y áreas de mejora.",
+          "Obtener evidencias de habilidades demostradas."
+        ],
+        "preferences": [
+          "Ejercicios prácticos.",
+          "Contextos laborales realistas.",
+          "Decisiones con consecuencias.",
+          "Posibilidad de repetir simulaciones.",
+          "Retroalimentación que explique los resultados.",
+          "Sesiones cortas."
+        ],
+        "constraints": [
+          "Disponibilidad de tiempo limitada.",
+          "Uso frecuente de dispositivos móviles.",
+          "Posible conectividad limitada.",
+          "Sensibilidad al costo.",
+          "Necesidad de privacidad.",
+          "Control sobre la información que comparte."
+        ]
+      }
+    ],
+    "problem_analysis": {
+      "id": "ANALYSIS_01",
+      "central_problem": "Existe una brecha entre la formación académica y la capacidad de enfrentar, resolver y demostrar competencias en situaciones profesionales reales.",
+      "causes": [
+        {
+          "id": "CAUSE_01",
+          "description": "Predominio de formación teórica frente a experiencias laborales prácticas."
+        },
+        {
+          "id": "CAUSE_02",
+          "description": "Falta de experiencia formal para demostrar habilidades."
+        },
+        {
+          "id": "CAUSE_03",
+          "description": "Pocas oportunidades para practicar decisiones bajo incertidumbre."
+        },
+        {
+          "id": "CAUSE_04",
+          "description": "Dificultad para comunicar competencias durante entrevistas."
+        },
+        {
+          "id": "CAUSE_05",
+          "description": "Ausencia de retroalimentación sobre el desempeño en situaciones profesionales simuladas."
+        }
+      ],
+      "consequences": [
+        "Inseguridad al incorporarse al mercado laboral.",
+        "Dificultad para afrontar situaciones ambiguas.",
+        "Poca capacidad para demostrar habilidades blandas.",
+        "Dificultad para identificar áreas de mejora.",
+        "CV con pocas evidencias prácticas."
+      ],
+      "proposed_solution": "Implementar una plataforma de simulaciones profesionales interactivas con decisiones, consecuencias, retroalimentación y seguimiento del desarrollo de habilidades."
+    },
+    "functional_requirements": [
+      {
+        "id": "RF-01",
+        "name": "Gestión de usuarios",
+        "description": "El sistema debe permitir registrar usuarios, iniciar sesión y administrar sus cuentas."
+      },
+      {
+        "id": "RF-02",
+        "name": "Gestión de escenarios",
+        "description": "El sistema debe permitir consultar y seleccionar simulaciones profesionales disponibles."
+      },
+      {
+        "id": "RF-03",
+        "name": "Desarrollo de simulaciones",
+        "description": "El sistema debe presentar situaciones laborales y permitir avanzar mediante respuestas y decisiones del usuario."
+      },
+      {
+        "id": "RF-04",
+        "name": "Gestión de decisiones",
+        "description": "El sistema debe registrar las decisiones tomadas y presentar sus consecuencias."
+      },
+      {
+        "id": "RF-05",
+        "name": "Retroalimentación personalizada",
+        "description": "El sistema debe explicar los aciertos, errores y acciones de mejora después de las decisiones."
+      },
+      {
+        "id": "RF-06",
+        "name": "Seguimiento del progreso",
+        "description": "El sistema debe registrar los resultados y la evolución de las habilidades del usuario."
+      },
+      {
+        "id": "RF-07",
+        "name": "Identificación de fortalezas y áreas de mejora",
+        "description": "El sistema debe identificar las habilidades desarrolladas y aquellas que requieren fortalecimiento."
+      },
+      {
+        "id": "RF-08",
+        "name": "Generación de evidencias",
+        "description": "El sistema debe permitir generar evidencias de habilidades demostradas durante las simulaciones."
+      },
+      {
+        "id": "RF-09",
+        "name": "Control de privacidad",
+        "description": "El sistema debe permitir al usuario controlar qué evidencias y resultados comparte y con quién."
+      },
+      {
+        "id": "RF-10",
+        "name": "Acceso flexible",
+        "description": "El sistema debe permitir realizar sesiones cortas y facilitar el uso desde dispositivos móviles."
+      }
+    ],
+    "system_queries": [
+      {
+        "id": "C-01",
+        "description": "¿Qué simulaciones tiene disponibles un usuario según su progreso y las habilidades que necesita fortalecer?",
+        "related_entities": ["Usuario", "Progreso", "Habilidad", "Simulacion"],
+        "graph_value": "Relacionar el estado de las habilidades del usuario con las competencias desarrolladas por cada simulación."
+      },
+      {
+        "id": "C-02",
+        "description": "¿Cuáles son las fortalezas y áreas de mejora de un usuario según los resultados de sus simulaciones?",
+        "related_entities": [
+          "Usuario",
+          "Intento",
+          "Respuesta",
+          "Retroalimentacion",
+          "Progreso",
+          "Habilidad"
+        ],
+        "graph_value": "Analizar conexiones entre desempeño, retroalimentación y habilidades."
+      },
+      {
+        "id": "C-03",
+        "description": "¿Qué decisiones tomó un usuario durante una simulación, qué consecuencias obtuvo y qué retroalimentación recibió?",
+        "related_entities": [
+          "Usuario",
+          "Intento",
+          "Respuesta",
+          "Paso",
+          "Opcion",
+          "Consecuencia",
+          "Retroalimentacion"
+        ],
+        "graph_value": "Reconstruir recorridos de decisiones y sus consecuencias."
+      },
+      {
+        "id": "C-04",
+        "description": "¿Qué evidencias puede compartir un usuario para demostrar una habilidad y en qué simulaciones las obtuvo?",
+        "related_entities": [
+          "Usuario",
+          "Evidencia",
+          "Habilidad",
+          "Intento",
+          "Comparticion"
+        ],
+        "graph_value": "Recorrer las relaciones entre evidencias, habilidades y experiencias que las originaron, considerando los permisos."
+      },
+      {
+        "id": "C-05",
+        "description": "¿Cómo ha evolucionado una habilidad a lo largo del tiempo y qué simulaciones contribuyeron a su desarrollo?",
+        "related_entities": [
+          "Usuario",
+          "Progreso",
+          "Habilidad",
+          "Intento",
+          "Simulacion"
+        ],
+        "graph_value": "Analizar trayectorias de aprendizaje y relaciones entre simulaciones y desarrollo de competencias."
+      }
+    ],
+    "domain_model": {
+      "entities": [
+        {
+          "id": "E01",
+          "name": "Usuario",
+          "neo4j_label": "Usuario",
+          "description": "Persona que utiliza la plataforma para practicar y desarrollar habilidades profesionales.",
+          "properties": [
+            {
+              "name": "id_usuario",
+              "type": "UUID",
+              "primary_key": true
+            },
+            {
+              "name": "nombre",
+              "type": "VARCHAR(100)"
+            },
+            {
+              "name": "correo",
+              "type": "VARCHAR(150)",
+              "unique": true
+            },
+            {
+              "name": "contrasena_hash",
+              "type": "VARCHAR(255)"
+            },
+            {
+              "name": "fecha_registro",
+              "type": "TIMESTAMP"
+            },
+            {
+              "name": "estado",
+              "type": "VARCHAR(20)"
+            }
+          ]
+        },
+        {
+          "id": "E02",
+          "name": "Simulacion",
+          "neo4j_label": "Simulacion",
+          "description": "Experiencia interactiva que representa una situación profesional.",
+          "properties": [
+            {
+              "name": "id_simulacion",
+              "type": "UUID",
+              "primary_key": true
+            },
+            {
+              "name": "titulo",
+              "type": "VARCHAR(150)"
+            },
+            {
+              "name": "descripcion",
+              "type": "TEXT"
+            },
+            {
+              "name": "dificultad",
+              "type": "VARCHAR(30)"
+            },
+            {
+              "name": "duracion_estimada",
+              "type": "INTEGER",
+              "nullable": true
+            },
+            {
+              "name": "estado",
+              "type": "VARCHAR(20)"
+            }
+          ]
+        },
+        {
+          "id": "E03",
+          "name": "Habilidad",
+          "neo4j_label": "Habilidad",
+          "description": "Competencia profesional que puede desarrollarse o demostrarse mediante simulaciones.",
+          "properties": [
+            {
+              "name": "id_habilidad",
+              "type": "UUID",
+              "primary_key": true
+            },
+            {
+              "name": "nombre",
+              "type": "VARCHAR(100)",
+              "unique": true
+            },
+            {
+              "name": "descripcion",
+              "type": "TEXT"
+            },
+            {
+              "name": "categoria",
+              "type": "VARCHAR(50)"
+            },
+            {
+              "name": "nivel_objetivo",
+              "type": "INTEGER",
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "id": "E04",
+          "name": "Paso",
+          "neo4j_label": "Paso",
+          "description": "Situación o etapa que forma parte de una simulación.",
+          "properties": [
+            {
+              "name": "id_paso",
+              "type": "UUID",
+              "primary_key": true
+            },
+            {
+              "name": "id_simulacion",
+              "type": "UUID",
+              "foreign_key": true
+            },
+            {
+              "name": "titulo",
+              "type": "VARCHAR(150)"
+            },
+            {
+              "name": "descripcion",
+              "type": "TEXT"
+            },
+            {
+              "name": "orden",
+              "type": "INTEGER"
+            },
+            {
+              "name": "tipo",
+              "type": "VARCHAR(30)"
+            }
+          ]
+        },
+        {
+          "id": "E05",
+          "name": "Opcion",
+          "neo4j_label": "Opcion",
+          "description": "Alternativa de decisión disponible para el usuario en un paso.",
+          "properties": [
+            {
+              "name": "id_opcion",
+              "type": "UUID",
+              "primary_key": true
+            },
+            {
+              "name": "id_paso",
+              "type": "UUID",
+              "foreign_key": true
+            },
+            {
+              "name": "descripcion",
+              "type": "TEXT"
+            },
+            {
+              "name": "valoracion",
+              "type": "DECIMAL(5,2)",
+              "nullable": true
+            },
+            {
+              "name": "id_paso_siguiente",
+              "type": "UUID",
+              "foreign_key": true,
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "id": "E06",
+          "name": "Consecuencia",
+          "neo4j_label": "Consecuencia",
+          "description": "Resultado asociado a una opción de decisión.",
+          "properties": [
+            {
+              "name": "id_consecuencia",
+              "type": "UUID",
+              "primary_key": true
+            },
+            {
+              "name": "id_opcion",
+              "type": "UUID",
+              "foreign_key": true
+            },
+            {
+              "name": "descripcion",
+              "type": "TEXT"
+            },
+            {
+              "name": "impacto",
+              "type": "VARCHAR(30)"
+            },
+            {
+              "name": "tipo",
+              "type": "VARCHAR(30)"
+            }
+          ]
+        },
+        {
+          "id": "E07",
+          "name": "Intento",
+          "neo4j_label": "Intento",
+          "description": "Ejecución de una simulación por parte de un usuario.",
+          "properties": [
+            {
+              "name": "id_intento",
+              "type": "UUID",
+              "primary_key": true
+            },
+            {
+              "name": "id_usuario",
+              "type": "UUID",
+              "foreign_key": true
+            },
+            {
+              "name": "id_simulacion",
+              "type": "UUID",
+              "foreign_key": true
+            },
+            {
+              "name": "fecha_inicio",
+              "type": "TIMESTAMP"
+            },
+            {
+              "name": "fecha_fin",
+              "type": "TIMESTAMP",
+              "nullable": true
+            },
+            {
+              "name": "estado",
+              "type": "VARCHAR(20)"
+            },
+            {
+              "name": "puntuacion",
+              "type": "DECIMAL(5,2)",
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "id": "E08",
+          "name": "Respuesta",
+          "neo4j_label": "Respuesta",
+          "description": "Registro de una opción seleccionada por el usuario durante un intento.",
+          "properties": [
+            {
+              "name": "id_respuesta",
+              "type": "UUID",
+              "primary_key": true
+            },
+            {
+              "name": "id_intento",
+              "type": "UUID",
+              "foreign_key": true
+            },
+            {
+              "name": "id_paso",
+              "type": "UUID",
+              "foreign_key": true
+            },
+            {
+              "name": "id_opcion",
+              "type": "UUID",
+              "foreign_key": true
+            },
+            {
+              "name": "fecha_respuesta",
+              "type": "TIMESTAMP"
+            }
+          ]
+        },
+        {
+          "id": "E09",
+          "name": "Retroalimentacion",
+          "neo4j_label": "Retroalimentacion",
+          "description": "Explicación del desempeño del usuario y recomendaciones de mejora.",
+          "properties": [
+            {
+              "name": "id_retroalimentacion",
+              "type": "UUID",
+              "primary_key": true
+            },
+            {
+              "name": "id_respuesta",
+              "type": "UUID",
+              "foreign_key": true
+            },
+            {
+              "name": "comentario",
+              "type": "TEXT"
+            },
+            {
+              "name": "tipo",
+              "type": "VARCHAR(30)"
+            },
+            {
+              "name": "recomendacion",
+              "type": "TEXT"
+            }
+          ]
+        },
+        {
+          "id": "E10",
+          "name": "Progreso",
+          "neo4j_label": "Progreso",
+          "description": "Registro del nivel de desarrollo de una habilidad para un usuario.",
+          "properties": [
+            {
+              "name": "id_progreso",
+              "type": "UUID",
+              "primary_key": true
+            },
+            {
+              "name": "id_usuario",
+              "type": "UUID",
+              "foreign_key": true
+            },
+            {
+              "name": "id_habilidad",
+              "type": "UUID",
+              "foreign_key": true
+            },
+            {
+              "name": "nivel_actual",
+              "type": "DECIMAL(5,2)"
+            },
+            {
+              "name": "fecha_actualizacion",
+              "type": "TIMESTAMP"
+            }
+          ]
+        },
+        {
+          "id": "E11",
+          "name": "Evidencia",
+          "neo4j_label": "Evidencia",
+          "description": "Registro que representa una habilidad demostrada durante una experiencia de simulación.",
+          "properties": [
+            {
+              "name": "id_evidencia",
+              "type": "UUID",
+              "primary_key": true
+            },
+            {
+              "name": "id_usuario",
+              "type": "UUID",
+              "foreign_key": true
+            },
+            {
+              "name": "id_intento",
+              "type": "UUID",
+              "foreign_key": true
+            },
+            {
+              "name": "titulo",
+              "type": "VARCHAR(150)"
+            },
+            {
+              "name": "descripcion",
+              "type": "TEXT"
+            },
+            {
+              "name": "fecha_generacion",
+              "type": "TIMESTAMP"
+            },
+            {
+              "name": "visibilidad",
+              "type": "VARCHAR(20)"
+            }
+          ]
+        },
+        {
+          "id": "E12",
+          "name": "Comparticion",
+          "neo4j_label": "Comparticion",
+          "description": "Mecanismo para controlar el acceso a una evidencia mediante un enlace o permiso.",
+          "properties": [
+            {
+              "name": "id_comparticion",
+              "type": "UUID",
+              "primary_key": true
+            },
+            {
+              "name": "id_evidencia",
+              "type": "UUID",
+              "foreign_key": true
+            },
+            {
+              "name": "token",
+              "type": "VARCHAR(255)",
+              "unique": true
+            },
+            {
+              "name": "fecha_creacion",
+              "type": "TIMESTAMP"
+            },
+            {
+              "name": "fecha_expiracion",
+              "type": "TIMESTAMP",
+              "nullable": true
+            },
+            {
+              "name": "estado",
+              "type": "VARCHAR(20)"
+            }
+          ]
+        }
+      ],
+      "relationships": [
+        {
+          "id": "R01",
+          "source": "Usuario",
+          "type": "REALIZA",
+          "target": "Intento",
+          "source_cardinality": "0..N",
+          "target_cardinality": "1..1"
+        },
+        {
+          "id": "R02",
+          "source": "Simulacion",
+          "type": "TIENE",
+          "target": "Intento",
+          "source_cardinality": "0..N",
+          "target_cardinality": "1..1"
+        },
+        {
+          "id": "R03",
+          "source": "Simulacion",
+          "type": "CONTIENE",
+          "target": "Paso",
+          "source_cardinality": "0..N",
+          "target_cardinality": "1..1"
+        },
+        {
+          "id": "R04",
+          "source": "Simulacion",
+          "type": "DESARROLLA",
+          "target": "Habilidad",
+          "source_cardinality": "0..N",
+          "target_cardinality": "0..N",
+          "relationship_properties": ["peso", "nivel_esperado"]
+        },
+        {
+          "id": "R05",
+          "source": "Paso",
+          "type": "OFRECE",
+          "target": "Opcion",
+          "source_cardinality": "1..N",
+          "target_cardinality": "1..1"
+        },
+        {
+          "id": "R06",
+          "source": "Opcion",
+          "type": "GENERA",
+          "target": "Consecuencia",
+          "source_cardinality": "0..N",
+          "target_cardinality": "1..1"
+        },
+        {
+          "id": "R07",
+          "source": "Opcion",
+          "type": "CONDUCE_A",
+          "target": "Paso",
+          "source_cardinality": "0..1",
+          "target_cardinality": "0..N"
+        },
+        {
+          "id": "R08",
+          "source": "Intento",
+          "type": "REGISTRA",
+          "target": "Respuesta",
+          "source_cardinality": "0..N",
+          "target_cardinality": "1..1"
+        },
+        {
+          "id": "R09",
+          "source": "Respuesta",
+          "type": "CORRESPONDE_A",
+          "target": "Paso",
+          "source_cardinality": "1..1",
+          "target_cardinality": "0..N"
+        },
+        {
+          "id": "R10",
+          "source": "Respuesta",
+          "type": "SELECCIONA",
+          "target": "Opcion",
+          "source_cardinality": "1..1",
+          "target_cardinality": "0..N"
+        },
+        {
+          "id": "R11",
+          "source": "Respuesta",
+          "type": "GENERA",
+          "target": "Retroalimentacion",
+          "source_cardinality": "0..N",
+          "target_cardinality": "1..1"
+        },
+        {
+          "id": "R12",
+          "source": "Usuario",
+          "type": "TIENE_PROGRESO",
+          "target": "Progreso",
+          "source_cardinality": "0..N",
+          "target_cardinality": "1..1"
+        },
+        {
+          "id": "R13",
+          "source": "Progreso",
+          "type": "CORRESPONDE_A",
+          "target": "Habilidad",
+          "source_cardinality": "1..1",
+          "target_cardinality": "0..N"
+        },
+        {
+          "id": "R14",
+          "source": "Usuario",
+          "type": "GENERA",
+          "target": "Evidencia",
+          "source_cardinality": "0..N",
+          "target_cardinality": "1..1"
+        },
+        {
+          "id": "R15",
+          "source": "Intento",
+          "type": "PRODUCE",
+          "target": "Evidencia",
+          "source_cardinality": "0..N",
+          "target_cardinality": "1..1"
+        },
+        {
+          "id": "R16",
+          "source": "Evidencia",
+          "type": "DEMUESTRA",
+          "target": "Habilidad",
+          "source_cardinality": "1..N",
+          "target_cardinality": "0..N"
+        },
+        {
+          "id": "R17",
+          "source": "Evidencia",
+          "type": "TIENE_COMPARTICION",
+          "target": "Comparticion",
+          "source_cardinality": "0..N",
+          "target_cardinality": "1..1"
+        }
+      ]
+    },
+    "integrity_constraints": [
+      {
+        "id": "RI-01",
+        "name": "Unicidad de identificadores",
+        "description": "Todas las entidades deben tener identificadores UUID únicos y obligatorios.",
+        "implementation": ["PRIMARY KEY", "Restricciones de unicidad en Neo4j"]
+      },
+      {
+        "id": "RI-02",
+        "name": "Correo único",
+        "description": "No pueden existir dos usuarios con el mismo correo electrónico, considerando mayúsculas y minúsculas como equivalentes.",
+        "implementation": ["UNIQUE", "Normalización del correo"]
+      },
+      {
+        "id": "RI-03",
+        "name": "Nombre de habilidad único",
+        "description": "No deben existir habilidades duplicadas por nombre.",
+        "implementation": ["UNIQUE"]
+      },
+      {
+        "id": "RI-04",
+        "name": "Propiedades obligatorias",
+        "description": "Los campos esenciales de cada entidad deben tener valores y no admitir NULL.",
+        "implementation": [
+          "NOT NULL",
+          "Restricciones de propiedades requeridas"
+        ]
+      },
+      {
+        "id": "RI-05",
+        "name": "Valores permitidos para dificultad y estado",
+        "description": "La dificultad solo puede ser BASICA, INTERMEDIA o AVANZADA. El estado de simulación debe pertenecer al catálogo BORRADOR, PUBLICADA o INACTIVA.",
+        "implementation": ["CHECK", "Catálogos controlados"]
+      },
+      {
+        "id": "RI-06",
+        "name": "Estado y puntuación de intento",
+        "description": "El estado del intento solo puede ser EN_CURSO, COMPLETADO o ABANDONADO. La puntuación debe estar entre 0 y 100.",
+        "implementation": ["CHECK"]
+      },
+      {
+        "id": "RI-07",
+        "name": "Rango de progreso",
+        "description": "El nivel de progreso debe estar entre 0 y 100.",
+        "implementation": ["CHECK"]
+      },
+      {
+        "id": "RI-08",
+        "name": "Relación simulación-habilidad única",
+        "description": "Una simulación no puede registrar dos veces la misma habilidad.",
+        "implementation": ["UNIQUE compuesto por id_simulacion e id_habilidad"]
+      },
+      {
+        "id": "RI-09",
+        "name": "Integridad de intentos",
+        "description": "Todo intento debe pertenecer a un usuario y una simulación existentes.",
+        "implementation": ["FOREIGN KEY", "Relaciones obligatorias en Neo4j"]
+      },
+      {
+        "id": "RI-10",
+        "name": "Consistencia de respuestas",
+        "description": "La opción seleccionada debe pertenecer al paso respondido y dicho paso debe pertenecer a la simulación del intento.",
+        "implementation": [
+          "Validación transaccional",
+          "Trigger o lógica de aplicación"
+        ]
+      },
+      {
+        "id": "RI-11",
+        "name": "Consistencia de rutas",
+        "description": "El paso siguiente de una opción debe pertenecer a la misma simulación que el paso de origen.",
+        "implementation": [
+          "Validación de dominio",
+          "Trigger o lógica de aplicación"
+        ]
+      },
+      {
+        "id": "RI-12",
+        "name": "Consistencia temporal de intentos",
+        "description": "La fecha de finalización no puede ser anterior a la fecha de inicio. Un intento COMPLETADO debe tener fecha_fin.",
+        "implementation": ["CHECK", "Validación de estado"]
+      },
+      {
+        "id": "RI-13",
+        "name": "Un progreso consolidado por habilidad",
+        "description": "Cada usuario puede tener un único registro de progreso consolidado por habilidad.",
+        "implementation": ["UNIQUE compuesto por id_usuario e id_habilidad"]
+      },
+      {
+        "id": "RI-14",
+        "name": "Propiedad de evidencias",
+        "description": "La evidencia y el intento que la originó deben pertenecer al mismo usuario.",
+        "implementation": [
+          "Validación transaccional",
+          "Trigger o lógica de aplicación"
+        ]
+      },
+      {
+        "id": "RI-15",
+        "name": "Seguridad de compartición",
+        "description": "El token de compartición debe ser único. Una evidencia privada no debe consultarse mediante un enlace sin autorización vigente.",
+        "implementation": [
+          "UNIQUE",
+          "Validación de permisos",
+          "Control de expiración y estado"
+        ]
+      }
+    ],
+    "architecture": {
+      "id": "ARCH_01",
+      "status": "DECISION_TAKEN",
+      "type": "Arquitectura híbrida orientada a grafos",
+      "current_decision": {
+        "primary_database": "Neo4j",
+        "secondary_database": "PostgreSQL",
+        "evaluated_but_not_selected": ["MongoDB"],
+        "architecture_description": "La arquitectura utilizará Neo4j como base de datos principal para representar el dominio y explotar las relaciones entre usuarios, simulaciones, decisiones, habilidades, progreso y evidencias. PostgreSQL será una base de datos complementaria. La distribución exacta de responsabilidades y la sincronización entre ambas deben definirse."
+      },
+      "databases": [
+        {
+          "name": "Neo4j",
+          "type": "Base de datos orientada a grafos",
+          "role": "Principal",
+          "status": "SELECTED",
+          "reason": [
+            "El dominio de QATO'K está compuesto por entidades fuertemente relacionadas.",
+            "Las simulaciones contienen pasos y opciones que pueden conducir a diferentes pasos.",
+            "Las decisiones producen consecuencias y retroalimentación.",
+            "Las habilidades se relacionan con simulaciones, progreso y evidencias.",
+            "Las consultas requieren recorrer múltiples relaciones.",
+            "Permite representar directamente recorridos de decisiones y conexiones entre experiencias y competencias.",
+            "Facilita consultas de caminos, relaciones y recomendaciones basadas en conexiones."
+          ],
+          "intended_uses": [
+            "Representar usuarios y sus experiencias.",
+            "Representar simulaciones y sus ramificaciones.",
+            "Relacionar habilidades con simulaciones.",
+            "Registrar decisiones y consecuencias.",
+            "Relacionar respuestas con retroalimentación.",
+            "Representar progreso y evolución.",
+            "Relacionar evidencias con habilidades e intentos.",
+            "Realizar consultas de múltiples saltos."
+          ],
+          "model": {
+            "node_labels": [
+              "Usuario",
+              "Simulacion",
+              "Habilidad",
+              "Paso",
+              "Opcion",
+              "Consecuencia",
+              "Intento",
+              "Respuesta",
+              "Retroalimentacion",
+              "Progreso",
+              "Evidencia",
+              "Comparticion"
+            ],
+            "relationship_types": [
+              "REALIZA",
+              "TIENE",
+              "CONTIENE",
+              "DESARROLLA",
+              "OFRECE",
+              "GENERA",
+              "CONDUCE_A",
+              "REGISTRA",
+              "CORRESPONDE_A",
+              "SELECCIONA",
+              "TIENE_PROGRESO",
+              "PRODUCE",
+              "DEMUESTRA",
+              "TIENE_COMPARTICION"
+            ]
+          },
+          "design_considerations": [
+            "Definir restricciones de unicidad para identificadores.",
+            "Definir índices para propiedades utilizadas en búsquedas.",
+            "Mantener consistencia entre nodos y relaciones.",
+            "Evitar nodos o relaciones huérfanas.",
+            "Definir transacciones para operaciones que afecten múltiples entidades.",
+            "Establecer políticas de respaldo y recuperación.",
+            "Definir mecanismos de autenticación y autorización."
+          ]
+        },
+        {
+          "name": "PostgreSQL",
+          "type": "Base de datos relacional",
+          "role": "Complementaria",
+          "status": "SELECTED",
+          "reason": [
+            "Permite representar información estructurada mediante tablas y restricciones.",
+            "Ofrece integridad referencial mediante claves primarias y foráneas.",
+            "Permite restricciones CHECK, UNIQUE y NOT NULL.",
+            "Es adecuada para operaciones transaccionales y datos estructurados."
+          ],
+          "potential_uses": [
+            "Persistencia complementaria de información estructurada.",
+            "Datos administrativos y catálogos.",
+            "Información de usuarios y autenticación, si se define esa distribución.",
+            "Operaciones que requieran restricciones relacionales.",
+            "Almacenamiento complementario de información transaccional."
+          ],
+          "important_note": "Estas responsabilidades son posibilidades de distribución, no una asignación definitiva. Neo4j es la base de datos principal. Falta definir qué entidades y operaciones se almacenarán exclusivamente en PostgreSQL y cuáles tendrán representación en ambas bases."
+        },
+        {
+          "name": "MongoDB",
+          "type": "Base de datos documental NoSQL",
+          "role": "Tecnología evaluada y no seleccionada",
+          "status": "NOT_SELECTED",
+          "reason_for_evaluation": [
+            "Los escenarios profesionales pueden contener estructuras variables.",
+            "Las simulaciones pueden tener diferentes cantidades de pasos y opciones.",
+            "El contenido de las experiencias puede evolucionar durante el desarrollo.",
+            "Los documentos permiten almacenar estructuras anidadas."
+          ],
+          "potential_advantages": [
+            "Flexibilidad de esquemas.",
+            "Almacenamiento de documentos JSON/BSON.",
+            "Representación de estructuras anidadas.",
+            "Facilidad para manejar documentos con estructuras variables."
+          ],
+          "reasons_for_not_selecting": [
+            "El dominio necesita consultar numerosas relaciones entre entidades.",
+            "Las relaciones entre decisiones, consecuencias, habilidades y evidencias son centrales.",
+            "La flexibilidad documental no resuelve por sí sola las necesidades de recorridos y análisis de relaciones.",
+            "Incorporar otra base de datos aumentaría la complejidad de la arquitectura."
+          ],
+          "decision": "No incorporar MongoDB en la arquitectura actual. Se mantiene como tecnología evaluada, sin implementación prevista en el alcance definido."
+        }
+      ],
+      "previous_architecture_analysis": {
+        "description": "En un análisis anterior se propuso PostgreSQL como fuente principal de verdad y Neo4j como representación especializada de relaciones.",
+        "previous_recommendation": {
+          "primary": "PostgreSQL",
+          "secondary": "Neo4j"
+        },
+        "current_correction": {
+          "primary": "Neo4j",
+          "secondary": "PostgreSQL"
+        },
+        "status": "SUPERSEDED",
+        "note": "La recomendación anterior no representa la decisión arquitectónica vigente. La decisión actual prioriza Neo4j como base de datos principal."
+      },
+      "synchronization": {
+        "status": "PENDING_DESIGN",
+        "description": "Se debe definir cómo se mantendrá la consistencia de los datos entre Neo4j y PostgreSQL.",
+        "risks": [
+          "Datos duplicados desactualizados.",
+          "Referencias inconsistentes.",
+          "Operaciones parcialmente completadas.",
+          "Pérdida de sincronización ante errores.",
+          "Conflictos al actualizar información en ambas bases."
+        ],
+        "decisions_required": [
+          "Determinar qué base administra cada entidad.",
+          "Determinar qué datos se duplicarán.",
+          "Definir qué sistema inicia cada escritura.",
+          "Definir el mecanismo de sincronización.",
+          "Definir tratamiento de errores y reintentos.",
+          "Definir estrategias de consistencia y recuperación."
+        ]
+      }
+    },
+    "logical_graph_model": {
+      "status": "PRELIMINARY_MODEL",
+      "description": "Modelo lógico de conocimiento para Neo4j.",
+      "modeling_decisions": [
+        {
+          "id": "MD-01",
+          "decision": "Representar Simulacion-Habilidad como una relación directa DESARROLLA.",
+          "reason": "La asociación entre una simulación y una habilidad puede representarse directamente como una relación con propiedades.",
+          "relationship_properties": ["peso", "nivel_esperado"]
+        },
+        {
+          "id": "MD-02",
+          "decision": "Conservar Progreso como nodo independiente.",
+          "reason": "Permite representar información adicional y facilita incorporar mediciones históricas y evolución del aprendizaje.",
+          "note": "La restricción de un único progreso consolidado por usuario y habilidad corresponde al estado actual. La evolución histórica requiere definir registros de medición adicionales o una ampliación del modelo."
+        },
+        {
+          "id": "MD-03",
+          "decision": "Representar los pasos y opciones como nodos conectados.",
+          "reason": "Permite construir simulaciones con ramificaciones y rutas alternativas."
+        },
+        {
+          "id": "MD-04",
+          "decision": "Representar las decisiones tomadas como nodos Respuesta asociados a Intento, Paso y Opcion.",
+          "reason": "Permite reconstruir el recorrido realizado por un usuario."
+        },
+        {
+          "id": "MD-05",
+          "decision": "Mantener Evidencia y Comparticion como nodos independientes.",
+          "reason": "Permite relacionar las evidencias con su origen, habilidades demostradas y mecanismos de acceso."
+        }
+      ],
+      "graph_structure": {
+        "nodes": [
+          "Usuario",
+          "Simulacion",
+          "Habilidad",
+          "Paso",
+          "Opcion",
+          "Consecuencia",
+          "Intento",
+          "Respuesta",
+          "Retroalimentacion",
+          "Progreso",
+          "Evidencia",
+          "Comparticion"
+        ],
+        "relationships": [
+          {
+            "from": "Usuario",
+            "type": "REALIZA",
+            "to": "Intento"
+          },
+          {
+            "from": "Simulacion",
+            "type": "TIENE",
+            "to": "Intento"
+          },
+          {
+            "from": "Simulacion",
+            "type": "CONTIENE",
+            "to": "Paso"
+          },
+          {
+            "from": "Simulacion",
+            "type": "DESARROLLA",
+            "to": "Habilidad"
+          },
+          {
+            "from": "Paso",
+            "type": "OFRECE",
+            "to": "Opcion"
+          },
+          {
+            "from": "Opcion",
+            "type": "GENERA",
+            "to": "Consecuencia"
+          },
+          {
+            "from": "Opcion",
+            "type": "CONDUCE_A",
+            "to": "Paso"
+          },
+          {
+            "from": "Intento",
+            "type": "REGISTRA",
+            "to": "Respuesta"
+          },
+          {
+            "from": "Respuesta",
+            "type": "CORRESPONDE_A",
+            "to": "Paso"
+          },
+          {
+            "from": "Respuesta",
+            "type": "SELECCIONA",
+            "to": "Opcion"
+          },
+          {
+            "from": "Respuesta",
+            "type": "GENERA",
+            "to": "Retroalimentacion"
+          },
+          {
+            "from": "Usuario",
+            "type": "TIENE_PROGRESO",
+            "to": "Progreso"
+          },
+          {
+            "from": "Progreso",
+            "type": "CORRESPONDE_A",
+            "to": "Habilidad"
+          },
+          {
+            "from": "Usuario",
+            "type": "GENERA",
+            "to": "Evidencia"
+          },
+          {
+            "from": "Intento",
+            "type": "PRODUCE",
+            "to": "Evidencia"
+          },
+          {
+            "from": "Evidencia",
+            "type": "DEMUESTRA",
+            "to": "Habilidad"
+          },
+          {
+            "from": "Evidencia",
+            "type": "TIENE_COMPARTICION",
+            "to": "Comparticion"
+          }
+        ]
+      }
+    },
+    "decisions_and_discards": [
+      {
+        "id": "D-01",
+        "topic": "Nombre del proyecto",
+        "decision": "QATO'K",
+        "status": "ACCEPTED"
+      },
+      {
+        "id": "D-02",
+        "topic": "Enfoque de la aplicación",
+        "decision": "Simulador de habilidades profesionales mediante experiencias interactivas.",
+        "status": "ACCEPTED"
+      },
+      {
+        "id": "D-03",
+        "topic": "Público objetivo",
+        "decision": "Estudiantes universitarios próximos a egresar y recién egresados.",
+        "status": "ACCEPTED"
+      },
+      {
+        "id": "D-04",
+        "topic": "Mecanismo de aprendizaje",
+        "decision": "Escenarios interactivos con decisiones, consecuencias y retroalimentación.",
+        "status": "ACCEPTED"
+      },
+      {
+        "id": "D-05",
+        "topic": "Seguimiento de aprendizaje",
+        "decision": "Registrar progreso por habilidad.",
+        "status": "ACCEPTED"
+      },
+      {
+        "id": "D-06",
+        "topic": "Evidencias",
+        "decision": "Permitir generar evidencias de habilidades demostradas.",
+        "status": "ACCEPTED"
+      },
+      {
+        "id": "D-07",
+        "topic": "Privacidad",
+        "decision": "Permitir controlar qué evidencias se comparten.",
+        "status": "ACCEPTED"
+      },
+      {
+        "id": "D-08",
+        "topic": "Base de datos principal",
+        "decision": "Neo4j.",
+        "status": "ACCEPTED"
+      },
+      {
+        "id": "D-09",
+        "topic": "Base de datos complementaria",
+        "decision": "PostgreSQL.",
+        "status": "ACCEPTED"
+      },
+      {
+        "id": "D-10",
+        "topic": "MongoDB",
+        "decision": "No incluir MongoDB en la arquitectura actual.",
+        "status": "NOT_SELECTED"
+      },
+      {
+        "id": "D-11",
+        "topic": "Relación entre simulación y habilidad",
+        "decision": "Utilizar una relación DESARROLLA con propiedades.",
+        "status": "ACCEPTED"
+      },
+      {
+        "id": "D-12",
+        "topic": "Representación del progreso",
+        "decision": "Mantener Progreso como nodo independiente.",
+        "status": "ACCEPTED"
+      },
+      {
+        "id": "D-13",
+        "topic": "Fuente principal de datos",
+        "decision": "La recomendación anterior de PostgreSQL como fuente de verdad queda sustituida por la decisión de Neo4j como base principal.",
+        "status": "SUPERSEDED"
+      }
+    ],
+    "pending_decisions": [
+      {
+        "id": "P-01",
+        "topic": "Distribución de información entre bases de datos",
+        "description": "Determinar qué entidades se almacenarán en Neo4j y cuáles en PostgreSQL, así como cuáles necesitarán representación en ambas."
+      },
+      {
+        "id": "P-02",
+        "topic": "Sincronización",
+        "description": "Definir el mecanismo para mantener consistencia entre Neo4j y PostgreSQL."
+      },
+      {
+        "id": "P-03",
+        "topic": "Evaluación de habilidades",
+        "description": "Definir cómo se calcula el nivel de habilidad a partir de respuestas, decisiones, consecuencias y resultados."
+      },
+      {
+        "id": "P-04",
+        "topic": "Ramificaciones",
+        "description": "Definir formalmente cómo se modelarán las rutas alternativas, las condiciones y las consecuencias de las decisiones."
+      },
+      {
+        "id": "P-05",
+        "topic": "Autenticidad de evidencias",
+        "description": "Definir cómo se garantiza que las evidencias representan el desempeño real del usuario dentro de las simulaciones."
+      },
+      {
+        "id": "P-06",
+        "topic": "Compartición",
+        "description": "Definir destinatarios, permisos, expiración y revocación de enlaces o accesos a evidencias."
+      },
+      {
+        "id": "P-07",
+        "topic": "Historial de progreso",
+        "description": "Definir si se utilizará un nodo de progreso consolidado acompañado de registros históricos de medición."
+      },
+      {
+        "id": "P-08",
+        "topic": "Catálogo de habilidades",
+        "description": "Definir categorías, niveles, criterios de evaluación y catálogo inicial de competencias."
+      },
+      {
+        "id": "P-09",
+        "topic": "Contenido de simulaciones",
+        "description": "Definir el formato de autoría, almacenamiento y publicación de escenarios."
+      },
+      {
+        "id": "P-10",
+        "topic": "Seguridad",
+        "description": "Definir autenticación, autorización, protección de información y administración de datos personales."
+      },
+      {
+        "id": "P-11",
+        "topic": "Escalabilidad",
+        "description": "Definir necesidades de rendimiento, concurrencia, respaldos y crecimiento de la plataforma."
+      }
+    ],
+    "graph_technology_analysis": {
+      "neo4j": {
+        "strengths_for_qatok": [
+          "Representación natural de relaciones complejas.",
+          "Recorridos entre múltiples entidades.",
+          "Modelado de caminos y ramificaciones.",
+          "Consultas sobre relaciones entre habilidades, simulaciones y resultados.",
+          "Representación explícita de decisiones y consecuencias."
+        ],
+        "limitations_to_consider": [
+          "Requiere diseñar correctamente etiquetas, relaciones e índices.",
+          "Las restricciones de integridad complejas pueden necesitar validaciones adicionales.",
+          "Debe definirse una estrategia para operaciones que involucren PostgreSQL.",
+          "Se necesita diseñar respaldos, recuperación y seguridad."
+        ]
+      },
+      "postgresql": {
+        "strengths_for_qatok": [
+          "Integridad referencial.",
+          "Restricciones relacionales.",
+          "Transacciones.",
+          "Consultas SQL.",
+          "Almacenamiento estructurado."
+        ],
+        "limitations_to_consider": [
+          "Los recorridos de relaciones complejas pueden requerir consultas recursivas o múltiples JOIN.",
+          "No representa de forma tan directa los caminos y relaciones del dominio como una base de datos de grafos."
+        ]
+      },
+      "mongodb": {
+        "strengths_for_qatok": [
+          "Flexibilidad documental.",
+          "Estructuras anidadas.",
+          "Esquemas variables."
+        ],
+        "limitations_to_consider": [
+          "Las relaciones complejas requieren referencias y consultas adicionales.",
+          "No ofrece la misma orientación a recorridos de grafos que Neo4j.",
+          "Añadirlo incrementaría la complejidad de la arquitectura."
+        ]
+      }
+    },
+    "traceability": {
+      "problem_to_solution": [
+        {
+          "problem": "Falta de experiencia laboral práctica.",
+          "solution": "Simulaciones profesionales.",
+          "requirements": ["RF-02", "RF-03"],
+          "entities": ["Simulacion", "Paso", "Opcion", "Intento"]
+        },
+        {
+          "problem": "Dificultad para tomar decisiones en situaciones ambiguas.",
+          "solution": "Decisiones con consecuencias.",
+          "requirements": ["RF-03", "RF-04"],
+          "entities": ["Paso", "Opcion", "Consecuencia", "Respuesta"]
+        },
+        {
+          "problem": "Ausencia de retroalimentación útil.",
+          "solution": "Retroalimentación personalizada.",
+          "requirements": ["RF-05"],
+          "entities": ["Respuesta", "Retroalimentacion"]
+        },
+        {
+          "problem": "Dificultad para identificar fortalezas y debilidades.",
+          "solution": "Seguimiento del progreso.",
+          "requirements": ["RF-06", "RF-07"],
+          "entities": ["Usuario", "Habilidad", "Progreso", "Intento"]
+        },
+        {
+          "problem": "Dificultad para demostrar habilidades ante empleadores.",
+          "solution": "Generación de evidencias compartibles.",
+          "requirements": ["RF-08", "RF-09"],
+          "entities": ["Evidencia", "Comparticion", "Habilidad"]
+        },
+        {
+          "problem": "Tiempo y conectividad limitados.",
+          "solution": "Acceso flexible y sesiones cortas.",
+          "requirements": ["RF-10"],
+          "entities": ["Usuario", "Intento", "Simulacion"]
+        }
+      ]
+    },
+    "known_modeling_observations": [
+      {
+        "id": "OBS-01",
+        "description": "Una simulación puede contener múltiples pasos."
+      },
+      {
+        "id": "OBS-02",
+        "description": "Un paso puede ofrecer múltiples opciones."
+      },
+      {
+        "id": "OBS-03",
+        "description": "Una opción puede generar una o más consecuencias."
+      },
+      {
+        "id": "OBS-04",
+        "description": "Una opción puede conducir a otro paso o terminar una ruta."
+      },
+      {
+        "id": "OBS-05",
+        "description": "Un usuario puede realizar múltiples intentos de simulación."
+      },
+      {
+        "id": "OBS-06",
+        "description": "Cada respuesta debe estar asociada con el intento, paso y opción correspondientes."
+      },
+      {
+        "id": "OBS-07",
+        "description": "Una respuesta puede generar retroalimentación."
+      },
+      {
+        "id": "OBS-08",
+        "description": "Una simulación puede desarrollar múltiples habilidades y una habilidad puede desarrollarse mediante múltiples simulaciones."
+      },
+      {
+        "id": "OBS-09",
+        "description": "Una evidencia puede demostrar una o varias habilidades."
+      },
+      {
+        "id": "OBS-10",
+        "description": "Un usuario recién registrado puede no tener intentos, progreso ni evidencias."
+      },
+      {
+        "id": "OBS-11",
+        "description": "Una simulación en borrador puede no tener pasos, pero una simulación publicada necesita contenido suficiente para ejecutarse."
+      },
+      {
+        "id": "OBS-12",
+        "description": "El progreso actual y el historial de evolución son conceptos relacionados, pero no necesariamente deben almacenarse como el mismo registro."
+      }
+    ],
+    "overall_status": {
+      "project_definition": "DEFINED",
+      "target_audience": "DEFINED",
+      "stakeholder_needs": "DEFINED",
+      "functional_requirements": "PRELIMINARY_DEFINED",
+      "system_queries": "DEFINED",
+      "entities": "PRELIMINARY_DEFINED",
+      "relationships": "PRELIMINARY_DEFINED",
+      "integrity_constraints": "PRELIMINARY_DEFINED",
+      "logical_graph_model": "PRELIMINARY_DEFINED",
+      "primary_database": "NEO4J_SELECTED",
+      "secondary_database": "POSTGRESQL_SELECTED",
+      "mongodb": "EVALUATED_NOT_SELECTED",
+      "database_responsibility_distribution": "PENDING",
+      "database_synchronization": "PENDING",
+      "implementation": "NOT_DEFINED_IN_CURRENT_MODEL"
+    }
+  }
+}

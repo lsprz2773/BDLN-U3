@@ -2,13 +2,18 @@
   "knowledge_graph": {
     "metadata": {
       "project": "QATO'K",
-      "version": "1.0",
+      "version": "1.1",
       "language": "es",
       "type": "Knowledge Graph",
       "description": "Grafo de conocimiento integral del proyecto QATO'K, que representa su dominio, objetivos, stakeholders, necesidades, requerimientos, modelo de datos, relaciones, restricciones, decisiones arquitectónicas y tecnologías evaluadas.",
-      "last_updated": "2026-11-09",
+      "last_updated": "2026-11-12",
       "architecture_status": "Neo4j como base de datos principal y PostgreSQL como base de datos complementaria.",
-      "information_policy": "Se distinguen las decisiones confirmadas, las propuestas preliminares y los aspectos pendientes. No se consideran confirmadas las decisiones que todavía no han sido definidas."
+      "information_policy": "Se distinguen las decisiones confirmadas, las propuestas preliminares y los aspectos pendientes. No se consideran confirmadas las decisiones que todavía no han sido definidas.",
+      "decisions_document": "docs/decisiones-modelado.md",
+      "status_legend": {
+        "ADOPTED": "Incorporado al modelo preliminar (DEC-xx ADOPTADA).",
+        "PROPOSED": "Incorporado como propuesta; depende de una decisión pendiente P-xx y puede cambiar."
+      }
     },
     "project": {
       "id": "PROJECT_QATOK",
@@ -173,7 +178,12 @@
       {
         "id": "C-01",
         "description": "¿Qué simulaciones tiene disponibles un usuario según su progreso y las habilidades que necesita fortalecer?",
-        "related_entities": ["Usuario", "Progreso", "Habilidad", "Simulacion"],
+        "related_entities": [
+          "Usuario",
+          "Progreso",
+          "Habilidad",
+          "Simulacion"
+        ],
         "graph_value": "Relacionar el estado de las habilidades del usuario con las competencias desarrolladas por cada simulación."
       },
       {
@@ -185,9 +195,11 @@
           "Respuesta",
           "Retroalimentacion",
           "Progreso",
-          "Habilidad"
+          "Habilidad",
+          "Simulacion"
         ],
-        "graph_value": "Analizar conexiones entre desempeño, retroalimentación y habilidades."
+        "graph_value": "Analizar conexiones entre desempeño, retroalimentación y habilidades.",
+        "change": "Se añade Simulacion (DEC-06). Atribución por simulación y Progreso; sin relación Opcion→Habilidad (limitación documentada)."
       },
       {
         "id": "C-03",
@@ -211,9 +223,11 @@
           "Evidencia",
           "Habilidad",
           "Intento",
+          "Simulacion",
           "Comparticion"
         ],
-        "graph_value": "Recorrer las relaciones entre evidencias, habilidades y experiencias que las originaron, considerando los permisos."
+        "graph_value": "Recorrer las relaciones entre evidencias, habilidades y experiencias que las originaron, considerando los permisos.",
+        "change": "Se añade Simulacion (DEC-05)."
       },
       {
         "id": "C-05",
@@ -225,7 +239,8 @@
           "Intento",
           "Simulacion"
         ],
-        "graph_value": "Analizar trayectorias de aprendizaje y relaciones entre simulaciones y desarrollo de competencias."
+        "graph_value": "Analizar trayectorias de aprendizaje y relaciones entre simulaciones y desarrollo de competencias.",
+        "limitation": "Aproximación con Intento.fecha_fin, Intento.puntuacion y DESARROLLA; historial completo pendiente (P-07, DEC-14)."
       }
     ],
     "domain_model": {
@@ -290,7 +305,9 @@
             {
               "name": "duracion_estimada",
               "type": "INTEGER",
-              "nullable": true
+              "nullable": true,
+              "range": ">0",
+              "decision": "DEC-11 (RI-24)"
             },
             {
               "name": "estado",
@@ -325,7 +342,14 @@
             {
               "name": "nivel_objetivo",
               "type": "INTEGER",
-              "nullable": true
+              "nullable": true,
+              "range": "0..100",
+              "decision": "DEC-08",
+              "status": "PROPOSED",
+              "pending": [
+                "P-03",
+                "P-08"
+              ]
             }
           ]
         },
@@ -355,7 +379,9 @@
             },
             {
               "name": "orden",
-              "type": "INTEGER"
+              "type": "INTEGER",
+              "description": "Orden de autoría/presentación, >0 y único por simulación; orden = 1 identifica el paso inicial.",
+              "decision": "DEC-03"
             },
             {
               "name": "tipo",
@@ -392,7 +418,9 @@
               "name": "id_paso_siguiente",
               "type": "UUID",
               "foreign_key": true,
-              "nullable": true
+              "nullable": true,
+              "description": "NULL = opción terminal: finaliza la ruta (OBS-04).",
+              "decision": "DEC-03"
             }
           ]
         },
@@ -496,6 +524,14 @@
             {
               "name": "fecha_respuesta",
               "type": "TIMESTAMP"
+            },
+            {
+              "name": "secuencia",
+              "type": "INTEGER",
+              "nullable": false,
+              "description": "Orden de la respuesta dentro del intento (>=1, única por intento).",
+              "decision": "DEC-01",
+              "status": "ADOPTED"
             }
           ]
         },
@@ -632,6 +668,15 @@
             {
               "name": "estado",
               "type": "VARCHAR(20)"
+            },
+            {
+              "name": "destinatario",
+              "type": "VARCHAR(150)",
+              "nullable": true,
+              "description": "Destinatario de la compartición (correo o descripción); NULL = cualquiera con el enlace vigente.",
+              "decision": "DEC-13",
+              "status": "PROPOSED",
+              "pending": "P-06"
             }
           ]
         }
@@ -668,7 +713,37 @@
           "target": "Habilidad",
           "source_cardinality": "0..N",
           "target_cardinality": "0..N",
-          "relationship_properties": ["peso", "nivel_esperado"]
+          "relationship_properties": [
+            "peso",
+            "nivel_esperado"
+          ],
+          "relationship_property_definitions": [
+            {
+              "name": "peso",
+              "type": "DECIMAL(3,2)",
+              "nullable": false,
+              "range": "(0,1]",
+              "description": "Contribución relativa de la simulación a la habilidad.",
+              "decision": "DEC-08",
+              "status": "PROPOSED",
+              "pending": [
+                "P-03"
+              ]
+            },
+            {
+              "name": "nivel_esperado",
+              "type": "INTEGER",
+              "nullable": false,
+              "range": "0..100",
+              "description": "Nivel de la habilidad que la simulación espera/desarrolla, en la escala de Progreso.nivel_actual.",
+              "decision": "DEC-08",
+              "status": "PROPOSED",
+              "pending": [
+                "P-03",
+                "P-08"
+              ]
+            }
+          ]
         },
         {
           "id": "R05",
@@ -676,15 +751,17 @@
           "type": "OFRECE",
           "target": "Opcion",
           "source_cardinality": "1..N",
-          "target_cardinality": "1..1"
+          "target_cardinality": "1..1",
+          "note": "Se mantiene 1..N: no hay pasos finales; las rutas terminan en una opción terminal sin CONDUCE_A (DEC-03)."
         },
         {
           "id": "R06",
           "source": "Opcion",
           "type": "GENERA",
           "target": "Consecuencia",
-          "source_cardinality": "0..N",
-          "target_cardinality": "1..1"
+          "source_cardinality": "1..N",
+          "target_cardinality": "1..1",
+          "note": "Antes 0..N (v1.0). Corregido por DEC-02 según D-04, RF-04 y OBS-03. Exigible cuando la simulación está PUBLICADA (RI-17)."
         },
         {
           "id": "R07",
@@ -692,7 +769,8 @@
           "type": "CONDUCE_A",
           "target": "Paso",
           "source_cardinality": "0..1",
-          "target_cardinality": "0..N"
+          "target_cardinality": "0..N",
+          "note": "0..1: una opción sin CONDUCE_A es terminal y finaliza el intento (DEC-03, RI-23)."
         },
         {
           "id": "R08",
@@ -774,26 +852,40 @@
           "source_cardinality": "0..N",
           "target_cardinality": "1..1"
         }
-      ]
+      ],
+      "cardinality_convention": {
+        "decision": "DEC-07",
+        "source_cardinality": "Número de nodos destino relacionados con cada nodo origen.",
+        "target_cardinality": "Número de nodos origen relacionados con cada nodo destino.",
+        "example": "R01: un Usuario REALIZA 0..N Intentos; cada Intento pertenece a 1..1 Usuario."
+      }
     },
     "integrity_constraints": [
       {
         "id": "RI-01",
         "name": "Unicidad de identificadores",
         "description": "Todas las entidades deben tener identificadores UUID únicos y obligatorios.",
-        "implementation": ["PRIMARY KEY", "Restricciones de unicidad en Neo4j"]
+        "implementation": [
+          "PRIMARY KEY",
+          "Restricciones de unicidad en Neo4j"
+        ]
       },
       {
         "id": "RI-02",
         "name": "Correo único",
         "description": "No pueden existir dos usuarios con el mismo correo electrónico, considerando mayúsculas y minúsculas como equivalentes.",
-        "implementation": ["UNIQUE", "Normalización del correo"]
+        "implementation": [
+          "UNIQUE",
+          "Normalización del correo"
+        ]
       },
       {
         "id": "RI-03",
         "name": "Nombre de habilidad único",
         "description": "No deben existir habilidades duplicadas por nombre.",
-        "implementation": ["UNIQUE"]
+        "implementation": [
+          "UNIQUE"
+        ]
       },
       {
         "id": "RI-04",
@@ -808,31 +900,43 @@
         "id": "RI-05",
         "name": "Valores permitidos para dificultad y estado",
         "description": "La dificultad solo puede ser BASICA, INTERMEDIA o AVANZADA. El estado de simulación debe pertenecer al catálogo BORRADOR, PUBLICADA o INACTIVA.",
-        "implementation": ["CHECK", "Catálogos controlados"]
+        "implementation": [
+          "CHECK",
+          "Catálogos controlados"
+        ]
       },
       {
         "id": "RI-06",
         "name": "Estado y puntuación de intento",
         "description": "El estado del intento solo puede ser EN_CURSO, COMPLETADO o ABANDONADO. La puntuación debe estar entre 0 y 100.",
-        "implementation": ["CHECK"]
+        "implementation": [
+          "CHECK"
+        ]
       },
       {
         "id": "RI-07",
         "name": "Rango de progreso",
         "description": "El nivel de progreso debe estar entre 0 y 100.",
-        "implementation": ["CHECK"]
+        "implementation": [
+          "CHECK"
+        ]
       },
       {
         "id": "RI-08",
         "name": "Relación simulación-habilidad única",
         "description": "Una simulación no puede registrar dos veces la misma habilidad.",
-        "implementation": ["UNIQUE compuesto por id_simulacion e id_habilidad"]
+        "implementation": [
+          "UNIQUE compuesto por id_simulacion e id_habilidad"
+        ]
       },
       {
         "id": "RI-09",
         "name": "Integridad de intentos",
         "description": "Todo intento debe pertenecer a un usuario y una simulación existentes.",
-        "implementation": ["FOREIGN KEY", "Relaciones obligatorias en Neo4j"]
+        "implementation": [
+          "FOREIGN KEY",
+          "Relaciones obligatorias en Neo4j"
+        ]
       },
       {
         "id": "RI-10",
@@ -856,13 +960,18 @@
         "id": "RI-12",
         "name": "Consistencia temporal de intentos",
         "description": "La fecha de finalización no puede ser anterior a la fecha de inicio. Un intento COMPLETADO debe tener fecha_fin.",
-        "implementation": ["CHECK", "Validación de estado"]
+        "implementation": [
+          "CHECK",
+          "Validación de estado"
+        ]
       },
       {
         "id": "RI-13",
         "name": "Un progreso consolidado por habilidad",
         "description": "Cada usuario puede tener un único registro de progreso consolidado por habilidad.",
-        "implementation": ["UNIQUE compuesto por id_usuario e id_habilidad"]
+        "implementation": [
+          "UNIQUE compuesto por id_usuario e id_habilidad"
+        ]
       },
       {
         "id": "RI-14",
@@ -882,6 +991,116 @@
           "Validación de permisos",
           "Control de expiración y estado"
         ]
+      },
+      {
+        "id": "RI-16",
+        "name": "Secuencia de respuestas",
+        "description": "Respuesta.secuencia debe ser >= 1 y única dentro de cada intento.",
+        "implementation": [
+          "Validación transaccional",
+          "Lógica de aplicación"
+        ],
+        "decision": "DEC-01",
+        "status": "ADOPTED"
+      },
+      {
+        "id": "RI-17",
+        "name": "Contenido mínimo de simulación publicada",
+        "description": "Una simulación PUBLICADA debe tener al menos un paso, al menos una habilidad en DESARROLLA; cada paso al menos una opción y cada opción al menos una consecuencia.",
+        "implementation": [
+          "Validación al publicar"
+        ],
+        "decision": "DEC-02",
+        "status": "ADOPTED"
+      },
+      {
+        "id": "RI-18",
+        "name": "Orden de pasos",
+        "description": "Paso.orden debe ser > 0 y único dentro de su simulación; el paso con orden = 1 es el paso inicial.",
+        "implementation": [
+          "Validación transaccional"
+        ],
+        "decision": "DEC-03",
+        "status": "ADOPTED"
+      },
+      {
+        "id": "RI-19",
+        "name": "Intentos sobre simulaciones publicadas",
+        "description": "Solo pueden crearse intentos de simulaciones en estado PUBLICADA.",
+        "implementation": [
+          "Lógica de aplicación"
+        ],
+        "decision": "DEC-11",
+        "status": "ADOPTED"
+      },
+      {
+        "id": "RI-20",
+        "name": "Habilidades demostrables",
+        "description": "Las habilidades que DEMUESTRA una evidencia deben estar entre las que DESARROLLA la simulación del intento que la produjo.",
+        "implementation": [
+          "Validación transaccional"
+        ],
+        "decision": "DEC-11",
+        "status": "ADOPTED"
+      },
+      {
+        "id": "RI-21",
+        "name": "Vigencia de compartición",
+        "description": "fecha_expiracion, si existe, debe ser posterior a fecha_creacion.",
+        "implementation": [
+          "Validación de dominio"
+        ],
+        "decision": "DEC-11",
+        "status": "ADOPTED"
+      },
+      {
+        "id": "RI-22",
+        "name": "Consistencia temporal y de estado de respuestas",
+        "description": "fecha_respuesta debe estar entre fecha_inicio y fecha_fin (si existe) del intento; solo se registran respuestas en intentos EN_CURSO.",
+        "implementation": [
+          "Validación transaccional"
+        ],
+        "decision": "DEC-11",
+        "status": "ADOPTED"
+      },
+      {
+        "id": "RI-23",
+        "name": "Finalización por opción terminal",
+        "description": "Un intento pasa a COMPLETADO cuando la respuesta selecciona una opción sin CONDUCE_A.",
+        "implementation": [
+          "Lógica de aplicación"
+        ],
+        "decision": "DEC-03",
+        "status": "ADOPTED"
+      },
+      {
+        "id": "RI-24",
+        "name": "Valores permitidos propuestos",
+        "description": "Las propiedades con catálogo propuesto solo admiten sus valores; peso en (0,1]; nivel_esperado y nivel_objetivo entre 0 y 100; duracion_estimada > 0.",
+        "implementation": [
+          "Validación de dominio",
+          "Property type constraint (Enterprise)"
+        ],
+        "decision": "DEC-08/DEC-09",
+        "status": "PROPOSED",
+        "pending": [
+          "P-03",
+          "P-08",
+          "P-09"
+        ]
+      },
+      {
+        "id": "RI-25",
+        "name": "Evidencias de intentos completados",
+        "description": "Solo puede generarse una evidencia a partir de un intento COMPLETADO.",
+        "implementation": [
+          "Lógica de aplicación"
+        ],
+        "decision": "DEC-11",
+        "status": "PROPOSED",
+        "pending": [
+          "P-05"
+        ]
       }
     ],
     "architecture": {
@@ -891,7 +1110,9 @@
       "current_decision": {
         "primary_database": "Neo4j",
         "secondary_database": "PostgreSQL",
-        "evaluated_but_not_selected": ["MongoDB"],
+        "evaluated_but_not_selected": [
+          "MongoDB"
+        ],
         "architecture_description": "La arquitectura utilizará Neo4j como base de datos principal para representar el dominio y explotar las relaciones entre usuarios, simulaciones, decisiones, habilidades, progreso y evidencias. PostgreSQL será una base de datos complementaria. La distribución exacta de responsabilidades y la sincronización entre ambas deben definirse."
       },
       "databases": [
@@ -1048,7 +1269,10 @@
           "id": "MD-01",
           "decision": "Representar Simulacion-Habilidad como una relación directa DESARROLLA.",
           "reason": "La asociación entre una simulación y una habilidad puede representarse directamente como una relación con propiedades.",
-          "relationship_properties": ["peso", "nivel_esperado"]
+          "relationship_properties": [
+            "peso",
+            "nivel_esperado"
+          ]
         },
         {
           "id": "MD-02",
@@ -1254,6 +1478,12 @@
         "topic": "Fuente principal de datos",
         "decision": "La recomendación anterior de PostgreSQL como fuente de verdad queda sustituida por la decisión de Neo4j como base principal.",
         "status": "SUPERSEDED"
+      },
+      {
+        "id": "D-14",
+        "topic": "Resolución de auditoría del KG",
+        "decision": "Decisiones DEC-01..DEC-22 (docs/decisiones-modelado.md), incorporadas en KG v1.1.",
+        "status": "ACCEPTED"
       }
     ],
     "pending_decisions": [
@@ -1360,38 +1590,80 @@
         {
           "problem": "Falta de experiencia laboral práctica.",
           "solution": "Simulaciones profesionales.",
-          "requirements": ["RF-02", "RF-03"],
-          "entities": ["Simulacion", "Paso", "Opcion", "Intento"]
+          "requirements": [
+            "RF-02",
+            "RF-03"
+          ],
+          "entities": [
+            "Simulacion",
+            "Paso",
+            "Opcion",
+            "Intento"
+          ]
         },
         {
           "problem": "Dificultad para tomar decisiones en situaciones ambiguas.",
           "solution": "Decisiones con consecuencias.",
-          "requirements": ["RF-03", "RF-04"],
-          "entities": ["Paso", "Opcion", "Consecuencia", "Respuesta"]
+          "requirements": [
+            "RF-03",
+            "RF-04"
+          ],
+          "entities": [
+            "Paso",
+            "Opcion",
+            "Consecuencia",
+            "Respuesta"
+          ]
         },
         {
           "problem": "Ausencia de retroalimentación útil.",
           "solution": "Retroalimentación personalizada.",
-          "requirements": ["RF-05"],
-          "entities": ["Respuesta", "Retroalimentacion"]
+          "requirements": [
+            "RF-05"
+          ],
+          "entities": [
+            "Respuesta",
+            "Retroalimentacion"
+          ]
         },
         {
           "problem": "Dificultad para identificar fortalezas y debilidades.",
           "solution": "Seguimiento del progreso.",
-          "requirements": ["RF-06", "RF-07"],
-          "entities": ["Usuario", "Habilidad", "Progreso", "Intento"]
+          "requirements": [
+            "RF-06",
+            "RF-07"
+          ],
+          "entities": [
+            "Usuario",
+            "Habilidad",
+            "Progreso",
+            "Intento"
+          ]
         },
         {
           "problem": "Dificultad para demostrar habilidades ante empleadores.",
           "solution": "Generación de evidencias compartibles.",
-          "requirements": ["RF-08", "RF-09"],
-          "entities": ["Evidencia", "Comparticion", "Habilidad"]
+          "requirements": [
+            "RF-08",
+            "RF-09"
+          ],
+          "entities": [
+            "Evidencia",
+            "Comparticion",
+            "Habilidad"
+          ]
         },
         {
           "problem": "Tiempo y conectividad limitados.",
           "solution": "Acceso flexible y sesiones cortas.",
-          "requirements": ["RF-10"],
-          "entities": ["Usuario", "Intento", "Simulacion"]
+          "requirements": [
+            "RF-10"
+          ],
+          "entities": [
+            "Usuario",
+            "Intento",
+            "Simulacion"
+          ]
         }
       ]
     },
@@ -1461,6 +1733,247 @@
       "database_responsibility_distribution": "PENDING",
       "database_synchronization": "PENDING",
       "implementation": "NOT_DEFINED_IN_CURRENT_MODEL"
-    }
+    },
+    "value_catalogs": [
+      {
+        "property": "Simulacion.dificultad",
+        "values": [
+          "BASICA",
+          "INTERMEDIA",
+          "AVANZADA"
+        ],
+        "source": "RI-05",
+        "status": "ADOPTED"
+      },
+      {
+        "property": "Simulacion.estado",
+        "values": [
+          "BORRADOR",
+          "PUBLICADA",
+          "INACTIVA"
+        ],
+        "source": "RI-05",
+        "status": "ADOPTED"
+      },
+      {
+        "property": "Intento.estado",
+        "values": [
+          "EN_CURSO",
+          "COMPLETADO",
+          "ABANDONADO"
+        ],
+        "source": "RI-06",
+        "status": "ADOPTED"
+      },
+      {
+        "property": "Usuario.estado",
+        "values": [
+          "ACTIVO",
+          "INACTIVO",
+          "SUSPENDIDO"
+        ],
+        "decision": "DEC-09",
+        "status": "PROPOSED",
+        "pending": [
+          "P-10"
+        ]
+      },
+      {
+        "property": "Paso.tipo",
+        "values": [
+          "CORREO",
+          "REUNION",
+          "CONVERSACION",
+          "TAREA",
+          "INCIDENTE"
+        ],
+        "meaning": "Tipo de situación laboral que presenta el paso.",
+        "decision": "DEC-04",
+        "status": "PROPOSED",
+        "pending": [
+          "P-09"
+        ]
+      },
+      {
+        "property": "Consecuencia.impacto",
+        "values": [
+          "POSITIVO",
+          "NEUTRO",
+          "NEGATIVO"
+        ],
+        "decision": "DEC-09",
+        "status": "PROPOSED",
+        "pending": [
+          "P-04"
+        ]
+      },
+      {
+        "property": "Consecuencia.tipo",
+        "values": [
+          "RELACIONAL",
+          "TIEMPO",
+          "CALIDAD",
+          "REPUTACION"
+        ],
+        "meaning": "Área afectada por la decisión.",
+        "decision": "DEC-09",
+        "status": "PROPOSED",
+        "pending": [
+          "P-04"
+        ]
+      },
+      {
+        "property": "Retroalimentacion.tipo",
+        "values": [
+          "ACIERTO",
+          "PARCIAL",
+          "ERROR"
+        ],
+        "decision": "DEC-09",
+        "status": "PROPOSED",
+        "pending": [
+          "P-03"
+        ]
+      },
+      {
+        "property": "Evidencia.visibilidad",
+        "values": [
+          "PRIVADA",
+          "PUBLICA"
+        ],
+        "default": "PRIVADA",
+        "decision": "DEC-09",
+        "status": "PROPOSED",
+        "pending": [
+          "P-06"
+        ]
+      },
+      {
+        "property": "Comparticion.estado",
+        "values": [
+          "ACTIVA",
+          "REVOCADA"
+        ],
+        "meaning": "Vigente = ACTIVA y (fecha_expiracion IS NULL o > ahora); la expiración no se almacena como estado.",
+        "decision": "DEC-09",
+        "status": "PROPOSED",
+        "pending": [
+          "P-06"
+        ]
+      },
+      {
+        "property": "Habilidad.categoria",
+        "values": null,
+        "note": "Sin catálogo hasta definir P-08.",
+        "decision": "DEC-09",
+        "status": "PENDING",
+        "pending": [
+          "P-08"
+        ]
+      }
+    ],
+    "neo4j_constraint_support": {
+      "decision": "DEC-12",
+      "native_any_edition": [
+        "Property uniqueness"
+      ],
+      "enterprise_only": [
+        "Property existence",
+        "Property type",
+        "Key"
+      ],
+      "application_logic": "Reglas entre nodos (RI-08 con MERGE, RI-09..RI-14, RI-16..RI-23).",
+      "verification_note": "Según Cypher Manual de Neo4j (resultados de búsqueda); reconfirmar en F4."
+    },
+    "known_limitations": [
+      {
+        "id": "LIM-01",
+        "topic": "C-02",
+        "description": "El desempeño se atribuye a habilidades por simulación (DESARROLLA) y por Progreso, no por decisión individual. Propuesta futura: (Opcion)-[:IMPACTA {delta}]->(Habilidad), ligada a P-03.",
+        "decision": "DEC-06"
+      },
+      {
+        "id": "LIM-02",
+        "topic": "C-05",
+        "description": "La evolución temporal se aproxima con intentos; el historial de Progreso está pendiente (P-07). Propuesta futura: nodo MedicionProgreso.",
+        "decision": "DEC-14"
+      },
+      {
+        "id": "LIM-03",
+        "topic": "RF-09",
+        "description": "Compartir 'resultados' se realiza mediante evidencias.",
+        "decision": "DEC-13"
+      },
+      {
+        "id": "LIM-04",
+        "topic": "RF-10",
+        "description": "Un intento EN_CURSO se reanuda desde la Respuesta con mayor secuencia; no existe estado PAUSADO.",
+        "decision": "DEC-18"
+      },
+      {
+        "id": "LIM-05",
+        "topic": "Alcance",
+        "description": "Roles de usuario y autoría de simulaciones fuera del alcance actual (P-09, P-10).",
+        "decision": "DEC-19"
+      },
+      {
+        "id": "LIM-06",
+        "topic": "P-04",
+        "description": "No se define si se permiten ciclos entre pasos ni si todo paso debe ser alcanzable desde el inicial; por ello no se restringe una respuesta por (intento, paso).",
+        "decision": "DEC-11"
+      }
+    ],
+    "modeling_notes": [
+      {
+        "topic": "TIENE",
+        "note": "Se mantiene (Simulacion)-[:TIENE]->(Intento); se lee 'la simulación tiene intentos realizados sobre ella'.",
+        "decision": "DEC-15"
+      },
+      {
+        "topic": "Tipos reutilizados",
+        "note": "GENERA (R06, R11, R14) y CORRESPONDE_A (R09, R13) se distinguen por el par de etiquetas.",
+        "decision": "DEC-16"
+      },
+      {
+        "topic": "Redundancias",
+        "note": "R09 y R14 son deducibles (R10+R05, R01+R15) y se mantienen por acceso directo; RI-10 y RI-14 garantizan su consistencia.",
+        "decision": "DEC-17"
+      },
+      {
+        "topic": "Tipos Neo4j",
+        "note": "UUID→String, VARCHAR/TEXT→String, INTEGER→Integer, DECIMAL→Float, TIMESTAMP→DateTime.",
+        "decision": "DEC-20"
+      },
+      {
+        "topic": "Obligatoriedad",
+        "note": "Obligatoria = sin nullable: true. fecha_fin es obligatoria condicionalmente (COMPLETADO, RI-12).",
+        "decision": "DEC-10"
+      }
+    ],
+    "changelog": [
+      {
+        "version": "1.1",
+        "date": "2026-11-12",
+        "document": "docs/decisiones-modelado.md",
+        "changes": [
+          "DEC-01: Respuesta.secuencia",
+          "DEC-02: R06 0..N → 1..N",
+          "DEC-03: rutas terminan en opción terminal; orden=1 inicial; R05 se mantiene 1..N",
+          "DEC-05/06: Simulacion añadida a C-04 y C-02",
+          "DEC-07: convención de cardinalidad",
+          "DEC-08: escalas y propiedades de DESARROLLA (propuesta)",
+          "DEC-04/09: value_catalogs (propuestas)",
+          "DEC-11: RI-16..RI-25",
+          "DEC-12: neo4j_constraint_support",
+          "DEC-13: Comparticion.destinatario (propuesta)",
+          "known_limitations y modeling_notes (DEC-06, 13-20)"
+        ]
+      },
+      {
+        "version": "1.0",
+        "date": "2026-11-09",
+        "document": "docs/KG-v1.0.json"
+      }
+    ]
   }
 }

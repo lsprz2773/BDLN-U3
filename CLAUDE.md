@@ -1,12 +1,13 @@
 # CLAUDE.md — Proyecto QATO'K
 
-Repositorio de entregables de la unidad 3 (BDLN) para el proyecto **QATO'K**. El grafo de conocimiento completo está en `docs/KG.json` (v1.0, actualizado 2026-11-09); este archivo resume lo esencial. **Si hay duda o se necesita detalle, consultar `docs/KG.json`, que es la fuente de verdad.**
+Repositorio de entregables de la unidad 3 (BDLN) para el proyecto **QATO'K**. El grafo de conocimiento completo está en `docs/KG.json` (**v1.1**, 2026-11-12; v1.0 conservada en `docs/KG-v1.0.json`). Las decisiones que originaron la v1.1 (DEC-01..DEC-22) y su justificación están en `docs/decisiones-modelado.md`; este archivo resume lo esencial. **Si hay duda o se necesita detalle, consultar `docs/KG.json`, que es la fuente de verdad.**
 
 ## Reglas de trabajo para los entregables
 
 - El estado de los entregables de la actividad se lleva en `PROGRESS.md` (enunciado en `docs/actividad.jpg`). **Actualizar `PROGRESS.md` (estado, checklist y bitácora) cada vez que se avance o corrija un entregable.**
 
 - **Plan y verificación:** seguir `PLAN.md`. Cada creación o corrección de un entregable pasa por el ciclo ToT → CoVe → self-consistency, repitiéndolo hasta una ronda sin cambios (máx. 3 rondas; si no converge, consultar al usuario). Registrar cada ronda en `verificacion/`. Trabajar fase por fase y esperar aprobación del usuario entre fases.
+- **Carpetas:** todos los entregables van en `entregables/`; los registros de verificación en `verificacion/`.
 - Idioma: **español**.
 - Formato de trabajo: **Markdown (.md)** mientras se modela. Al terminar, cada entregable se convertirá al formato final que le corresponda (p. ej. .docx para tablas/documentos; otro formato si el entregable lo requiere, como un diagrama). Escribir el .md pensando en que se convertirá: tablas Markdown estándar, encabezados claros, sin HTML.
 - Distinguir siempre entre decisiones **confirmadas** (ACCEPTED), **preliminares** (PRELIMINARY) y **pendientes** (P-xx). No presentar como decidido lo que está pendiente; si un entregable necesita una propuesta sobre un tema pendiente, marcarla explícitamente como *propuesta*.
@@ -53,10 +54,10 @@ Estudiante de último semestre, sin experiencia laboral ni prácticas, CV corto,
 ## Consultas clave del sistema (justifican el uso de grafos)
 
 - **C-01** Simulaciones disponibles para un usuario según su progreso y habilidades a fortalecer (Usuario, Progreso, Habilidad, Simulacion).
-- **C-02** Fortalezas y áreas de mejora según resultados (Usuario, Intento, Respuesta, Retroalimentacion, Progreso, Habilidad).
+- **C-02** Fortalezas y áreas de mejora según resultados (Usuario, Intento, Respuesta, Retroalimentacion, Progreso, Habilidad, Simulacion). Limitación LIM-01: atribución por simulación, no por decisión.
 - **C-03** Decisiones tomadas en una simulación, consecuencias y retroalimentación (Usuario, Intento, Respuesta, Paso, Opcion, Consecuencia, Retroalimentacion).
-- **C-04** Evidencias compartibles de una habilidad y simulaciones de origen, respetando permisos (Usuario, Evidencia, Habilidad, Intento, Comparticion).
-- **C-05** Evolución de una habilidad en el tiempo y simulaciones que contribuyeron (Usuario, Progreso, Habilidad, Intento, Simulacion).
+- **C-04** Evidencias compartibles de una habilidad y simulaciones de origen, respetando permisos (Usuario, Evidencia, Habilidad, Intento, Simulacion, Comparticion).
+- **C-05** Evolución de una habilidad en el tiempo y simulaciones que contribuyeron (Usuario, Progreso, Habilidad, Intento, Simulacion). Limitación LIM-02: aproximación por intentos (P-07).
 
 ## Modelo de dominio (12 entidades / etiquetas Neo4j)
 
@@ -71,11 +72,11 @@ Todas con PK `UUID`.
 | E05 | `Opcion` | id_paso FK, descripcion TEXT, valoracion DECIMAL(5,2) NULL, id_paso_siguiente FK NULL |
 | E06 | `Consecuencia` | id_opcion FK, descripcion TEXT, impacto VARCHAR(30), tipo VARCHAR(30) |
 | E07 | `Intento` | id_usuario FK, id_simulacion FK, fecha_inicio TIMESTAMP, fecha_fin TIMESTAMP NULL, estado VARCHAR(20), puntuacion DECIMAL(5,2) NULL |
-| E08 | `Respuesta` | id_intento FK, id_paso FK, id_opcion FK, fecha_respuesta TIMESTAMP |
+| E08 | `Respuesta` | id_intento FK, id_paso FK, id_opcion FK, fecha_respuesta TIMESTAMP, **secuencia INTEGER** (DEC-01) |
 | E09 | `Retroalimentacion` | id_respuesta FK, comentario TEXT, tipo VARCHAR(30), recomendacion TEXT |
 | E10 | `Progreso` | id_usuario FK, id_habilidad FK, nivel_actual DECIMAL(5,2), fecha_actualizacion TIMESTAMP |
 | E11 | `Evidencia` | id_usuario FK, id_intento FK, titulo VARCHAR(150), descripcion TEXT, fecha_generacion TIMESTAMP, visibilidad VARCHAR(20) |
-| E12 | `Comparticion` | id_evidencia FK, token VARCHAR(255) UNIQUE, fecha_creacion TIMESTAMP, fecha_expiracion TIMESTAMP NULL, estado VARCHAR(20) |
+| E12 | `Comparticion` | id_evidencia FK, token VARCHAR(255) UNIQUE, fecha_creacion TIMESTAMP, fecha_expiracion TIMESTAMP NULL, estado VARCHAR(20), *destinatario VARCHAR(150) NULL* (propuesta, DEC-13) |
 
 Ids: `id_usuario`, `id_simulacion`, `id_habilidad`, `id_paso`, `id_opcion`, `id_consecuencia`, `id_intento`, `id_respuesta`, `id_retroalimentacion`, `id_progreso`, `id_evidencia`, `id_comparticion`.
 
@@ -86,9 +87,9 @@ Ids: `id_usuario`, `id_simulacion`, `id_habilidad`, `id_paso`, `id_opcion`, `id_
 | R01 | `(Usuario)-[:REALIZA]->(Intento)` | 0..N / 1..1 |
 | R02 | `(Simulacion)-[:TIENE]->(Intento)` | 0..N / 1..1 |
 | R03 | `(Simulacion)-[:CONTIENE]->(Paso)` | 0..N / 1..1 |
-| R04 | `(Simulacion)-[:DESARROLLA {peso, nivel_esperado}]->(Habilidad)` | 0..N / 0..N |
+| R04 | `(Simulacion)-[:DESARROLLA {peso, nivel_esperado}]->(Habilidad)` | 0..N / 0..N (propuesta DEC-08: peso DECIMAL(3,2) en (0,1], nivel_esperado INTEGER 0–100) |
 | R05 | `(Paso)-[:OFRECE]->(Opcion)` | 1..N / 1..1 |
-| R06 | `(Opcion)-[:GENERA]->(Consecuencia)` | 0..N / 1..1 |
+| R06 | `(Opcion)-[:GENERA]->(Consecuencia)` | **1..N** / 1..1 (v1.1, DEC-02) |
 | R07 | `(Opcion)-[:CONDUCE_A]->(Paso)` | 0..1 / 0..N |
 | R08 | `(Intento)-[:REGISTRA]->(Respuesta)` | 0..N / 1..1 |
 | R09 | `(Respuesta)-[:CORRESPONDE_A]->(Paso)` | 1..1 / 0..N |
@@ -102,6 +103,8 @@ Ids: `id_usuario`, `id_simulacion`, `id_habilidad`, `id_paso`, `id_opcion`, `id_
 | R17 | `(Evidencia)-[:TIENE_COMPARTICION]->(Comparticion)` | 0..N / 1..1 |
 
 Tipos de relación (14): REALIZA, TIENE, CONTIENE, DESARROLLA, OFRECE, GENERA, CONDUCE_A, REGISTRA, CORRESPONDE_A, SELECCIONA, TIENE_PROGRESO, PRODUCE, DEMUESTRA, TIENE_COMPARTICION. Nota: `GENERA` y `CORRESPONDE_A` se reutilizan entre distintos pares de etiquetas.
+
+**Convención de cardinalidad (DEC-07):** `origen / destino` = nº de destinos por cada origen / nº de orígenes por cada destino. **Rutas (DEC-03):** no hay pasos finales; una opción sin `CONDUCE_A` es terminal y completa el intento; el paso inicial es el de `orden = 1`.
 
 ## Restricciones de integridad
 
@@ -120,6 +123,12 @@ Tipos de relación (14): REALIZA, TIENE, CONTIENE, DESARROLLA, OFRECE, GENERA, C
 - **RI-13** Un único Progreso consolidado por (usuario, habilidad).
 - **RI-14** Evidencia e intento de origen pertenecen al mismo usuario.
 - **RI-15** Token de compartición único; evidencia privada no accesible sin autorización vigente (estado y expiración).
+
+Añadidas en v1.1 (DEC-11): **RI-16** `secuencia` ≥1 y única por intento · **RI-17** contenido mínimo de simulación PUBLICADA · **RI-18** `orden` >0, único por simulación, `orden = 1` inicial · **RI-19** intentos solo de simulaciones PUBLICADAS · **RI-20** DEMUESTRA ⊆ DESARROLLA de la simulación del intento · **RI-21** `fecha_expiracion` > `fecha_creacion` · **RI-22** respuestas dentro de las fechas del intento y solo en EN_CURSO · **RI-23** COMPLETADO al elegir opción terminal · *RI-24* catálogos y rangos propuestos (propuesta) · *RI-25* evidencia solo de intento COMPLETADO (propuesta, P-05).
+
+**Catálogos propuestos (DEC-04/09, `value_catalogs` del KG):** `Usuario.estado` {ACTIVO, INACTIVO, SUSPENDIDO} · `Paso.tipo` {CORREO, REUNION, CONVERSACION, TAREA, INCIDENTE} · `Consecuencia.impacto` {POSITIVO, NEUTRO, NEGATIVO} · `Consecuencia.tipo` {RELACIONAL, TIEMPO, CALIDAD, REPUTACION} · `Retroalimentacion.tipo` {ACIERTO, PARCIAL, ERROR} · `Evidencia.visibilidad` {PRIVADA, PUBLICA} (por defecto PRIVADA) · `Comparticion.estado` {ACTIVA, REVOCADA} (vigencia calculada con `fecha_expiracion`) · `Habilidad.categoria` sin catálogo (P-08).
+
+**Neo4j (DEC-12):** uniqueness nativa en cualquier edición; existence/type/key solo Enterprise; reglas entre nodos en lógica de aplicación.
 
 ## Arquitectura (DECISION_TAKEN)
 
@@ -140,7 +149,7 @@ Arquitectura híbrida orientada a grafos:
 ## Decisiones registradas
 
 ACCEPTED: D-01 nombre QATO'K · D-02 simulador de habilidades con experiencias interactivas · D-03 público universitario/egresados · D-04 escenarios con decisiones, consecuencias y retroalimentación · D-05 progreso por habilidad · D-06 evidencias · D-07 control de privacidad · D-08 Neo4j principal · D-09 PostgreSQL complementaria · D-11 DESARROLLA con propiedades · D-12 Progreso como nodo.
-NOT_SELECTED: D-10 MongoDB. SUPERSEDED: D-13 PostgreSQL como fuente de verdad.
+NOT_SELECTED: D-10 MongoDB. SUPERSEDED: D-13 PostgreSQL como fuente de verdad. ACCEPTED: D-14 resolución de la auditoría (DEC-01..22, KG v1.1).
 
 ## Decisiones pendientes
 
@@ -169,7 +178,7 @@ NOT_SELECTED: D-10 MongoDB. SUPERSEDED: D-13 PostgreSQL como fuente de verdad.
 
 ## Observaciones de modelado
 
-OBS-01 simulación con múltiples pasos · OBS-02 paso con múltiples opciones · OBS-03 opción con una o más consecuencias · OBS-04 opción conduce a otro paso o termina la ruta · OBS-05 usuario con múltiples intentos · OBS-06 respuesta ligada a intento, paso y opción · OBS-07 respuesta puede generar retroalimentación · OBS-08 Simulacion–Habilidad N:M · OBS-09 evidencia demuestra una o varias habilidades · OBS-10 usuario nuevo sin intentos/progreso/evidencias · OBS-11 simulación BORRADOR puede no tener pasos; PUBLICADA necesita contenido · OBS-12 progreso actual ≠ historial de evolución.
+OBS-01 simulación con múltiples pasos · OBS-02 paso con múltiples opciones · OBS-03 opción con una o más consecuencias (ahora coherente con R06 1..N) · OBS-04 opción conduce a otro paso o termina la ruta · OBS-05 usuario con múltiples intentos · OBS-06 respuesta ligada a intento, paso y opción · OBS-07 respuesta puede generar retroalimentación · OBS-08 Simulacion–Habilidad N:M · OBS-09 evidencia demuestra una o varias habilidades · OBS-10 usuario nuevo sin intentos/progreso/evidencias · OBS-11 simulación BORRADOR puede no tener pasos; PUBLICADA necesita contenido · OBS-12 progreso actual ≠ historial de evolución.
 
 ## Estado general
 

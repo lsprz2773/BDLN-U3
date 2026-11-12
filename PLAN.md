@@ -78,7 +78,7 @@ Cada ronda se registra en `verificacion/NN-*.md`: versión, ramas ToT y elecció
 | Fase | Entregable | Depende de | Actividad del enunciado |
 |---|---|---|---|
 | F0 | Preparación: estructura de carpetas y `scripts/verificar.py` | — | — |
-| F0.5 | Auditoría del KG (`verificacion/00-auditoria-kg.md`) y decisiones del usuario sobre los hallazgos | KG | Todas |
+| F0.5 | Auditoría del KG (`verificacion/00-auditoria-kg.md`) y decisiones (`docs/decisiones-modelado.md`, KG v1.1) ✅ | KG | Todas |
 | F1 | 1. Tabla de requerimientos y consultas | KG | A1 |
 | F2 | 2. Diccionario de entidades y propiedades | F1 | A2 |
 | F3 | 3. Catálogo de relaciones | F1, F2 | A2 |

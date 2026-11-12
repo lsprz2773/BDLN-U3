@@ -6,19 +6,20 @@ Seguimiento de los entregables de la actividad (ver `docs/actividad.jpg`). Proye
 
 ## Auditoría previa del KG
 
-✅ Realizada → `verificacion/00-auditoria-kg.md`. 20 hallazgos (1 🔴, 6 🟠, 7 🟡, 6 ⚪). **Pendiente de decisión del usuario** antes de iniciar F1: H-01, H-02, H-05 y el método para actualizar el KG (v1.1).
+✅ Realizada → `verificacion/00-auditoria-kg.md`. 20 hallazgos (1 🔴, 6 🟠, 7 🟡, 6 ⚪).
+✅ Resuelta → `docs/decisiones-modelado.md` (DEC-01..DEC-22, decididas por Claude por delegación del usuario, verificadas con ToT/CoVe/SC en 2 rondas). Aplicadas en `docs/KG.json` v1.1.
 
 ## Resumen
 
 | # | Entregable | Estado | Archivo | Insumo en el KG |
 |---|---|---|---|---|
-| 1 | Tabla de requerimientos y consultas | ⬜ Pendiente | — | RF-01..RF-10, C-01..C-05 |
-| 2 | Diccionario de entidades y propiedades | ⬜ Pendiente | — | E01..E12 |
-| 3 | Catálogo de relaciones | ⬜ Pendiente | — | R01..R17 (sin descripción) |
-| 4 | Tabla de restricciones de integridad | ⬜ Pendiente | — | RI-01..RI-15 |
-| 5 | Tabla de cardinalidades | ⬜ Pendiente | — | Cardinalidades de R01..R17 |
-| 6 | Diagrama del modelo lógico | ⬜ Pendiente | — | `logical_graph_model`, MD-01..MD-05 |
-| 7 | Conclusiones (2 preguntas) | ⬜ Pendiente | — | — (redacción propia) |
+| 1 | Tabla de requerimientos y consultas | ⬜ Pendiente | `entregables/01-requerimientos-consultas.md` | RF-01..RF-10, C-01..C-05 (C-02/C-04 con Simulacion) |
+| 2 | Diccionario de entidades y propiedades | ⬜ Pendiente | `entregables/02-diccionario-entidades.md` | E01..E12, `value_catalogs` |
+| 3 | Catálogo de relaciones | ⬜ Pendiente | `entregables/03-catalogo-relaciones.md` | R01..R17 (sin descripción), `modeling_notes` |
+| 4 | Tabla de restricciones de integridad | ⬜ Pendiente | `entregables/04-restricciones-integridad.md` | RI-01..RI-25, `neo4j_constraint_support` |
+| 5 | Tabla de cardinalidades | ⬜ Pendiente | `entregables/05-cardinalidades.md` | R01..R17, `cardinality_convention` |
+| 6 | Diagrama del modelo lógico | ⬜ Pendiente | `entregables/06-modelo-logico.md` | `logical_graph_model`, MD-01..MD-05 |
+| 7 | Conclusiones (2 preguntas) | ⬜ Pendiente | `entregables/07-conclusiones.md` | `known_limitations`, DEC-xx |
 
 ---
 
@@ -89,9 +90,9 @@ Cada actividad tiene requisitos propios que deben cumplirse aunque su resultado 
 
 **Observaciones**
 - El KG da cardinalidades para R01..R17; hay que traducirlas a respuestas explícitas a las 3 preguntas.
-- ⚠️ **Inconsistencia detectada:** R06 `Opcion-GENERA->Consecuencia` tiene 0..N, pero OBS-03 dice "una opción puede generar **una o más** consecuencias" (1..N). Decidir cuál prevalece.
+- ✅ R06 resuelta: **1..N** (DEC-02).
 - R03 `Simulacion-CONTIENE->Paso` 0..N es coherente con OBS-11 (borrador sin pasos), pero una simulación PUBLICADA requiere ≥1 paso: mencionarlo como regla condicionada al estado.
-- R05 `Paso-OFRECE->Opcion` 1..N: revisar si un paso final (sin decisión) debe ofrecer opciones.
+- ✅ R05 resuelta: se mantiene 1..N; las rutas terminan en opción terminal (DEC-03).
 
 ### 6. Diagrama del modelo lógico — ⬜ Pendiente
 **Criterios de la actividad**
@@ -136,3 +137,4 @@ Cada actividad tiene requisitos propios que deben cumplirse aunque su resultado 
 | 2026-11-12 | Decisión de formato: todo en .md durante el modelado; conversión al formato final de cada entregable al terminar. |
 | 2026-11-12 | Creación de PLAN.md: fases F0–F9 y protocolo de verificación ToT + CoVe + self-consistency por cada creación y corrección. |
 | 2026-11-12 | Auditoría del KG (2 rondas de verificación): estructura coherente; 20 hallazgos de significado y completitud con resoluciones propuestas. |
+| 2026-11-12 | Decisiones DEC-01..DEC-22 (`docs/decisiones-modelado.md`) y KG v1.1. Carpeta única de entregables: `entregables/`. |
