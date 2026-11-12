@@ -121,3 +121,4 @@ Generada con `node scripts/md2docx.js` → `entregables/docx/`. Estilo sobrio: t
 | 2026-11-12 | Presentación: guía de estudio (Claude Docs + `presentacion/guia-estudio.md`/.docx) y deck de 12 diapositivas (fuente en `presentacion/diapositivas/`). Ver `presentacion/README.md`. |
 | 2026-11-12 | PDF de la guía de estudio (`presentacion/guia-estudio.pdf`, 5 páginas) y de las diapositivas (`presentacion/diapositivas.pdf`, 12 páginas). |
 | 2026-11-12 | F10: implementación en Neo4j (restricciones, índices, datos de ejemplo, pruebas de humo, limpieza). 76 pruebas, 0 fallos; se corrigieron 12 pruebas que pasaban sin comprobar nada. |
+| 2026-11-12 | Documento «QATO'K explicado» (Claude Docs) y su copia en `presentacion/qatok-explicado.md`/.docx/.pdf. |
