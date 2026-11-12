@@ -4,6 +4,7 @@
  * (texto negro, tablas con encabezado gris, sin colores azules ni hipervínculos).
  *
  * Uso: node scripts/md2docx.js            -> genera entregables/docx/*.docx
+ *      node scripts/md2docx.js in.md out.docx [--vertical]   -> convierte un archivo cualquiera
  * Requiere el paquete npm `docx`.
  */
 const fs = require("fs");
@@ -101,8 +102,9 @@ function tabla(lineas, anchoUtil) {
 }
 
 // ------------------------------------------------------------ documento
-function convertir(nombre, horizontal) {
-  const md = fs.readFileSync(path.join(ORIGEN, nombre), "utf8");
+function convertir(rutaMd, horizontal) {
+  const md = fs.readFileSync(rutaMd, "utf8");
+  const baseImg = path.dirname(rutaMd);
   const anchoPagina = horizontal ? ALTO_CARTA : ANCHO_CARTA;
   const anchoUtil = anchoPagina - 2 * MARGEN;
   const lineas = md.split("\n");
@@ -148,7 +150,7 @@ function convertir(nombre, horizontal) {
     // imágenes
     const img = l.match(/^!\[([^\]]*)\]\(([^)]+)\)/);
     if (img) {
-      const ruta = path.join(ORIGEN, img[2]);
+      const ruta = path.join(baseImg, img[2]);
       const datos = fs.readFileSync(ruta);
       const ancho = datos.readUInt32BE(16);
       const alto = datos.readUInt32BE(20);
@@ -253,9 +255,16 @@ function convertir(nombre, horizontal) {
 }
 
 (async () => {
+  const args = process.argv.slice(2);
+  if (args.length >= 2) {
+    const buf = await convertir(path.resolve(args[0]), !args.includes("--vertical"));
+    fs.writeFileSync(path.resolve(args[1]), buf);
+    console.log("OK", args[1]);
+    return;
+  }
   fs.mkdirSync(DESTINO, { recursive: true });
   for (const e of ENTREGABLES) {
-    const buf = await convertir(e.md, e.horizontal);
+    const buf = await convertir(path.join(ORIGEN, e.md), e.horizontal);
     const salida = path.join(DESTINO, e.md.replace(/\.md$/, ".docx"));
     fs.writeFileSync(salida, buf);
     console.log("OK", path.relative(RAIZ, salida));
