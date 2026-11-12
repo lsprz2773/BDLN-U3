@@ -40,6 +40,7 @@
 | DEC-20 | H-20 | El diccionario lleva tipo SQL y tipo Neo4j. | ADOPTADA |
 | DEC-21 | — | Método: KG v1.1 con `changelog`; v1.0 conservada. | ADOPTADA |
 | DEC-22 | — | Todos los entregables en la carpeta `entregables/`; la verificación en `verificacion/`. | ADOPTADA |
+| DEC-23 | — (surgida en F1) | Añadir `Simulacion` a las entidades de C-03. | ADOPTADA |
 
 ---
 
@@ -194,6 +195,13 @@ Mapeo: UUID→String · VARCHAR/TEXT→String · INTEGER→Integer · DECIMAL→
 
 ### DEC-22 — Carpeta de entregables
 Todos los entregables se crean en `entregables/`. Los razonamientos de verificación van en `verificacion/`, para que los entregables queden limpios para la conversión final. **ADOPTADA.**
+
+### DEC-23 — `Simulacion` en C-03 (surgida al verificar el entregable 1)
+- **Problema:** C-03 pregunta por las decisiones "durante una simulación", pero su lista de entidades no incluye `Simulacion`. Un usuario puede tener varios intentos de la misma simulación (OBS-05), así que el parámetro natural es la simulación.
+- **ToT:** A. añadir `Simulacion` y devolver las decisiones por intento · B. parametrizar solo por `Intento` (el usuario tendría que conocer el id del intento) · C. reformular la pregunta. → **A**: fiel al texto; C-03 está DEFINED en el KG.
+- **CoVe:** camino `(Usuario)-[:REALIZA]->(Intento)<-[:TIENE]-(Simulacion)` → existe (R01, R02). ✔
+- **SC:** texto de la pregunta → sí · necesidad del parámetro → sí · lista del KG → no. **2–1 → añadir** (mismo criterio que DEC-05).
+- **Decisión:** C-03 pasa a 8 entidades. **ADOPTADA.** Aplicada en el KG v1.1 (`changelog`).
 
 ---
 

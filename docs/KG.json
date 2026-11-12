@@ -206,6 +206,7 @@
         "description": "¿Qué decisiones tomó un usuario durante una simulación, qué consecuencias obtuvo y qué retroalimentación recibió?",
         "related_entities": [
           "Usuario",
+          "Simulacion",
           "Intento",
           "Respuesta",
           "Paso",
@@ -213,7 +214,8 @@
           "Consecuencia",
           "Retroalimentacion"
         ],
-        "graph_value": "Reconstruir recorridos de decisiones y sus consecuencias."
+        "graph_value": "Reconstruir recorridos de decisiones y sus consecuencias.",
+        "change": "Se añade Simulacion (DEC-23): la pregunta se formula \"durante una simulación\" y un usuario puede tener varios intentos de la misma simulación."
       },
       {
         "id": "C-04",
@@ -1966,7 +1968,8 @@
           "DEC-11: RI-16..RI-25",
           "DEC-12: neo4j_constraint_support",
           "DEC-13: Comparticion.destinatario (propuesta)",
-          "known_limitations y modeling_notes (DEC-06, 13-20)"
+          "known_limitations y modeling_notes (DEC-06, 13-20)",
+          "DEC-23: Simulacion añadida a C-03 (surgida en F1)"
         ]
       },
       {

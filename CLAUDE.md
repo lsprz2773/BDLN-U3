@@ -55,7 +55,7 @@ Estudiante de último semestre, sin experiencia laboral ni prácticas, CV corto,
 
 - **C-01** Simulaciones disponibles para un usuario según su progreso y habilidades a fortalecer (Usuario, Progreso, Habilidad, Simulacion).
 - **C-02** Fortalezas y áreas de mejora según resultados (Usuario, Intento, Respuesta, Retroalimentacion, Progreso, Habilidad, Simulacion). Limitación LIM-01: atribución por simulación, no por decisión.
-- **C-03** Decisiones tomadas en una simulación, consecuencias y retroalimentación (Usuario, Intento, Respuesta, Paso, Opcion, Consecuencia, Retroalimentacion).
+- **C-03** Decisiones tomadas en una simulación, consecuencias y retroalimentación (Usuario, Simulacion, Intento, Respuesta, Paso, Opcion, Consecuencia, Retroalimentacion; Simulacion añadida por DEC-23).
 - **C-04** Evidencias compartibles de una habilidad y simulaciones de origen, respetando permisos (Usuario, Evidencia, Habilidad, Intento, Simulacion, Comparticion).
 - **C-05** Evolución de una habilidad en el tiempo y simulaciones que contribuyeron (Usuario, Progreso, Habilidad, Intento, Simulacion). Limitación LIM-02: aproximación por intentos (P-07).
 
