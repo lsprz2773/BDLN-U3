@@ -27,6 +27,7 @@ Levanta un Neo4j Community embebido en un directorio temporal, ejecuta los seis 
 **Opción B — Neo4j Desktop, Aura o un servidor propio:** pegar cada script en Neo4j Browser (o `cypher-shell -f archivo.cypher`) en el orden de la tabla.
 - En `05-pruebas-humo.cypher`, toda fila con `ok = false` es un fallo.
 - Las sentencias precedidas por `// ESPERA_ERROR` **deben** fallar: prueban que la base rechaza un duplicado o una restricción exclusiva de Enterprise.
+- **En Neo4j Desktop usar `05-desktop-pruebas.cypher`.** Desktop detiene el script en el primer error y sus instancias locales son Enterprise, así que esta versión quita las sentencias que deben fallar (A3, A4 y C15) y en su lugar muestra la edición del servidor. Se ejecuta completa y todas las filas deben dar `ok = true`.
 
 ## Datos de ejemplo por consulta
 
