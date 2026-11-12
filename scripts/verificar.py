@@ -104,6 +104,13 @@ ARISTA = re.compile(r"(<?-)\[(\w*)(?::(\w+))?(?:\s*\{[^}]*\})?\](->|-)")
 
 
 def verificar_cypher(nombre, bloque):
+    """Analiza cada sentencia (separada por ';') por separado: las variables son locales a cada sentencia."""
+    sentencias = [x for x in bloque.split(";") if x.strip()]
+    if len(sentencias) > 1:
+        res = {}
+        for st in sentencias:
+            res.update(verificar_cypher(nombre, st))
+        return res
     var_label = {}
     for m in NODO.finditer(bloque):
         if m.group(1) and m.group(2):
@@ -252,7 +259,7 @@ CATEGORIAS = ["Unicidad de identificadores", "Propiedades obligatorias", "Valore
 
 
 def e4(md):
-    filas = tabla_con(md, "Mecanismo")[0][1]
+    filas = tabla_con(md, "Mecanismo en Neo4j")[0][1]
     ids = [limpiar(f["ID"]) for f in filas]
     check(ids == RI_IDS, f"[E4] RI del entregable = KG ({len(ids)})")
     check(len(ids) >= 8, "[E4] al menos 8 restricciones")
@@ -266,6 +273,12 @@ def e4(md):
         prop = kg.get("status") == "PROPOSED"
         check(("Propuesta" in f["Estado"]) == prop, f"[E4] {f['ID']}: estado coherente con el KG")
     check(cubiertas == set(CATEGORIAS), f"[E4] las 5 categorías del enunciado cubiertas ({len(cubiertas)})")
+    cob = {limpiar(f["Categoría"]): set(re.findall(r"RI-\d{2}", f["Restricciones"])) for f in tabla_con(md, "Restricciones")[0][1]}
+    for c in CATEGORIAS:
+        reales = {limpiar(f["ID"]) for f in filas if c in f["Categoría"]}
+        check(cob.get(c) == reales, f"[E4] tabla de cobertura de '{c}' = filas de esa categoría" + ("" if cob.get(c) == reales else f" (tabla {sorted(cob.get(c, []))} vs filas {sorted(reales)})"))
+    for k, bloque in enumerate(re.findall(r"```cypher\n(.*?)```", md, re.S)):
+        verificar_cypher(f"E4 bloque {k+1}", bloque)
     for bloque in re.findall(r"```cypher\n(.*?)```", md, re.S):
         for lab, prop in re.findall(r"FOR \(\w+:(\w+)\) REQUIRE \w+\.(\w+)", bloque):
             check(lab in ENTIDADES and prop in {p["name"] for p in ENTIDADES[lab]["properties"]}, f"[E4] constraint {lab}.{prop} referencia una propiedad existente")
