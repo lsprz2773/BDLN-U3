@@ -4,6 +4,10 @@ Seguimiento de los entregables de la actividad (ver `docs/actividad.jpg`). Proye
 
 **Estados:** ⬜ Pendiente · 🟨 En progreso · 🟧 Por corregir · ✅ Terminado
 
+## Auditoría previa del KG
+
+✅ Realizada → `verificacion/00-auditoria-kg.md`. 20 hallazgos (1 🔴, 6 🟠, 7 🟡, 6 ⚪). **Pendiente de decisión del usuario** antes de iniciar F1: H-01, H-02, H-05 y el método para actualizar el KG (v1.1).
+
 ## Resumen
 
 | # | Entregable | Estado | Archivo | Insumo en el KG |
@@ -131,3 +135,4 @@ Cada actividad tiene requisitos propios que deben cumplirse aunque su resultado 
 | 2026-11-12 | Se añaden explícitamente las actividades A1–A6 de la columna izquierda del enunciado, con sus requisitos y el entregable donde se presentan. |
 | 2026-11-12 | Decisión de formato: todo en .md durante el modelado; conversión al formato final de cada entregable al terminar. |
 | 2026-11-12 | Creación de PLAN.md: fases F0–F9 y protocolo de verificación ToT + CoVe + self-consistency por cada creación y corrección. |
+| 2026-11-12 | Auditoría del KG (2 rondas de verificación): estructura coherente; 20 hallazgos de significado y completitud con resoluciones propuestas. |
