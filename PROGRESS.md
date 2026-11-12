@@ -79,6 +79,12 @@ Seguimiento de los entregables de la actividad (ver `docs/actividad.jpg`). Proye
 - Todo se trabajó en `.md`, como se acordó. Los temas que dependen de decisiones pendientes (P-xx) están marcados como *propuesta* en cada entregable.
 - **Pendiente de revisión del usuario:** las *propuestas* (catálogos, rangos, `Comparticion.destinatario`, RI-24, RI-25) y las decisiones DEC-01..DEC-23.
 
+## Implementación en Neo4j (F10) — ✅
+
+Carpeta `neo4j/` (ver su README). Neo4j 5.26 LTS Community: 15 restricciones, 9 índices, 51 nodos y 71 relaciones de ejemplo (uno o más casos por consulta C-01..C-05), pruebas de humo y limpieza. **76 pruebas, 0 fallos** (`neo4j/resultado-pruebas.txt`). Verificación: `verificacion/09-neo4j.md`.
+
+- [x] Restricciones · [x] Índices · [x] Nodos de ejemplo por consulta · [x] Relaciones · [x] Pruebas de humo · [x] Datos retirados
+
 ## Conversión final (F9)
 
 Generada con `node scripts/md2docx.js` → `entregables/docx/`. Estilo sobrio: texto negro, encabezados de tabla en gris y sin azul (también se neutralizaron los estilos azules que la plantilla trae pero no usa). Los 7 archivos pasaron la validación de esquema y se revisaron visualmente renderizados a PDF.
@@ -114,3 +120,4 @@ Generada con `node scripts/md2docx.js` → `entregables/docx/`. Estilo sobrio: t
 | 2026-11-12 | F9: conversión a .docx sin azul; diagrama re-renderizado en gris/naranja/verde (corrección registrada en `verificacion/06-modelo-logico.md`). |
 | 2026-11-12 | Presentación: guía de estudio (Claude Docs + `presentacion/guia-estudio.md`/.docx) y deck de 12 diapositivas (fuente en `presentacion/diapositivas/`). Ver `presentacion/README.md`. |
 | 2026-11-12 | PDF de la guía de estudio (`presentacion/guia-estudio.pdf`, 5 páginas) y de las diapositivas (`presentacion/diapositivas.pdf`, 12 páginas). |
+| 2026-11-12 | F10: implementación en Neo4j (restricciones, índices, datos de ejemplo, pruebas de humo, limpieza). 76 pruebas, 0 fallos; se corrigieron 12 pruebas que pasaban sin comprobar nada. |

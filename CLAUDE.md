@@ -184,6 +184,10 @@ OBS-01 simulación con múltiples pasos · OBS-02 paso con múltiples opciones �
 
 Los 7 entregables están terminados y verificados en `entregables/` (ver `PROGRESS.md`). La verificación automática se ejecuta con `python3 scripts/verificar.py` y debe dar 0 fallos después de cualquier cambio. Conversión a .docx hecha (`entregables/docx/`, `node scripts/md2docx.js`). Material de presentación en `presentacion/` (guía de estudio y diapositivas; ver su README). Los documentos y diapositivas no usan colores azules, por petición del usuario.
 
+## Neo4j (F10)
+
+Scripts en `neo4j/` (orden 01→06). Ejecutar todo con `neo4j/ejecutar.sh` (Neo4j 5.26 Community embebido vía Maven; necesita Java 21). Debe terminar con 0 fallos después de cualquier cambio en el modelo o en las consultas del entregable 1. Las consultas de `05-pruebas-humo.cypher` (sección D) son copia literal del entregable 1: si este cambia, actualizar esa sección. Los datos de ejemplo usan ids con el prefijo `e0000000-0000-4000-8000-`.
+
 ## Estado general
 
 Definido: proyecto, público, necesidades, consultas del sistema. Preliminar: requerimientos, entidades, relaciones, restricciones, modelo lógico. Seleccionado: Neo4j (principal), PostgreSQL (complementaria). Pendiente: distribución de responsabilidades entre BD y sincronización. Implementación: no definida aún.

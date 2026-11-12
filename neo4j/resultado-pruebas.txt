@@ -1,0 +1,151 @@
+Neo4j embebido listo (Community). Base temporal: (directorio temporal)
+
+--- 01-restricciones.cypher ---
+  [ok] línea 11: RI-01 · Identificador UUID único en las 12 etiquetas  → 1 restricciones creadas
+  [ok] línea 12: CREATE CONSTRAINT simulacion_id IF NOT EXISTS FOR (n:Simulacion) REQUIRE n.id_simulacio...  → 1 restricciones creadas
+  [ok] línea 13: CREATE CONSTRAINT habilidad_id IF NOT EXISTS FOR (n:Habilidad) REQUIRE n.id_habilidad I...  → 1 restricciones creadas
+  [ok] línea 14: CREATE CONSTRAINT paso_id IF NOT EXISTS FOR (n:Paso) REQUIRE n.id_paso IS UNIQUE  → 1 restricciones creadas
+  [ok] línea 15: CREATE CONSTRAINT opcion_id IF NOT EXISTS FOR (n:Opcion) REQUIRE n.id_opcion IS UNIQUE  → 1 restricciones creadas
+  [ok] línea 16: CREATE CONSTRAINT consecuencia_id IF NOT EXISTS FOR (n:Consecuencia) REQUIRE n.id_conse...  → 1 restricciones creadas
+  [ok] línea 17: CREATE CONSTRAINT intento_id IF NOT EXISTS FOR (n:Intento) REQUIRE n.id_intento IS UNIQUE  → 1 restricciones creadas
+  [ok] línea 18: CREATE CONSTRAINT respuesta_id IF NOT EXISTS FOR (n:Respuesta) REQUIRE n.id_respuesta I...  → 1 restricciones creadas
+  [ok] línea 19: CREATE CONSTRAINT retroalimentacion_id IF NOT EXISTS FOR (n:Retroalimentacion) REQUIRE ...  → 1 restricciones creadas
+  [ok] línea 20: CREATE CONSTRAINT progreso_id IF NOT EXISTS FOR (n:Progreso) REQUIRE n.id_progreso IS U...  → 1 restricciones creadas
+  [ok] línea 21: CREATE CONSTRAINT evidencia_id IF NOT EXISTS FOR (n:Evidencia) REQUIRE n.id_evidencia I...  → 1 restricciones creadas
+  [ok] línea 22: CREATE CONSTRAINT comparticion_id IF NOT EXISTS FOR (n:Comparticion) REQUIRE n.id_compa...  → 1 restricciones creadas
+  [ok] línea 25: RI-02 · Correo único (la aplicación lo guarda normalizado: toLower(trim(correo)))  → 1 restricciones creadas
+  [ok] línea 28: RI-03 · Nombre de habilidad único  → 1 restricciones creadas
+  [ok] línea 31: RI-15 · Token de compartición único  → 1 restricciones creadas
+
+--- 02-indices.cypher ---
+  [ok] línea 9: C-01, RI-19 · filtrar simulaciones PUBLICADAS  → 1 índices creados
+  [ok] línea 12: RF-02 · buscar simulaciones por texto (título y descripción)  → 1 índices creados
+  [ok] línea 15: RF-02 · filtrar el catálogo de habilidades por categoría  → 1 índices creados
+  [ok] línea 18: RI-18 · localizar el paso inicial (orden = 1) de una simulación  → 1 índices creados
+  [ok] línea 21: C-05, RF-10 · intentos COMPLETADOS o EN_CURSO (reanudar)  → 1 índices creados
+  [ok] línea 24: C-03, C-05 · ordenar y filtrar intentos por fecha  → 1 índices creados
+  [ok] línea 27: C-03, RI-16 · ordenar las respuestas de un intento  → 1 índices creados
+  [ok] línea 30: C-04, RI-15 · enlaces vigentes: estado ACTIVA y sin expirar (índice compuesto)  → 1 índices creados
+  [ok] línea 33: RF-09 · evidencias por visibilidad  → 1 índices creados
+  [ok] línea 36: Esperar a que todos los índices estén en línea
+
+--- 03-nodos-ejemplo.cypher ---
+  [ok] línea 11: ---- Usuarios (C-01..C-05). Ana tiene historial; Bruno es nuevo (OBS-10) ----  → 2 nodos creados, 12 propiedades, 2 etiquetas
+  [ok] línea 21: ---- Habilidades (C-01, C-02, C-04, C-05). Gestión del tiempo sin nivel_objetivo ----  → 3 nodos creados, 14 propiedades, 3 etiquetas
+  [ok] línea 31: ---- Simulaciones (C-01: la de BORRADOR no debe recomendarse) ----  → 3 nodos creados, 17 propiedades, 3 etiquetas
+  [ok] línea 41: ---- Pasos (C-03). P1..P3 de la simulación 0301; Q1 de la 0302 ----  → 4 nodos creados, 20 propiedades, 4 etiquetas
+  [ok] línea 51: ---- Opciones (C-03). Las que no tendrán CONDUCE_A son terminales ----  → 9 nodos creados, 27 propiedades, 9 etiquetas
+  [ok] línea 66: ---- Consecuencias (C-03). Una por opción (RI-17) ----  → 9 nodos creados, 36 propiedades, 9 etiquetas
+  [ok] línea 81: ---- Intentos de Ana (C-02, C-03, C-05). El 0704 sigue EN_CURSO ----  → 4 nodos creados, 20 propiedades, 4 etiquetas
+  [ok] línea 92: ---- Respuestas (C-02, C-03) ----  → 5 nodos creados, 15 propiedades, 5 etiquetas
+  [ok] línea 103: ---- Retroalimentación (C-02, C-03). Una por respuesta ----  → 5 nodos creados, 20 propiedades, 5 etiquetas
+  [ok] línea 114: ---- Progreso consolidado de Ana (C-01, C-02, C-05). Bruno no tiene ----  → 3 nodos creados, 9 propiedades, 3 etiquetas
+  [ok] línea 123: ---- Evidencia de Ana (C-04) ----  → 1 nodos creados, 5 propiedades, 1 etiquetas
+  [ok] línea 129: ---- Comparticiones (C-04): una vigente, una revocada y una expirada ----  → 3 nodos creados, 18 propiedades, 3 etiquetas
+
+--- 04-relaciones-ejemplo.cypher ---
+  [ok] línea 10: R01 · (Usuario)-[:REALIZA]->(Intento): los 4 intentos son de Ana  → 4 relaciones creadas
+  [ok] línea 16: R02 · (Simulacion)-[:TIENE]->(Intento)  → 4 relaciones creadas
+  [ok] línea 22: R03 · (Simulacion)-[:CONTIENE]->(Paso). La simulación en BORRADOR no tiene pasos (OBS-11)  → 4 relaciones creadas
+  [ok] línea 28: R04 · (Simulacion)-[:DESARROLLA {peso, nivel_esperado}]->(Habilidad). MERGE: un par, un...  → 5 relaciones creadas, 10 propiedades
+  [ok] línea 41: R05 · (Paso)-[:OFRECE]->(Opcion)  → 9 relaciones creadas
+  [ok] línea 48: R06 · (Opcion)-[:GENERA]->(Consecuencia)  → 9 relaciones creadas
+  [ok] línea 55: R07 · (Opcion)-[:CONDUCE_A]->(Paso). Las opciones 0504..0509 no tienen: son terminales ...  → 3 relaciones creadas
+  [ok] línea 61: R08 · (Intento)-[:REGISTRA]->(Respuesta). El intento 0704 (EN_CURSO) aún no tiene respu...  → 5 relaciones creadas
+  [ok] línea 67: R09 · (Respuesta)-[:CORRESPONDE_A]->(Paso)  → 5 relaciones creadas
+  [ok] línea 73: R10 · (Respuesta)-[:SELECCIONA]->(Opcion)  → 5 relaciones creadas
+  [ok] línea 79: R11 · (Respuesta)-[:GENERA]->(Retroalimentacion)  → 5 relaciones creadas
+  [ok] línea 85: R12 · (Usuario)-[:TIENE_PROGRESO]->(Progreso)  → 3 relaciones creadas
+  [ok] línea 91: R13 · (Progreso)-[:CORRESPONDE_A]->(Habilidad)  → 3 relaciones creadas
+  [ok] línea 97: R14 · (Usuario)-[:GENERA]->(Evidencia)  → 1 relaciones creadas
+  [ok] línea 102: R15 · (Intento)-[:PRODUCE]->(Evidencia): la evidencia sale del intento con 92 puntos  → 1 relaciones creadas
+  [ok] línea 107: R16 · (Evidencia)-[:DEMUESTRA]->(Habilidad): solo habilidades que desarrolla su simulac...  → 2 relaciones creadas
+  [ok] línea 113: R17 · (Evidencia)-[:TIENE_COMPARTICION]->(Comparticion)  → 3 relaciones creadas
+
+--- 05-pruebas-humo.cypher ---
+  [OK] A1 · 15 restricciones de unicidad — 15 encontradas
+  [OK] A2 · 9 índices de consulta en línea — 9 índices, 9 en línea
+  [OK] línea 27: falla como se esperaba ("Enterprise")
+  [OK] línea 31: falla como se esperaba ("Enterprise")
+  [OK] B1 · nodos :Usuario — 2 de 2
+  [OK] B1 · nodos :Habilidad — 3 de 3
+  [OK] B1 · nodos :Simulacion — 3 de 3
+  [OK] B1 · nodos :Paso — 4 de 4
+  [OK] B1 · nodos :Opcion — 9 de 9
+  [OK] B1 · nodos :Consecuencia — 9 de 9
+  [OK] B1 · nodos :Intento — 4 de 4
+  [OK] B1 · nodos :Respuesta — 5 de 5
+  [OK] B1 · nodos :Retroalimentacion — 5 de 5
+  [OK] B1 · nodos :Progreso — 3 de 3
+  [OK] B1 · nodos :Evidencia — 1 de 1
+  [OK] B1 · nodos :Comparticion — 3 de 3
+  [OK] B2 · (Usuario)-[:REALIZA]->(Intento) — 4 de 4
+  [OK] B2 · (Simulacion)-[:TIENE]->(Intento) — 4 de 4
+  [OK] B2 · (Simulacion)-[:CONTIENE]->(Paso) — 4 de 4
+  [OK] B2 · (Simulacion)-[:DESARROLLA]->(Habilidad) — 5 de 5
+  [OK] B2 · (Paso)-[:OFRECE]->(Opcion) — 9 de 9
+  [OK] B2 · (Opcion)-[:GENERA]->(Consecuencia) — 9 de 9
+  [OK] B2 · (Opcion)-[:CONDUCE_A]->(Paso) — 3 de 3
+  [OK] B2 · (Intento)-[:REGISTRA]->(Respuesta) — 5 de 5
+  [OK] B2 · (Respuesta)-[:CORRESPONDE_A]->(Paso) — 5 de 5
+  [OK] B2 · (Respuesta)-[:SELECCIONA]->(Opcion) — 5 de 5
+  [OK] B2 · (Respuesta)-[:GENERA]->(Retroalimentacion) — 5 de 5
+  [OK] B2 · (Usuario)-[:TIENE_PROGRESO]->(Progreso) — 3 de 3
+  [OK] B2 · (Progreso)-[:CORRESPONDE_A]->(Habilidad) — 3 de 3
+  [OK] B2 · (Usuario)-[:GENERA]->(Evidencia) — 1 de 1
+  [OK] B2 · (Intento)-[:PRODUCE]->(Evidencia) — 1 de 1
+  [OK] B2 · (Evidencia)-[:DEMUESTRA]->(Habilidad) — 2 de 2
+  [OK] B2 · (Evidencia)-[:TIENE_COMPARTICION]->(Comparticion) — 3 de 3
+  [OK] B3 · 51 nodos y 71 relaciones en total — 51 nodos, 71 relaciones
+  [OK] B4 · opcionales sin valor no se almacenan — []
+  [OK] C1 · cardinalidades obligatorias de :Paso — 0 nodos incumplen
+  [OK] C1 · cardinalidades obligatorias de :Opcion — 0 nodos incumplen
+  [OK] C1 · cardinalidades obligatorias de :Consecuencia — 0 nodos incumplen
+  [OK] C1 · cardinalidades obligatorias de :Intento — 0 nodos incumplen
+  [OK] C1 · cardinalidades obligatorias de :Respuesta — 0 nodos incumplen
+  [OK] C1 · cardinalidades obligatorias de :Retroalimentacion — 0 nodos incumplen
+  [OK] C1 · cardinalidades obligatorias de :Progreso — 0 nodos incumplen
+  [OK] C1 · cardinalidades obligatorias de :Evidencia — 0 nodos incumplen
+  [OK] C1 · cardinalidades obligatorias de :Comparticion — 0 nodos incumplen
+  [OK] C2 · RI-10 consistencia de respuestas — 0 incoherentes
+  [OK] C3 · RI-11 rutas dentro de la misma simulación — 0 rutas cruzadas
+  [OK] C4 · RI-17 contenido mínimo de las simulaciones PUBLICADAS — 0 incompletas
+  [OK] C5 · RI-16 secuencia válida y única por intento — 0 repetidas o inválidas
+  [OK] C6 · RI-18 orden de pasos — 0 simulaciones con orden inválido
+  [OK] C7 · RI-20 DEMUESTRA dentro de DESARROLLA — 0 fuera
+  [OK] C8 · RI-14 propiedad de evidencias — 0 ajenas
+  [OK] C9 · RI-06, RI-07, RI-12 rangos y fechas — 0 valores fuera de rango
+  [OK] C10 · RI-13 un progreso por usuario y habilidad — 0 duplicados
+  [OK] C11 · RI-23 fin del intento en opción terminal — 0 incoherentes
+  [OK] C12 · RI-08 DESARROLLA única por par — 0 pares repetidos
+  [OK] C13 · RI-05, RI-06, RI-24 catálogos y rangos — 0 valores no permitidos
+  [OK] C14 · tipos String, Integer, Float y DateTime — [STRING NOT NULL, INTEGER NOT NULL, FLOAT NOT NULL, ZONED DATETIME NOT NULL]
+  [OK] línea 214: falla como se esperaba ("already exists")
+  [OK] línea 216: falla como se esperaba ("already exists")
+  [OK] línea 218: falla como se esperaba ("already exists")
+  [OK] línea 220: falla como se esperaba ("already exists")
+  [OK] D1 · C-01 Ana: 2 simulaciones, primero «Tres entregas para mañana» — [[Tres entregas para mañana, Cliente molesto por un retraso], [[Gestión del tiempo], [Resolución de conflictos]]]
+  [OK] D2 · C-01 Bruno: 2 simulaciones publicadas, ninguna en BORRADOR — [Cliente molesto por un retraso, Tres entregas para mañana]
+  [OK] D3 · C-02 Ana: 1 fortaleza y 2 áreas de mejora (objetivo de respaldo = 60) — [[Comunicación efectiva, FORTALEZA, 75, 2, 1, 2], [Resolución de conflictos, AREA_DE_MEJORA, 70, 2, 1, 1], [Gestión del tiempo, AREA_DE_MEJORA, 60, 0, 0, 1]]
+  [OK] D4 · C-03 Ana: recorrido de 4 decisiones ordenado por intento y secuencia — [[1, Esperar a tener toda la información antes de responder], [2, Minimizar el problema], [1, Responder de inmediato: disculparte y proponer una llamada], [2, Proponer una nueva fecha y comprometerte a avisar]]
+  [OK] D5 · C-04 Ana: evidencia de «Cliente molesto por un retraso» con 1 enlace vigente — [[Manejo de un cliente molesto, PRIVADA, Cliente molesto por un retraso, [tok-ejemplo-vigente]]]
+  [OK] D6 · C-05 Ana: evolución 45 → 92 → 65, nivel consolidado 78 — [[[Cliente molesto por un retraso, 45.0], [Cliente molesto por un retraso, 92.0], [Tres entregas para mañana, 65.0]], [78.0]]
+  [OK] D7 · RF-02 búsqueda por texto encuentra «Cliente molesto por un retraso» — [Cliente molesto por un retraso]
+  [ok] línea 344: (Cypher de referencia del entregable 4, con parámetros sustituidos)
+  [OK] E1 · RI-10 rechaza una respuesta con un paso de otra simulación — 0 respuestas en el intento
+  [ok] línea 358: E2 · RI-10 + RI-16: una respuesta válida se crea con secuencia 1 y queda bien enlazada  → 1 nodos creados, 3 relaciones creadas, 3 propiedades, 1 etiquetas
+  [OK] E2 · respuesta válida creada con secuencia 1 y fecha dentro del intento — 1 respuesta(s), secuencia 1
+  [ok] línea 374: La respuesta de E2 tiene un id aleatorio (no lleva el prefijo de ejemplo): se retira aquí  → 1 nodos borrados, 3 relaciones borradas
+  [ok] línea 378: E3 · RI-08: repetir el MERGE de DESARROLLA no duplica la relación  → 2 propiedades
+  [OK] E3 · RI-08 MERGE mantiene una sola DESARROLLA por par — 1 relación(es)
+  [ok] línea 387: E4 · RI-19: no se puede iniciar un intento de una simulación en BORRADOR
+  [OK] E4 · RI-19 sin intentos sobre una simulación en BORRADOR — 0 intentos
+  [OK] E5 · las escrituras de prueba no dejaron restos — 51 nodos, 71 relaciones
+
+--- 06-limpieza.cypher ---
+  [ok] línea 8: MATCH (n)  → 51 nodos borrados, 71 relaciones borradas
+  [OK] L1 · base sin datos de ejemplo — 0 nodos, 0 relaciones
+  [OK] L2 · se conservan las 15 restricciones — 15
+  [OK] L3 · se conservan los 9 índices — 9
+
+=== RESUMEN: 76 pruebas, 0 fallos ===

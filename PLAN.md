@@ -88,6 +88,7 @@ Cada ronda se registra en `verificacion/NN-*.md`: versión, ramas ToT y elecció
 | F7 | 7. Conclusiones ✅ | F1–F6 | A6 |
 | F8 | Revisión de coherencia global ✅ | F1–F7 | Todas |
 | F9 | Conversión al formato final (.docx u otro) | F8 + aprobación | — |
+| F10 | Implementación en Neo4j: restricciones, índices, datos de ejemplo por consulta, relaciones, pruebas de humo y limpieza (`neo4j/`) ✅ | F1–F8 | — |
 
 **Ritmo:** una fase a la vez. Al terminar cada fase se presenta un resumen (qué se hizo, qué se cambió en la verificación, qué queda como *propuesta* o pregunta) y **se espera la aprobación del usuario** antes de pasar a la siguiente.
 
