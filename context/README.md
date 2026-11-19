@@ -11,8 +11,9 @@ Esta carpeta reúne lo que el equipo necesita para **trabajar**: la guía del pr
 
 **Todos (unos 30 minutos):**
 1. [`plan-trabajo.md`](plan-trabajo.md): busca tu perfil en la sección 1 y tus tareas en la sección 4.
-2. [`convenciones.md`](convenciones.md): nombres, ids, fechas, valores permitidos, API y git.
-3. [`../docs/modelos/matriz-propiedad.md`](../docs/modelos/matriz-propiedad.md): qué dato vive en qué base. **Es la base de todo.**
+2. [`como-trabajar.md`](como-trabajar.md): **el paso a paso del día a día**: preparar tu máquina, usar el tablero, ramas, commits, PR y revisión.
+3. [`convenciones.md`](convenciones.md): nombres, ids, fechas, valores permitidos, API y git.
+4. [`../docs/modelos/matriz-propiedad.md`](../docs/modelos/matriz-propiedad.md): qué dato vive en qué base. **Es la base de todo.**
 
 **Después, según tu perfil:**
 
@@ -29,6 +30,7 @@ Esta carpeta reúne lo que el equipo necesita para **trabajar**: la guía del pr
 | Archivo | Qué es |
 |---|---|
 | `plan-trabajo.md` | Plan vigente: perfiles, fases, tareas, dependencias |
+| `como-trabajar.md` | Guía práctica: del tablero al merge |
 | `convenciones.md` | Reglas comunes que todos siguen |
 | `github.md` | Configuración de GitHub que hace el admin: rama por defecto y protección de ramas |
 | `guia/` | Guía del proyecto final del profesor |
