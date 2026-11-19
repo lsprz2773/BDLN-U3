@@ -62,7 +62,7 @@ Columnas: **Bases** = PG / Mongo / Neo4j que toca (L = lectura, E = escritura, *
              "grafo":      { "ok": true, "latencia_ms": 5 } } }
 ```
 
-`estado` vale `"DEGRADADO"` si alguna base tiene `ok: false`. Este endpoint es la base de la **prueba de conectividad**.
+`estado` vale `"DEGRADADO"` si alguna base tiene `ok: false`. En ese caso, la base que falla incluye `"error": "SIN_CONEXION" | "TIEMPO_AGOTADO"`; el detalle técnico solo va al log. Este endpoint es la base de la **prueba de conectividad**. Implementado en el paso 0.7: es la plantilla de capas que copian los demás endpoints.
 
 ### F1 Cuenta — dueño B (RF-01, RF-09)
 
