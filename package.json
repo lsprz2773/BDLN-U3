@@ -1,0 +1,45 @@
+{
+  "name": "qatok",
+  "version": "2.0.0-dev",
+  "private": true,
+  "description": "QATO'K: simulaciones de habilidades profesionales sobre PostgreSQL, MongoDB y Neo4j",
+  "workspaces": [
+    "shared",
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write \"{shared,backend,frontend,tests}/**/*.{ts,tsx,js,mjs,json,css}\" \"*.{json,mjs,mts}\"",
+    "format:check": "prettier --check \"{shared,backend,frontend,tests}/**/*.{ts,tsx,js,mjs,json,css}\" \"*.{json,mjs,mts}\"",
+    "typecheck": "npm run typecheck --workspaces --if-present && tsc --noEmit -p tests",
+    "test": "vitest run",
+    "validar:dataset": "python3 database/seed/validar_dataset.py",
+    "verificar:modelo": "python3 scripts/verificar.py",
+    "verificar": "npm run lint && npm run format:check && npm run typecheck && npm run test:unit && npm run validar:dataset && npm run verificar:modelo",
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose down",
+    "db:reset": "docker compose down -v",
+    "db:logs": "docker compose logs -f",
+    "db:ps": "docker compose ps",
+    "dev:api": "npm run dev -w @qatok/backend",
+    "test:unit": "vitest run --project unit",
+    "test:integration": "vitest run --project integration",
+    "setup:env": "node scripts/crear-env.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/supertest": "^7.2.1",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.14.0",
+    "prettier": "^3.10.1",
+    "supertest": "^7.3.2",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.73.0",
+    "vitest": "^5.1.1"
+  }
+}

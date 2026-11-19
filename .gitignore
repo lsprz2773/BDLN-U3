@@ -1,1 +1,22 @@
-neo4j/runner/target/
+# Dependencias y compilados
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Configuración local y credenciales (solo se versiona .env.example)
+.env
+.env.*
+!.env.example
+
+# Pruebas e2e
+playwright-report/
+test-results/
+
+# Runner Java de Neo4j (actividad anterior)
+database/graph/runner/target/
+
+# Sistema y editores
+.DS_Store
+.idea/
+*.log

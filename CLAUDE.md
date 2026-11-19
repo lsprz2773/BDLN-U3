@@ -1,193 +1,85 @@
-# CLAUDE.md — Proyecto QATO'K
+# CLAUDE.md — Proyecto QATO'K (proyecto final de Bases de Datos en la Nube)
 
-Repositorio de entregables de la unidad 3 (BDLN) para el proyecto **QATO'K**. El grafo de conocimiento completo está en `docs/KG.json` (**v1.1**, 2026-11-12; v1.0 conservada en `docs/KG-v1.0.json`). Las decisiones que originaron la v1.1 (DEC-01..DEC-22) y su justificación están en `docs/decisiones-modelado.md`; este archivo resume lo esencial. **Si hay duda o se necesita detalle, consultar `docs/KG.json`, que es la fuente de verdad.**
+QATO'K es una plataforma de simulaciones profesionales: el estudiante toma decisiones en situaciones laborales, ve consecuencias y recibe retroalimentación, y la plataforma sigue el progreso de sus habilidades y genera evidencias compartibles.
 
-## Reglas de trabajo para los entregables
+El repositorio está en la etapa del **proyecto final**: una sola aplicación con **tres bases de datos** (relacional, documental y de grafos) coordinadas por una API, con interfaz. La guía del profesor manda: `context/guia/Guia_Proyecto_Final_Bases_Datos.pdf`.
 
-- El estado de los entregables de la actividad se lleva en `PROGRESS.md` (enunciado en `docs/actividad.jpg`). **Actualizar `PROGRESS.md` (estado, checklist y bitácora) cada vez que se avance o corrija un entregable.**
+## Leer primero
 
-- **Plan y verificación:** seguir `PLAN.md`. Cada creación o corrección de un entregable pasa por el ciclo ToT → CoVe → self-consistency, repitiéndolo hasta una ronda sin cambios (máx. 3 rondas; si no converge, consultar al usuario). Registrar cada ronda en `verificacion/`. Trabajar fase por fase y esperar aprobación del usuario entre fases.
-- **Carpetas:** todos los entregables van en `entregables/`; los registros de verificación en `verificacion/`.
-- Idioma: **español**.
-- Formato de trabajo: **Markdown (.md)** mientras se modela. Al terminar, cada entregable se convertirá al formato final que le corresponda (p. ej. .docx para tablas/documentos; otro formato si el entregable lo requiere, como un diagrama). Escribir el .md pensando en que se convertirá: tablas Markdown estándar, encabezados claros, sin HTML.
-- Distinguir siempre entre decisiones **confirmadas** (ACCEPTED), **preliminares** (PRELIMINARY) y **pendientes** (P-xx). No presentar como decidido lo que está pendiente; si un entregable necesita una propuesta sobre un tema pendiente, marcarla explícitamente como *propuesta*.
-- Arquitectura vigente: **Neo4j principal + PostgreSQL complementaria**. La recomendación antigua (PostgreSQL principal) está **SUPERSEDED**: no usarla.
-- **MongoDB fue evaluado y NO seleccionado**: solo mencionarlo como alternativa descartada.
-- Usar los nombres exactos de etiquetas, relaciones, IDs (RF-xx, C-xx, RI-xx, MD-xx, D-xx, P-xx) y propiedades del modelo para mantener trazabilidad.
+| Para… | Archivo |
+|---|---|
+| Saber qué hace cada integrante y en qué fase vamos | `context/plan-trabajo.md` |
+| Nombres, ids, fechas, catálogos, API, git | `context/convenciones.md` |
+| Qué dato vive en qué base (**la base de todo**) | `docs/modelos/matriz-propiedad.md` (por qué esta y no otra: `analisis-matriz.md`) |
+| Endpoints, entradas, salidas y errores | `docs/api/contrato-v0.md` |
+| Dominio completo (entidades, relaciones, RI, decisiones) | `docs/KG.json` **v1.2** — fuente de verdad del dominio |
+| Historial de decisiones | `docs/decisiones-modelado.md` (DEC-01..DEC-24) |
 
-## Proyecto
+## Arquitectura vigente (DEC-24, KG v1.2)
 
-- **Nombre:** QATO'K — *Sistema de simulación y aprendizaje de habilidades profesionales mediante experiencias interactivas*.
-- **Categoría:** plataforma educativa y de simulación profesional.
-- **Objetivo:** reducir la brecha entre la formación académica y las exigencias laborales mediante simulaciones prácticas.
-- **Concepto central:** aprender mediante simulaciones con decisiones contextualizadas, consecuencias y retroalimentación.
-- **Público objetivo:** estudiantes universitarios próximos a egresar, recién egresados, personas con formación académica y poca experiencia laboral formal.
-- **Propuesta de valor:** practicar situaciones laborales antes de vivirlas; aprender por decisiones y consecuencias; retroalimentación orientada a mejora; identificar fortalezas/áreas de oportunidad; generar evidencias para empleadores.
+```
+Next.js (frontend/) ──HTTP──► API REST Express + TS (backend/) ──► PostgreSQL · MongoDB · Neo4j
+                              controllers → services → repositories/{relational,document,graph}
+```
 
-### Stakeholder principal (STAKEHOLDER_01)
-Estudiante de último semestre, sin experiencia laboral ni prácticas, CV corto, LinkedIn incompleto; solo experiencia académica.
-- **Problemas:** no sabe si su experiencia académica es relevante, le cuesta demostrar y comunicar habilidades, inseguridad en entrevistas, poca experiencia con problemas reales.
-- **Preferencias:** ejercicios prácticos, contextos realistas, decisiones con consecuencias, repetir simulaciones, retroalimentación explicada, sesiones cortas.
-- **Restricciones:** poco tiempo, uso móvil, conectividad limitada, sensibilidad al costo, privacidad y control de lo que comparte.
-
-### Análisis del problema
-- **Problema central:** brecha entre formación académica y capacidad de enfrentar, resolver y demostrar competencias en situaciones profesionales reales.
-- **Causas:** CAUSE_01 formación teórica predominante · CAUSE_02 falta de experiencia formal · CAUSE_03 pocas oportunidades de decidir bajo incertidumbre · CAUSE_04 dificultad para comunicar competencias en entrevistas · CAUSE_05 ausencia de retroalimentación.
-- **Consecuencias:** inseguridad laboral, dificultad ante ambigüedad, poca demostración de habilidades blandas, no identifica áreas de mejora, CV con pocas evidencias.
-- **Solución:** plataforma de simulaciones interactivas con decisiones, consecuencias, retroalimentación y seguimiento de habilidades.
-
-## Requerimientos funcionales
-
-| ID | Nombre | Descripción breve |
+| Base | Responsabilidad | Es dueña de |
 |---|---|---|
-| RF-01 | Gestión de usuarios | Registro, inicio de sesión, administración de cuenta |
-| RF-02 | Gestión de escenarios | Consultar y seleccionar simulaciones |
-| RF-03 | Desarrollo de simulaciones | Presentar situaciones y avanzar con decisiones |
-| RF-04 | Gestión de decisiones | Registrar decisiones y mostrar consecuencias |
-| RF-05 | Retroalimentación personalizada | Explicar aciertos, errores y mejoras |
-| RF-06 | Seguimiento del progreso | Registrar resultados y evolución de habilidades |
-| RF-07 | Fortalezas y áreas de mejora | Identificar habilidades desarrolladas y a reforzar |
-| RF-08 | Generación de evidencias | Evidencias de habilidades demostradas |
-| RF-09 | Control de privacidad | Decidir qué se comparte y con quién |
-| RF-10 | Acceso flexible | Sesiones cortas, uso móvil |
+| **PostgreSQL** | Cuentas, estados y transacciones | usuario (+rol), habilidad, simulacion (metadatos y estado), simulacion_habilidad, intento, respuesta, evidencia (registro), comparticion, evento_sincronizacion |
+| **MongoDB** | Documentos con estructura anidada y variable | contenidos_simulacion (pasos → opciones → consecuencias + retroalimentación; `contexto` distinto por `Paso.tipo`), evidencias (instantánea) |
+| **Neo4j** | Proyección para recorridos (C-01..C-05) | Solo datos derivados: `Progreso` y `DEMUESTRA`. El resto son copias parciales (ids + lo que filtran las consultas) |
 
-## Consultas clave del sistema (justifican el uso de grafos)
+Reglas que no se rompen:
+- **Una entidad existe cuando existe su registro en PostgreSQL.** Un documento de MongoDB sin registro es huérfano.
+- **Todo cambio que deba llegar al grafo nace en PostgreSQL** junto con su evento (outbox `evento_sincronizacion`, misma transacción). Se aplica en Neo4j de inmediato y, si falla, se reintenta; efectos idempotentes con `MERGE`.
+- La API **nunca** dice que el grafo está al día si el evento no se aplicó: responde con `sincronizacion: { grafo: "PENDIENTE" }`.
+- El contenido de una simulación PUBLICADA es inmutable.
+- **La interfaz solo consume la API** (guía §7.6): Next.js no importa drivers de bases (ESLint lo bloquea), no usa Route Handlers ni Server Actions como backend y no tiene credenciales de bases.
+- El SQL, el MQL y el Cypher solo viven en `backend/src/repositories/` y en `database/`, siempre parametrizados.
 
-- **C-01** Simulaciones disponibles para un usuario según su progreso y habilidades a fortalecer (Usuario, Progreso, Habilidad, Simulacion).
-- **C-02** Fortalezas y áreas de mejora según resultados (Usuario, Intento, Respuesta, Retroalimentacion, Progreso, Habilidad, Simulacion). Limitación LIM-01: atribución por simulación, no por decisión.
-- **C-03** Decisiones tomadas en una simulación, consecuencias y retroalimentación (Usuario, Simulacion, Intento, Respuesta, Paso, Opcion, Consecuencia, Retroalimentacion; Simulacion añadida por DEC-23).
-- **C-04** Evidencias compartibles de una habilidad y simulaciones de origen, respetando permisos (Usuario, Evidencia, Habilidad, Intento, Simulacion, Comparticion).
-- **C-05** Evolución de una habilidad en el tiempo y simulaciones que contribuyeron (Usuario, Progreso, Habilidad, Intento, Simulacion). Limitación LIM-02: aproximación por intentos (P-07).
+## Estructura del repositorio
 
-## Modelo de dominio (12 entidades / etiquetas Neo4j)
+| Ruta | Qué hay |
+|---|---|
+| `backend/` | API (Express 5 + TypeScript). `GET /api/health` es la plantilla de capas a copiar |
+| `frontend/` | Interfaz Next.js (la arma el responsable del frontend; ver `frontend/README.md`) |
+| `shared/` | Esquemas zod y catálogos compartidos: **fuente única** de tipos para backend y frontend |
+| `database/` | `relational/`, `document/`, `graph/` (scripts de cada base, con dueño) y `seed/` (datos de prueba comunes) |
+| `tests/` | `unit/` (sin bases, repositorios falsos), `integration/` (contra Docker), `e2e/` |
+| `docs/` | Lo que **evalúa el profesor** (E1–E8): modelos, API, pruebas |
+| `context/` | Lo que ayuda al equipo a **trabajar**: plan, convenciones, guía, antecedentes |
+| `entregables/`, `verificacion/`, `presentacion/`, `PLAN.md`, `PROGRESS.md` | **Actividad anterior** (modelo lógico de grafos, v1.1). Antecedente: no se edita salvo para corregir |
 
-Todas con PK `UUID`.
+## Comandos
 
-| ID | Etiqueta | Propiedades (además del id) |
-|---|---|---|
-| E01 | `Usuario` | nombre VARCHAR(100), correo VARCHAR(150) UNIQUE, contrasena_hash VARCHAR(255), fecha_registro TIMESTAMP, estado VARCHAR(20) |
-| E02 | `Simulacion` | titulo VARCHAR(150), descripcion TEXT, dificultad VARCHAR(30), duracion_estimada INTEGER NULL, estado VARCHAR(20) |
-| E03 | `Habilidad` | nombre VARCHAR(100) UNIQUE, descripcion TEXT, categoria VARCHAR(50), nivel_objetivo INTEGER NULL |
-| E04 | `Paso` | id_simulacion FK, titulo VARCHAR(150), descripcion TEXT, orden INTEGER, tipo VARCHAR(30) |
-| E05 | `Opcion` | id_paso FK, descripcion TEXT, valoracion DECIMAL(5,2) NULL, id_paso_siguiente FK NULL |
-| E06 | `Consecuencia` | id_opcion FK, descripcion TEXT, impacto VARCHAR(30), tipo VARCHAR(30) |
-| E07 | `Intento` | id_usuario FK, id_simulacion FK, fecha_inicio TIMESTAMP, fecha_fin TIMESTAMP NULL, estado VARCHAR(20), puntuacion DECIMAL(5,2) NULL |
-| E08 | `Respuesta` | id_intento FK, id_paso FK, id_opcion FK, fecha_respuesta TIMESTAMP, **secuencia INTEGER** (DEC-01) |
-| E09 | `Retroalimentacion` | id_respuesta FK, comentario TEXT, tipo VARCHAR(30), recomendacion TEXT |
-| E10 | `Progreso` | id_usuario FK, id_habilidad FK, nivel_actual DECIMAL(5,2), fecha_actualizacion TIMESTAMP |
-| E11 | `Evidencia` | id_usuario FK, id_intento FK, titulo VARCHAR(150), descripcion TEXT, fecha_generacion TIMESTAMP, visibilidad VARCHAR(20) |
-| E12 | `Comparticion` | id_evidencia FK, token VARCHAR(255) UNIQUE, fecha_creacion TIMESTAMP, fecha_expiracion TIMESTAMP NULL, estado VARCHAR(20), *destinatario VARCHAR(150) NULL* (propuesta, DEC-13) |
+```bash
+npm run setup:env           # una vez: crea .env con secretos aleatorios
+npm install
+npm run db:up               # PostgreSQL :5433, MongoDB :27018, Neo4j :7475/:7688 (espera a que estén sanas)
+npm run dev:api             # API en http://localhost:4000/api
+npm run verificar           # lint + formato + tipos + unitarias + dataset + modelo (debe quedar en verde)
+npm run test:integration    # contra las 3 bases de Docker
+```
 
-Ids: `id_usuario`, `id_simulacion`, `id_habilidad`, `id_paso`, `id_opcion`, `id_consecuencia`, `id_intento`, `id_respuesta`, `id_retroalimentacion`, `id_progreso`, `id_evidencia`, `id_comparticion`.
+`npm run verificar` y `npm run test:integration` deben pasar antes de cada commit que toque código. `python3 scripts/verificar.py` (incluido en `verificar`) debe seguir en **0 fallos**: valida los entregables de la actividad anterior contra el KG. `python3 database/seed/validar_dataset.py` valida los datos de prueba.
 
-## Relaciones (17)
+## Reglas de trabajo
 
-| ID | Patrón | Card. (origen / destino) |
-|---|---|---|
-| R01 | `(Usuario)-[:REALIZA]->(Intento)` | 0..N / 1..1 |
-| R02 | `(Simulacion)-[:TIENE]->(Intento)` | 0..N / 1..1 |
-| R03 | `(Simulacion)-[:CONTIENE]->(Paso)` | 0..N / 1..1 |
-| R04 | `(Simulacion)-[:DESARROLLA {peso, nivel_esperado}]->(Habilidad)` | 0..N / 0..N (propuesta DEC-08: peso DECIMAL(3,2) en (0,1], nivel_esperado INTEGER 0–100) |
-| R05 | `(Paso)-[:OFRECE]->(Opcion)` | 1..N / 1..1 |
-| R06 | `(Opcion)-[:GENERA]->(Consecuencia)` | **1..N** / 1..1 (v1.1, DEC-02) |
-| R07 | `(Opcion)-[:CONDUCE_A]->(Paso)` | 0..1 / 0..N |
-| R08 | `(Intento)-[:REGISTRA]->(Respuesta)` | 0..N / 1..1 |
-| R09 | `(Respuesta)-[:CORRESPONDE_A]->(Paso)` | 1..1 / 0..N |
-| R10 | `(Respuesta)-[:SELECCIONA]->(Opcion)` | 1..1 / 0..N |
-| R11 | `(Respuesta)-[:GENERA]->(Retroalimentacion)` | 0..N / 1..1 |
-| R12 | `(Usuario)-[:TIENE_PROGRESO]->(Progreso)` | 0..N / 1..1 |
-| R13 | `(Progreso)-[:CORRESPONDE_A]->(Habilidad)` | 1..1 / 0..N |
-| R14 | `(Usuario)-[:GENERA]->(Evidencia)` | 0..N / 1..1 |
-| R15 | `(Intento)-[:PRODUCE]->(Evidencia)` | 0..N / 1..1 |
-| R16 | `(Evidencia)-[:DEMUESTRA]->(Habilidad)` | 1..N / 0..N |
-| R17 | `(Evidencia)-[:TIENE_COMPARTICION]->(Comparticion)` | 0..N / 1..1 |
+- **Idioma:** español. Dominio con los nombres exactos del KG (`Simulacion`, `id_intento`, `CONDUCE_A`, RF-xx, C-xx, RI-xx, P-xx, D-xx, DEC-xx).
+- **Gitflow:** `feature/<perfil>-<tarea>` desde `develop` → PR a `develop`. **Un commit por implementación**, con formato `<ámbito>: <qué cambia>` (convenciones §7). Fusionar con merge commit, no squash.
+- **Avanzar paso a paso:** terminar un paso del plan, hacer su commit, reportar y esperar el visto bueno antes del siguiente.
+- **Decisiones:** distinguir siempre **ACCEPTED/ADOPTADA**, **PRELIMINARY/PRELIMINAR** (pendiente de aprobación del equipo), **PROPOSED/PROPUESTA** (depende de una P-xx) y **pendientes** (P-xx). No presentar como decidido lo que no lo está. Toda decisión nueva se registra como DEC-xx en `docs/decisiones-modelado.md` y, si cambia el dominio o la arquitectura, en el KG con su `changelog`.
+- **Documentos de modelo** (matriz, modelos lógicos, contrato): se verifican con ToT → CoVe → self-consistency antes de darlos por buenos. **El código** se verifica con pruebas y CI, no con rondas de documentos.
+- **Datos de prueba:** nadie inserta datos a mano; todo sale de `database/seed/dataset.json` (ids con el prefijo `e0000000-0000-4000-8000-`).
+- Los documentos y diapositivas **no usan colores azules** (preferencia del usuario).
 
-Tipos de relación (14): REALIZA, TIENE, CONTIENE, DESARROLLA, OFRECE, GENERA, CONDUCE_A, REGISTRA, CORRESPONDE_A, SELECCIONA, TIENE_PROGRESO, PRODUCE, DEMUESTRA, TIENE_COMPARTICION. Nota: `GENERA` y `CORRESPONDE_A` se reutilizan entre distintos pares de etiquetas.
+## Dominio (resumen; el detalle está en el KG)
 
-**Convención de cardinalidad (DEC-07):** `origen / destino` = nº de destinos por cada origen / nº de orígenes por cada destino. **Rutas (DEC-03):** no hay pasos finales; una opción sin `CONDUCE_A` es terminal y completa el intento; el paso inicial es el de `orden = 1`.
+- **Usuarios:** estudiantes de último semestre y recién egresados (STAKEHOLDER_01) y administradores (`rol = ADMIN`).
+- **RF-01..RF-10:** usuarios, escenarios, simulaciones, decisiones, retroalimentación, progreso, fortalezas y áreas de mejora, evidencias, privacidad, acceso flexible.
+- **Consultas C-01..C-05:** recomendaciones, fortalezas y áreas de mejora, recorrido de decisiones, evidencias por habilidad, evolución de una habilidad.
+- **12 entidades** (modelo conceptual común, todas con UUID): Usuario, Simulacion, Habilidad, Paso, Opcion, Consecuencia, Intento, Respuesta, Retroalimentacion, Progreso, Evidencia, Comparticion. **17 relaciones** R01..R17 y **25 restricciones** RI-01..RI-25.
+- **Rutas de una simulación:** el paso inicial es el de `orden = 1`; una opción sin siguiente paso es terminal y completa el intento (RI-23).
 
-## Restricciones de integridad
+## Pendientes abiertos
 
-- **RI-01** UUID único y obligatorio en todas las entidades.
-- **RI-02** Correo único sin distinguir mayúsculas (normalizar).
-- **RI-03** Nombre de habilidad único.
-- **RI-04** Propiedades esenciales NOT NULL.
-- **RI-05** `dificultad` ∈ {BASICA, INTERMEDIA, AVANZADA}; estado de simulación ∈ {BORRADOR, PUBLICADA, INACTIVA}.
-- **RI-06** Estado de intento ∈ {EN_CURSO, COMPLETADO, ABANDONADO}; `puntuacion` entre 0 y 100.
-- **RI-07** `nivel_actual` de progreso entre 0 y 100.
-- **RI-08** Par (simulación, habilidad) único en DESARROLLA.
-- **RI-09** Todo intento pertenece a un usuario y una simulación existentes.
-- **RI-10** La opción respondida pertenece al paso respondido, y el paso a la simulación del intento (validación transaccional/aplicación).
-- **RI-11** El paso siguiente de una opción pertenece a la misma simulación que el paso origen.
-- **RI-12** `fecha_fin` ≥ `fecha_inicio`; intento COMPLETADO requiere `fecha_fin`.
-- **RI-13** Un único Progreso consolidado por (usuario, habilidad).
-- **RI-14** Evidencia e intento de origen pertenecen al mismo usuario.
-- **RI-15** Token de compartición único; evidencia privada no accesible sin autorización vigente (estado y expiración).
-
-Añadidas en v1.1 (DEC-11): **RI-16** `secuencia` ≥1 y única por intento · **RI-17** contenido mínimo de simulación PUBLICADA · **RI-18** `orden` >0, único por simulación, `orden = 1` inicial · **RI-19** intentos solo de simulaciones PUBLICADAS · **RI-20** DEMUESTRA ⊆ DESARROLLA de la simulación del intento · **RI-21** `fecha_expiracion` > `fecha_creacion` · **RI-22** respuestas dentro de las fechas del intento y solo en EN_CURSO · **RI-23** COMPLETADO al elegir opción terminal · *RI-24* catálogos y rangos propuestos (propuesta) · *RI-25* evidencia solo de intento COMPLETADO (propuesta, P-05).
-
-**Catálogos propuestos (DEC-04/09, `value_catalogs` del KG):** `Usuario.estado` {ACTIVO, INACTIVO, SUSPENDIDO} · `Paso.tipo` {CORREO, REUNION, CONVERSACION, TAREA, INCIDENTE} · `Consecuencia.impacto` {POSITIVO, NEUTRO, NEGATIVO} · `Consecuencia.tipo` {RELACIONAL, TIEMPO, CALIDAD, REPUTACION} · `Retroalimentacion.tipo` {ACIERTO, PARCIAL, ERROR} · `Evidencia.visibilidad` {PRIVADA, PUBLICA} (por defecto PRIVADA) · `Comparticion.estado` {ACTIVA, REVOCADA} (vigencia calculada con `fecha_expiracion`) · `Habilidad.categoria` sin catálogo (P-08).
-
-**Neo4j (DEC-12):** uniqueness nativa en cualquier edición; existence/type/key solo Enterprise; reglas entre nodos en lógica de aplicación.
-
-## Arquitectura (DECISION_TAKEN)
-
-Arquitectura híbrida orientada a grafos:
-- **Neo4j — principal (SELECTED).** Dominio fuertemente relacionado, ramificaciones paso→opción→paso, decisiones→consecuencias→retroalimentación, habilidades conectadas con simulaciones/progreso/evidencias, consultas de múltiples saltos y caminos. Consideraciones: constraints de unicidad, índices, evitar nodos/relaciones huérfanas, transacciones multi-entidad, respaldos, autenticación/autorización. Limitaciones: diseño cuidadoso de etiquetas/índices; restricciones complejas requieren validación adicional.
-- **PostgreSQL — complementaria (SELECTED).** Integridad referencial, CHECK/UNIQUE/NOT NULL, transacciones, datos estructurados. Usos *potenciales* (no definitivos): catálogos y datos administrativos, usuarios/autenticación, datos transaccionales. Limitación: recorridos complejos requieren JOIN múltiples o consultas recursivas.
-- **MongoDB — NOT_SELECTED.** Evaluado por flexibilidad de esquema y estructuras anidadas; descartado porque el dominio depende de relaciones, la flexibilidad documental no resuelve recorridos y añadiría complejidad.
-- **Sincronización Neo4j↔PostgreSQL: PENDING_DESIGN.** Riesgos: duplicados desactualizados, referencias inconsistentes, operaciones parciales, pérdida de sincronización, conflictos de actualización.
-
-## Decisiones de modelado lógico (PRELIMINARY_MODEL)
-
-- **MD-01** Simulacion–Habilidad como relación directa `DESARROLLA {peso, nivel_esperado}`.
-- **MD-02** `Progreso` como nodo independiente (habilita historial futuro; hoy solo uno consolidado por usuario-habilidad).
-- **MD-03** Pasos y opciones como nodos conectados (ramificaciones).
-- **MD-04** Decisiones como nodos `Respuesta` ligados a Intento, Paso y Opcion (reconstruir recorridos).
-- **MD-05** `Evidencia` y `Comparticion` como nodos independientes.
-
-## Decisiones registradas
-
-ACCEPTED: D-01 nombre QATO'K · D-02 simulador de habilidades con experiencias interactivas · D-03 público universitario/egresados · D-04 escenarios con decisiones, consecuencias y retroalimentación · D-05 progreso por habilidad · D-06 evidencias · D-07 control de privacidad · D-08 Neo4j principal · D-09 PostgreSQL complementaria · D-11 DESARROLLA con propiedades · D-12 Progreso como nodo.
-NOT_SELECTED: D-10 MongoDB. SUPERSEDED: D-13 PostgreSQL como fuente de verdad. ACCEPTED: D-14 resolución de la auditoría (DEC-01..22, KG v1.1).
-
-## Decisiones pendientes
-
-- **P-01** Distribución de entidades entre Neo4j y PostgreSQL.
-- **P-02** Mecanismo de sincronización.
-- **P-03** Cálculo del nivel de habilidad.
-- **P-04** Modelado formal de ramificaciones, condiciones y consecuencias.
-- **P-05** Autenticidad de evidencias.
-- **P-06** Compartición: destinatarios, permisos, expiración, revocación.
-- **P-07** Historial de progreso (nodo consolidado + mediciones históricas).
-- **P-08** Catálogo de habilidades (categorías, niveles, criterios).
-- **P-09** Formato de autoría/publicación de simulaciones.
-- **P-10** Seguridad (authN/authZ, datos personales).
-- **P-11** Escalabilidad (rendimiento, concurrencia, respaldos).
-
-## Trazabilidad problema → solución
-
-| Problema | Solución | RF | Entidades |
-|---|---|---|---|
-| Falta de experiencia práctica | Simulaciones profesionales | RF-02, RF-03 | Simulacion, Paso, Opcion, Intento |
-| Decisiones en ambigüedad | Decisiones con consecuencias | RF-03, RF-04 | Paso, Opcion, Consecuencia, Respuesta |
-| Sin retroalimentación útil | Retroalimentación personalizada | RF-05 | Respuesta, Retroalimentacion |
-| No identifica fortalezas/debilidades | Seguimiento del progreso | RF-06, RF-07 | Usuario, Habilidad, Progreso, Intento |
-| Difícil demostrar habilidades | Evidencias compartibles | RF-08, RF-09 | Evidencia, Comparticion, Habilidad |
-| Tiempo y conectividad limitados | Acceso flexible, sesiones cortas | RF-10 | Usuario, Intento, Simulacion |
-
-## Observaciones de modelado
-
-OBS-01 simulación con múltiples pasos · OBS-02 paso con múltiples opciones · OBS-03 opción con una o más consecuencias (ahora coherente con R06 1..N) · OBS-04 opción conduce a otro paso o termina la ruta · OBS-05 usuario con múltiples intentos · OBS-06 respuesta ligada a intento, paso y opción · OBS-07 respuesta puede generar retroalimentación · OBS-08 Simulacion–Habilidad N:M · OBS-09 evidencia demuestra una o varias habilidades · OBS-10 usuario nuevo sin intentos/progreso/evidencias · OBS-11 simulación BORRADOR puede no tener pasos; PUBLICADA necesita contenido · OBS-12 progreso actual ≠ historial de evolución.
-
-## Estado de la actividad
-
-Los 7 entregables están terminados y verificados en `entregables/` (ver `PROGRESS.md`). La verificación automática se ejecuta con `python3 scripts/verificar.py` y debe dar 0 fallos después de cualquier cambio. Conversión a .docx hecha (`entregables/docx/`, `node scripts/md2docx.js`). Material de presentación en `presentacion/` (guía de estudio y diapositivas; ver su README). Los documentos y diapositivas no usan colores azules, por petición del usuario.
-
-## Neo4j (F10)
-
-Scripts en `neo4j/` (orden 01→06). Ejecutar todo con `neo4j/ejecutar.sh` (Neo4j 5.26 Community embebido vía Maven; necesita Java 21). Debe terminar con 0 fallos después de cualquier cambio en el modelo o en las consultas del entregable 1. Las consultas de `05-pruebas-humo.cypher` (sección D) son copia literal del entregable 1: si este cambia, actualizar esa sección. Los datos de ejemplo usan ids con el prefijo `e0000000-0000-4000-8000-`.
-
-## Estado general
-
-Definido: proyecto, público, necesidades, consultas del sistema. Preliminar: requerimientos, entidades, relaciones, restricciones, modelo lógico. Seleccionado: Neo4j (principal), PostgreSQL (complementaria). Pendiente: distribución de responsabilidades entre BD y sincronización. Implementación: no definida aún.
+P-03 (cálculo del nivel de habilidad; la puntuación del intento tiene propuesta D-21), P-04 (ciclos entre pasos), P-05 (autenticidad de evidencias), P-06 (uso de `visibilidad = PUBLICA`), P-07 (historial de progreso), P-08 (catálogo de habilidades), P-09 (flujo de autoría), P-10 (seguridad), P-11 (escalabilidad). P-01 y P-02 quedaron resueltos de forma preliminar por DEC-24.

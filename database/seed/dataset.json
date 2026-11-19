@@ -1,0 +1,234 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "descripcion": "Datos de prueba comunes de QATO'K. Una sola fuente para las 3 bases: cada dueño escribe el cargador de su base a partir de este archivo.",
+    "origen": "neo4j/03-nodos-ejemplo.cypher y 04-relaciones-ejemplo.cypher (actividad anterior), adaptados a docs/modelos/matriz-propiedad.md v2",
+    "prefijo_ids": "e0000000-0000-4000-8000-",
+    "contrasena_demo": "Qatok2026!",
+    "nota_contrasena": "Solo para datos de prueba. El cargador relacional la convierte en contrasena_hash con bcrypt (costo 10); nunca se guarda en texto plano.",
+    "secciones": {
+      "relacional": "Una clave por tabla de PostgreSQL. Las filas usan los nombres de columna exactos.",
+      "documental": "Una clave por colección de MongoDB. _id es el UUID de la entidad.",
+      "grafo": "No tiene sección: el grafo se construye proyectando relacional + documental (matriz §3 y §5), igual que lo hacen los eventos."
+    },
+    "derivados_no_incluidos": [
+      "Progreso (Neo4j): lo calcula el cargador del grafo con la misma función que aplica INTENTO_FINALIZADO.",
+      "DEMUESTRA (Neo4j): habilidades DESARROLLA de la simulación del intento que produjo la evidencia (RI-20).",
+      "Respuesta.tipo_retroalimentacion (Neo4j): la retroalimentación de la opción elegida en el contenido.",
+      "evento_sincronizacion (PostgreSQL): vacía después de la carga."
+    ],
+    "cambios_respecto_a_neo4j": [
+      "Puntuaciones recalculadas con la regla del contrato (promedio de valoraciones elegidas): 0701 92 → 92.5, 0703 45 → 37.5, 0702 65 → 40.",
+      "Se agrega Carla Ruiz (ADMIN) para el flujo de administración.",
+      "La retroalimentación pasa de una por respuesta a una por opción (dentro del contenido); se escribieron las 4 que faltaban (0503, 0505, 0506, 0508).",
+      "Cada paso tiene un contexto según su tipo.",
+      "Progreso y DEMUESTRA ya no se escriben a mano: son derivados."
+    ],
+    "escenarios": {
+      "Ana López (0101)": "Usuaria con historial: 3 intentos COMPLETADO en 2 simulaciones, 1 EN_CURSO (para retomar), 1 evidencia con 3 enlaces (vigente, revocado y vencido).",
+      "Bruno Díaz (0102)": "Usuario nuevo sin intentos, progreso ni evidencias (OBS-10).",
+      "Carla Ruiz (0103)": "Administradora.",
+      "Presentación ante dirección (0303)": "Simulación en BORRADOR sin contenido: no aparece en el catálogo, no se proyecta al grafo y publicarla debe dar 409 SIN_CONTENIDO."
+    }
+  },
+
+  "relacional": {
+    "usuario": [
+      { "id_usuario": "e0000000-0000-4000-8000-000000000101", "nombre": "Ana López", "correo": "ana.lopez@ejemplo.com", "rol": "ESTUDIANTE", "estado": "ACTIVO", "fecha_registro": "2026-09-01T09:00:00.000Z" },
+      { "id_usuario": "e0000000-0000-4000-8000-000000000102", "nombre": "Bruno Díaz", "correo": "bruno.diaz@ejemplo.com", "rol": "ESTUDIANTE", "estado": "ACTIVO", "fecha_registro": "2026-11-10T12:00:00.000Z" },
+      { "id_usuario": "e0000000-0000-4000-8000-000000000103", "nombre": "Carla Ruiz", "correo": "carla.ruiz@ejemplo.com", "rol": "ADMIN", "estado": "ACTIVO", "fecha_registro": "2026-08-15T08:00:00.000Z" }
+    ],
+
+    "habilidad": [
+      { "id_habilidad": "e0000000-0000-4000-8000-000000000201", "nombre": "Comunicación efectiva", "descripcion": "Expresar ideas con claridad y escuchar al otro.", "categoria": "Interpersonal", "nivel_objetivo": 75 },
+      { "id_habilidad": "e0000000-0000-4000-8000-000000000202", "nombre": "Resolución de conflictos", "descripcion": "Llegar a acuerdos cuando hay intereses en tensión.", "categoria": "Interpersonal", "nivel_objetivo": 70 },
+      { "id_habilidad": "e0000000-0000-4000-8000-000000000203", "nombre": "Gestión del tiempo", "descripcion": "Priorizar tareas y comunicar riesgos de plazo a tiempo.", "categoria": "Organizacional", "nivel_objetivo": null }
+    ],
+
+    "simulacion": [
+      { "id_simulacion": "e0000000-0000-4000-8000-000000000301", "titulo": "Cliente molesto por un retraso", "descripcion": "Un cliente reclama por un pedido que lleva una semana de retraso.", "dificultad": "INTERMEDIA", "duracion_estimada": 15, "estado": "PUBLICADA" },
+      { "id_simulacion": "e0000000-0000-4000-8000-000000000302", "titulo": "Tres entregas para mañana", "descripcion": "Tienes tres tareas con la misma fecha límite y no llegas a todas.", "dificultad": "BASICA", "duracion_estimada": 10, "estado": "PUBLICADA" },
+      { "id_simulacion": "e0000000-0000-4000-8000-000000000303", "titulo": "Presentación ante dirección", "descripcion": "Debes presentar resultados negativos a la dirección.", "dificultad": "AVANZADA", "duracion_estimada": null, "estado": "BORRADOR" }
+    ],
+
+    "simulacion_habilidad": [
+      { "id_simulacion": "e0000000-0000-4000-8000-000000000301", "id_habilidad": "e0000000-0000-4000-8000-000000000201", "peso": 0.6, "nivel_esperado": 70 },
+      { "id_simulacion": "e0000000-0000-4000-8000-000000000301", "id_habilidad": "e0000000-0000-4000-8000-000000000202", "peso": 0.4, "nivel_esperado": 60 },
+      { "id_simulacion": "e0000000-0000-4000-8000-000000000302", "id_habilidad": "e0000000-0000-4000-8000-000000000203", "peso": 0.7, "nivel_esperado": 60 },
+      { "id_simulacion": "e0000000-0000-4000-8000-000000000302", "id_habilidad": "e0000000-0000-4000-8000-000000000201", "peso": 0.3, "nivel_esperado": 50 },
+      { "id_simulacion": "e0000000-0000-4000-8000-000000000303", "id_habilidad": "e0000000-0000-4000-8000-000000000203", "peso": 0.5, "nivel_esperado": 70 }
+    ],
+
+    "intento": [
+      { "id_intento": "e0000000-0000-4000-8000-000000000703", "id_usuario": "e0000000-0000-4000-8000-000000000101", "id_simulacion": "e0000000-0000-4000-8000-000000000301", "fecha_inicio": "2026-09-20T16:00:00.000Z", "fecha_fin": "2026-09-20T16:12:00.000Z", "estado": "COMPLETADO", "puntuacion": 37.5 },
+      { "id_intento": "e0000000-0000-4000-8000-000000000701", "id_usuario": "e0000000-0000-4000-8000-000000000101", "id_simulacion": "e0000000-0000-4000-8000-000000000301", "fecha_inicio": "2026-10-01T10:00:00.000Z", "fecha_fin": "2026-10-01T10:14:00.000Z", "estado": "COMPLETADO", "puntuacion": 92.5 },
+      { "id_intento": "e0000000-0000-4000-8000-000000000702", "id_usuario": "e0000000-0000-4000-8000-000000000101", "id_simulacion": "e0000000-0000-4000-8000-000000000302", "fecha_inicio": "2026-10-10T18:00:00.000Z", "fecha_fin": "2026-10-10T18:08:00.000Z", "estado": "COMPLETADO", "puntuacion": 40.0 },
+      { "id_intento": "e0000000-0000-4000-8000-000000000704", "id_usuario": "e0000000-0000-4000-8000-000000000101", "id_simulacion": "e0000000-0000-4000-8000-000000000302", "fecha_inicio": "2026-11-11T09:00:00.000Z", "fecha_fin": null, "estado": "EN_CURSO", "puntuacion": null }
+    ],
+
+    "respuesta": [
+      { "id_respuesta": "e0000000-0000-4000-8000-000000000804", "id_intento": "e0000000-0000-4000-8000-000000000703", "id_paso": "e0000000-0000-4000-8000-000000000401", "id_opcion": "e0000000-0000-4000-8000-000000000502", "fecha_respuesta": "2026-09-20T16:04:00.000Z", "secuencia": 1 },
+      { "id_respuesta": "e0000000-0000-4000-8000-000000000805", "id_intento": "e0000000-0000-4000-8000-000000000703", "id_paso": "e0000000-0000-4000-8000-000000000403", "id_opcion": "e0000000-0000-4000-8000-000000000507", "fecha_respuesta": "2026-09-20T16:10:00.000Z", "secuencia": 2 },
+      { "id_respuesta": "e0000000-0000-4000-8000-000000000801", "id_intento": "e0000000-0000-4000-8000-000000000701", "id_paso": "e0000000-0000-4000-8000-000000000401", "id_opcion": "e0000000-0000-4000-8000-000000000501", "fecha_respuesta": "2026-10-01T10:03:00.000Z", "secuencia": 1 },
+      { "id_respuesta": "e0000000-0000-4000-8000-000000000802", "id_intento": "e0000000-0000-4000-8000-000000000701", "id_paso": "e0000000-0000-4000-8000-000000000402", "id_opcion": "e0000000-0000-4000-8000-000000000504", "fecha_respuesta": "2026-10-01T10:10:00.000Z", "secuencia": 2 },
+      { "id_respuesta": "e0000000-0000-4000-8000-000000000803", "id_intento": "e0000000-0000-4000-8000-000000000702", "id_paso": "e0000000-0000-4000-8000-000000000404", "id_opcion": "e0000000-0000-4000-8000-000000000509", "fecha_respuesta": "2026-10-10T18:05:00.000Z", "secuencia": 1 }
+    ],
+
+    "evidencia": [
+      { "id_evidencia": "e0000000-0000-4000-8000-000000001101", "id_usuario": "e0000000-0000-4000-8000-000000000101", "id_intento": "e0000000-0000-4000-8000-000000000701", "titulo": "Manejo de un cliente molesto", "fecha_generacion": "2026-10-01T10:20:00.000Z", "visibilidad": "PRIVADA" }
+    ],
+
+    "comparticion": [
+      { "id_comparticion": "e0000000-0000-4000-8000-000000001201", "id_evidencia": "e0000000-0000-4000-8000-000000001101", "token": "tok-ejemplo-vigente", "fecha_creacion": "2026-10-02T09:00:00.000Z", "fecha_expiracion": null, "estado": "ACTIVA", "destinatario": "reclutamiento@empresa-ejemplo.com" },
+      { "id_comparticion": "e0000000-0000-4000-8000-000000001202", "id_evidencia": "e0000000-0000-4000-8000-000000001101", "token": "tok-ejemplo-revocado", "fecha_creacion": "2026-10-03T09:00:00.000Z", "fecha_expiracion": null, "estado": "REVOCADA", "destinatario": null },
+      { "id_comparticion": "e0000000-0000-4000-8000-000000001203", "id_evidencia": "e0000000-0000-4000-8000-000000001101", "token": "tok-ejemplo-expirado", "fecha_creacion": "2026-10-05T09:00:00.000Z", "fecha_expiracion": "2026-10-15T09:00:00.000Z", "estado": "ACTIVA", "destinatario": null }
+    ]
+  },
+
+  "documental": {
+    "contenidos_simulacion": [
+      {
+        "_id": "e0000000-0000-4000-8000-000000000301",
+        "pasos": [
+          {
+            "id_paso": "e0000000-0000-4000-8000-000000000401", "orden": 1, "tipo": "CORREO",
+            "titulo": "Correo del cliente",
+            "descripcion": "El cliente escribe molesto: su pedido lleva una semana de retraso.",
+            "contexto": {
+              "remitente": "Mariana Torres <compras@distribuidora-ejemplo.com>",
+              "asunto": "Pedido 4581: una semana de retraso",
+              "cuerpo": "Buenos días. Nuestro pedido debía llegar hace una semana y nadie nos ha dado una explicación. Necesito una respuesta hoy."
+            },
+            "opciones": [
+              {
+                "id_opcion": "e0000000-0000-4000-8000-000000000501",
+                "descripcion": "Responder de inmediato: disculparte y proponer una llamada",
+                "valoracion": 90.0, "id_paso_siguiente": "e0000000-0000-4000-8000-000000000402",
+                "consecuencias": [ { "id_consecuencia": "e0000000-0000-4000-8000-000000000601", "descripcion": "El cliente agradece la rapidez y acepta la llamada", "impacto": "POSITIVO", "tipo": "RELACIONAL" } ],
+                "retroalimentacion": { "tipo": "ACIERTO", "comentario": "Responder rápido baja la tensión del cliente.", "recomendacion": "Mantén el tono empático durante la llamada." }
+              },
+              {
+                "id_opcion": "e0000000-0000-4000-8000-000000000502",
+                "descripcion": "Esperar a tener toda la información antes de responder",
+                "valoracion": 50.0, "id_paso_siguiente": "e0000000-0000-4000-8000-000000000403",
+                "consecuencias": [ { "id_consecuencia": "e0000000-0000-4000-8000-000000000602", "descripcion": "El cliente insiste y escala la queja", "impacto": "NEGATIVO", "tipo": "REPUTACION" } ],
+                "retroalimentacion": { "tipo": "PARCIAL", "comentario": "Buscar información es bueno, pero el cliente necesitaba una respuesta.", "recomendacion": "Acusa recibo aunque aún no tengas la solución." }
+              },
+              {
+                "id_opcion": "e0000000-0000-4000-8000-000000000503",
+                "descripcion": "Reenviar el correo a tu jefa sin responder",
+                "valoracion": 20.0, "id_paso_siguiente": "e0000000-0000-4000-8000-000000000403",
+                "consecuencias": [ { "id_consecuencia": "e0000000-0000-4000-8000-000000000603", "descripcion": "Tu jefa te pide que lo atiendas tú", "impacto": "NEUTRO", "tipo": "TIEMPO" } ],
+                "retroalimentacion": { "tipo": "ERROR", "comentario": "Reenviar sin responder deja al cliente sin atención y traslada el problema.", "recomendacion": "Responde tú primero y después informa a tu jefa." }
+              }
+            ]
+          },
+          {
+            "id_paso": "e0000000-0000-4000-8000-000000000402", "orden": 2, "tipo": "CONVERSACION",
+            "titulo": "Llamada con el cliente",
+            "descripcion": "El cliente acepta hablar por teléfono y pide una solución.",
+            "contexto": {
+              "interlocutor": "Mariana Torres (cliente)",
+              "lineas": [
+                { "quien": "Cliente", "texto": "Gracias por llamar. ¿Qué van a hacer con mi pedido?" },
+                { "quien": "Cliente", "texto": "Tengo a mi propio cliente esperando esa mercancía." }
+              ]
+            },
+            "opciones": [
+              {
+                "id_opcion": "e0000000-0000-4000-8000-000000000504",
+                "descripcion": "Proponer una nueva fecha y comprometerte a avisar",
+                "valoracion": 95.0, "id_paso_siguiente": null,
+                "consecuencias": [ { "id_consecuencia": "e0000000-0000-4000-8000-000000000604", "descripcion": "El cliente acepta la nueva fecha", "impacto": "POSITIVO", "tipo": "RELACIONAL" } ],
+                "retroalimentacion": { "tipo": "ACIERTO", "comentario": "Una fecha concreta con compromiso de aviso recupera la confianza.", "recomendacion": "Confirma el acuerdo por escrito." }
+              },
+              {
+                "id_opcion": "e0000000-0000-4000-8000-000000000505",
+                "descripcion": "Culpar al proveedor del retraso",
+                "valoracion": 30.0, "id_paso_siguiente": null,
+                "consecuencias": [ { "id_consecuencia": "e0000000-0000-4000-8000-000000000605", "descripcion": "El cliente pierde confianza en la empresa", "impacto": "NEGATIVO", "tipo": "REPUTACION" } ],
+                "retroalimentacion": { "tipo": "ERROR", "comentario": "Culpar a un tercero no resuelve nada y daña la imagen de la empresa.", "recomendacion": "Asume la responsabilidad y ofrece una solución concreta." }
+              }
+            ]
+          },
+          {
+            "id_paso": "e0000000-0000-4000-8000-000000000403", "orden": 3, "tipo": "REUNION",
+            "titulo": "Reunión con tu jefa",
+            "descripcion": "Tu jefa quiere saber qué pasó y qué propones.",
+            "contexto": {
+              "participantes": ["Tú", "Laura Méndez (jefa de área)"],
+              "agenda": ["Qué pasó con el pedido 4581", "Qué propones para resolverlo"]
+            },
+            "opciones": [
+              {
+                "id_opcion": "e0000000-0000-4000-8000-000000000506",
+                "descripcion": "Explicar el problema con dos alternativas",
+                "valoracion": 80.0, "id_paso_siguiente": null,
+                "consecuencias": [ { "id_consecuencia": "e0000000-0000-4000-8000-000000000606", "descripcion": "Tu jefa aprueba una de las alternativas", "impacto": "POSITIVO", "tipo": "CALIDAD" } ],
+                "retroalimentacion": { "tipo": "ACIERTO", "comentario": "Presentar el problema con alternativas facilita que tu jefa decida.", "recomendacion": "Acompaña cada alternativa con su costo y su plazo." }
+              },
+              {
+                "id_opcion": "e0000000-0000-4000-8000-000000000507",
+                "descripcion": "Minimizar el problema",
+                "valoracion": 25.0, "id_paso_siguiente": null,
+                "consecuencias": [ { "id_consecuencia": "e0000000-0000-4000-8000-000000000607", "descripcion": "El problema crece y se pierde un día", "impacto": "NEGATIVO", "tipo": "TIEMPO" } ],
+                "retroalimentacion": { "tipo": "ERROR", "comentario": "Minimizar el problema impide decidir a tiempo.", "recomendacion": "Presenta el problema con su impacto y alternativas." }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "_id": "e0000000-0000-4000-8000-000000000302",
+        "pasos": [
+          {
+            "id_paso": "e0000000-0000-4000-8000-000000000404", "orden": 1, "tipo": "TAREA",
+            "titulo": "Tres tareas, un día",
+            "descripcion": "Son las 9:00 y tienes tres entregas para las 18:00.",
+            "contexto": {
+              "entregables": ["Informe semanal de ventas", "Presentación para el cliente", "Revisión del contrato"],
+              "plazo_horas": 9
+            },
+            "opciones": [
+              {
+                "id_opcion": "e0000000-0000-4000-8000-000000000508",
+                "descripcion": "Priorizar y avisar del riesgo a tiempo",
+                "valoracion": 90.0, "id_paso_siguiente": null,
+                "consecuencias": [ { "id_consecuencia": "e0000000-0000-4000-8000-000000000608", "descripcion": "Dos entregas llegan y la tercera se reprograma a tiempo", "impacto": "POSITIVO", "tipo": "TIEMPO" } ],
+                "retroalimentacion": { "tipo": "ACIERTO", "comentario": "Priorizar y avisar a tiempo permite reorganizar sin sorpresas.", "recomendacion": "Deja por escrito la nueva fecha de la entrega reprogramada." }
+              },
+              {
+                "id_opcion": "e0000000-0000-4000-8000-000000000509",
+                "descripcion": "Intentar terminar todo sin avisar",
+                "valoracion": 40.0, "id_paso_siguiente": null,
+                "consecuencias": [ { "id_consecuencia": "e0000000-0000-4000-8000-000000000609", "descripcion": "Las tres entregas llegan incompletas", "impacto": "NEGATIVO", "tipo": "CALIDAD" } ],
+                "retroalimentacion": { "tipo": "ERROR", "comentario": "Callar el riesgo deja sin margen a tu equipo.", "recomendacion": "Avisa en cuanto detectes que no llegas." }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+
+    "evidencias": [
+      {
+        "_id": "e0000000-0000-4000-8000-000000001101",
+        "descripcion": "Atendió una queja por retraso: respondió rápido, propuso una nueva fecha y recuperó la confianza del cliente.",
+        "simulacion": { "id_simulacion": "e0000000-0000-4000-8000-000000000301", "titulo": "Cliente molesto por un retraso" },
+        "puntuacion": 92.5,
+        "habilidades": [
+          { "id_habilidad": "e0000000-0000-4000-8000-000000000201", "nombre": "Comunicación efectiva" },
+          { "id_habilidad": "e0000000-0000-4000-8000-000000000202", "nombre": "Resolución de conflictos" }
+        ],
+        "decisiones": [
+          { "secuencia": 1, "paso": { "titulo": "Correo del cliente", "tipo": "CORREO" },
+            "opcion": "Responder de inmediato: disculparte y proponer una llamada",
+            "consecuencias": ["El cliente agradece la rapidez y acepta la llamada"], "retroalimentacion_tipo": "ACIERTO" },
+          { "secuencia": 2, "paso": { "titulo": "Llamada con el cliente", "tipo": "CONVERSACION" },
+            "opcion": "Proponer una nueva fecha y comprometerte a avisar",
+            "consecuencias": ["El cliente acepta la nueva fecha"], "retroalimentacion_tipo": "ACIERTO" }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "@qatok/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Esquemas zod, catálogos y tipos compartidos por backend y frontend (fuente única del contrato)",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  }
+}

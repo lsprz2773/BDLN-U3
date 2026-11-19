@@ -1,0 +1,73 @@
+# Las 3 bases de QATO'K para desarrollo y pruebas (paso 0.6).
+# Uso:  npm run setup:env  →  npm run db:up  (espera a que las 3 estén sanas)
+# Los datos persisten en volúmenes con nombre; `npm run db:reset` los borra.
+name: qatok
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: qatok-postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Falta .env, ejecuta npm run setup:env}
+      POSTGRES_USER: ${POSTGRES_USER:?Falta .env, ejecuta npm run setup:env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Falta .env, ejecuta npm run setup:env}
+      TZ: UTC
+    ports:
+      - '${POSTGRES_PORT:-5433}:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:7
+    container_name: qatok-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:?Falta .env, ejecuta npm run setup:env}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?Falta .env, ejecuta npm run setup:env}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:?Falta .env, ejecuta npm run setup:env}
+    ports:
+      - '${MONGO_PORT:-27018}:27017'
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  neo4j:
+    image: neo4j:5-community
+    container_name: qatok-neo4j
+    environment:
+      NEO4J_AUTH: ${NEO4J_USER:?Falta .env, ejecuta npm run setup:env}/${NEO4J_PASSWORD:?Falta .env, ejecuta npm run setup:env}
+      # Memoria acotada para que las 3 bases quepan en una laptop.
+      NEO4J_server_memory_heap_initial__size: 256m
+      NEO4J_server_memory_heap_max__size: 512m
+      NEO4J_server_memory_pagecache_size: 256m
+    ports:
+      - '${NEO4J_HTTP_PORT:-7475}:7474'
+      - '${NEO4J_BOLT_PORT:-7688}:7687'
+    volumes:
+      - neo4j_data:/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'cypher-shell -u "$${NEO4J_AUTH%%/*}" -p "$${NEO4J_AUTH#*/}" "RETURN 1" > /dev/null',
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 20s
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  mongo_data:
+  neo4j_data:

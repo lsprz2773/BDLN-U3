@@ -1,0 +1,52 @@
+# CI de QATO'K (paso 0.9): en cada push y PR levanta las 3 bases con el mismo
+# docker-compose.yml que se usa en local y corre lint, formato, tipos, pruebas unitarias,
+# validación del dataset, verificación del modelo y pruebas de integración.
+# No hay credenciales escritas: el .env se genera con secretos aleatorios en cada ejecución.
+name: CI
+
+on:
+  push:
+    branches: [develop, main, 'feature/**', 'release/**', 'hotfix/**']
+  pull_request:
+    branches: [develop, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: Verificar (lint, tipos, pruebas y 3 bases)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Generar .env con secretos aleatorios
+        run: npm run setup:env
+
+      - name: Levantar PostgreSQL, MongoDB y Neo4j
+        run: npm run db:up
+
+      - name: Lint, formato, tipos, unitarias, dataset y modelo
+        run: npm run verificar
+
+      - name: Pruebas de integración (3 bases)
+        run: npm run test:integration
+
+      - name: Registros de las bases (si algo falló)
+        if: failure()
+        run: docker compose logs --no-color --tail 200
+
+      - name: Detener las bases
+        if: always()
+        run: docker compose down -v

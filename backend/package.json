@@ -1,0 +1,31 @@
+{
+  "name": "@qatok/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "API de QATO'K: controladores, servicios y un repositorio por base (paso 0.7)",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.3.0",
+    "mongodb": "^7.9.0",
+    "neo4j-driver": "^6.3.2",
+    "pg": "^8.23.1",
+    "pino": "^10.4.0",
+    "pino-http": "^11.0.0",
+    "zod": "^4.6.7",
+    "@qatok/shared": "*"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "@types/pg": "^8.23.1",
+    "pino-pretty": "^13.2.0",
+    "tsx": "^4.23.15"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "typecheck": "tsc --noEmit -p ."
+  }
+}

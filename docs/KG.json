@@ -2,18 +2,20 @@
   "knowledge_graph": {
     "metadata": {
       "project": "QATO'K",
-      "version": "1.1",
+      "version": "1.2",
       "language": "es",
       "type": "Knowledge Graph",
       "description": "Grafo de conocimiento integral del proyecto QATO'K, que representa su dominio, objetivos, stakeholders, necesidades, requerimientos, modelo de datos, relaciones, restricciones, decisiones arquitectónicas y tecnologías evaluadas.",
-      "last_updated": "2026-11-12",
-      "architecture_status": "Neo4j como base de datos principal y PostgreSQL como base de datos complementaria.",
+      "last_updated": "2026-11-18",
+      "architecture_status": "Tres bases con responsabilidades distintas, coordinadas por una API: PostgreSQL (cuentas, estados y transacciones), MongoDB (contenido documental) y Neo4j (proyección de conexiones y recorridos).",
       "information_policy": "Se distinguen las decisiones confirmadas, las propuestas preliminares y los aspectos pendientes. No se consideran confirmadas las decisiones que todavía no han sido definidas.",
       "decisions_document": "docs/decisiones-modelado.md",
       "status_legend": {
         "ADOPTED": "Incorporado al modelo preliminar (DEC-xx ADOPTADA).",
         "PROPOSED": "Incorporado como propuesta; depende de una decisión pendiente P-xx y puede cambiar."
-      }
+      },
+      "property_matrix": "docs/modelos/matriz-propiedad.md",
+      "project_phase": "Proyecto final (guía de tres modelos de bases de datos). El modelo de dominio y el modelo lógico de grafos de la v1.1 se conservan como modelo conceptual común; la v1.2 cambia la arquitectura y el reparto de datos."
     },
     "project": {
       "id": "PROJECT_QATOK",
@@ -1111,20 +1113,28 @@
     "architecture": {
       "id": "ARCH_01",
       "status": "DECISION_TAKEN",
-      "type": "Arquitectura híbrida orientada a grafos",
+      "type": "Arquitectura modular con tres bases especializadas coordinadas por una API",
       "current_decision": {
-        "primary_database": "Neo4j",
-        "secondary_database": "PostgreSQL",
-        "evaluated_but_not_selected": [
-          "MongoDB"
-        ],
-        "architecture_description": "La arquitectura utilizará Neo4j como base de datos principal para representar el dominio y explotar las relaciones entre usuarios, simulaciones, decisiones, habilidades, progreso y evidencias. PostgreSQL será una base de datos complementaria. La distribución exacta de responsabilidades y la sincronización entre ambas deben definirse."
+        "relational_database": "PostgreSQL",
+        "document_database": "MongoDB",
+        "graph_database": "Neo4j",
+        "architecture_description": "Una API REST (Node.js + TypeScript) coordina las tres bases mediante un repositorio por base. Cada dato tiene una sola base dueña; Neo4j guarda una proyección para recorridos y es dueño solo de datos derivados (Progreso y DEMUESTRA). La interfaz (Next.js) solo consume la API.",
+        "property_matrix": "docs/modelos/matriz-propiedad.md",
+        "alternatives_analysis": "docs/modelos/analisis-matriz.md",
+        "decided_by": [
+          "D-15",
+          "D-16",
+          "D-17",
+          "D-18",
+          "D-19",
+          "D-20"
+        ]
       },
       "databases": [
         {
           "name": "Neo4j",
           "type": "Base de datos orientada a grafos",
-          "role": "Principal",
+          "role": "Grafo: proyección para recorridos de conexiones; dueño de Progreso y DEMUESTRA",
           "status": "SELECTED",
           "reason": [
             "El dominio de QATO'K está compuesto por entidades fuertemente relacionadas.",
@@ -1185,12 +1195,61 @@
             "Definir transacciones para operaciones que afecten múltiples entidades.",
             "Establecer políticas de respaldo y recuperación.",
             "Definir mecanismos de autenticación y autorización."
-          ]
+          ],
+          "model_note": "model.node_labels y model.relationship_types describen el modelo lógico de la v1.1 (modelo conceptual común). La proyección física vigente está en physical_projection.",
+          "physical_projection": {
+            "source": "docs/modelos/matriz-propiedad.md",
+            "node_labels": [
+              "Usuario",
+              "Simulacion",
+              "Habilidad",
+              "Paso",
+              "Opcion",
+              "Intento",
+              "Respuesta",
+              "Progreso",
+              "Evidencia"
+            ],
+            "relationship_types": [
+              "REALIZA",
+              "TIENE",
+              "CONTIENE",
+              "DESARROLLA",
+              "OFRECE",
+              "GENERA",
+              "CONDUCE_A",
+              "REGISTRA",
+              "CORRESPONDE_A",
+              "SELECCIONA",
+              "TIENE_PROGRESO",
+              "PRODUCE",
+              "DEMUESTRA"
+            ],
+            "removed_from_graph": {
+              "labels": [
+                "Consecuencia",
+                "Retroalimentacion",
+                "Comparticion"
+              ],
+              "relationships": [
+                "R06",
+                "R11",
+                "R17"
+              ],
+              "reason": "No se recorren: Consecuencia y Retroalimentacion viven anidadas en el contenido (MongoDB) y Comparticion es transaccional (PostgreSQL). La retroalimentación se proyecta como Respuesta.tipo_retroalimentacion."
+            },
+            "owned_data": [
+              "Progreso (derivado, recalculable)",
+              "DEMUESTRA (derivada, RI-20)"
+            ],
+            "status": "PRELIMINARY",
+            "implementation": "Fase 1, perfil A"
+          }
         },
         {
           "name": "PostgreSQL",
           "type": "Base de datos relacional",
-          "role": "Complementaria",
+          "role": "Relacional: fuente de verdad de cuentas, estados y transacciones",
           "status": "SELECTED",
           "reason": [
             "Permite representar información estructurada mediante tablas y restricciones.",
@@ -1205,13 +1264,22 @@
             "Operaciones que requieran restricciones relacionales.",
             "Almacenamiento complementario de información transaccional."
           ],
-          "important_note": "Estas responsabilidades son posibilidades de distribución, no una asignación definitiva. Neo4j es la base de datos principal. Falta definir qué entidades y operaciones se almacenarán exclusivamente en PostgreSQL y cuáles tendrán representación en ambas bases."
+          "important_note": "Estas responsabilidades son posibilidades de distribución, no una asignación definitiva. Neo4j es la base de datos principal. Falta definir qué entidades y operaciones se almacenarán exclusivamente en PostgreSQL y cuáles tendrán representación en ambas bases.",
+          "previous_role": "Complementaria (v1.1)",
+          "assigned_uses": [
+            "Usuarios, roles y autenticación (RI-02).",
+            "Catálogo de habilidades y relación simulación–habilidad (RI-03, RI-08).",
+            "Metadatos y estado de las simulaciones (RI-05, RI-19).",
+            "Intentos y respuestas en una sola transacción (RI-10, RI-12, RI-16, RI-22, RI-23).",
+            "Registro de evidencias y enlaces compartidos (RI-14, RI-15, RI-21).",
+            "Outbox evento_sincronizacion hacia Neo4j."
+          ]
         },
         {
           "name": "MongoDB",
           "type": "Base de datos documental NoSQL",
-          "role": "Tecnología evaluada y no seleccionada",
-          "status": "NOT_SELECTED",
+          "role": "Documental: contenido de simulaciones y evidencias",
+          "status": "SELECTED",
           "reason_for_evaluation": [
             "Los escenarios profesionales pueden contener estructuras variables.",
             "Las simulaciones pueden tener diferentes cantidades de pasos y opciones.",
@@ -1224,13 +1292,28 @@
             "Representación de estructuras anidadas.",
             "Facilidad para manejar documentos con estructuras variables."
           ],
-          "reasons_for_not_selecting": [
+          "decision": "No incorporar MongoDB en la arquitectura actual. Se mantiene como tecnología evaluada, sin implementación prevista en el alcance definido.",
+          "previous_status": "NOT_SELECTED",
+          "previous_reasons_for_not_selecting": [
             "El dominio necesita consultar numerosas relaciones entre entidades.",
             "Las relaciones entre decisiones, consecuencias, habilidades y evidencias son centrales.",
             "La flexibilidad documental no resuelve por sí sola las necesidades de recorridos y análisis de relaciones.",
             "Incorporar otra base de datos aumentaría la complejidad de la arquitectura."
           ],
-          "decision": "No incorporar MongoDB en la arquitectura actual. Se mantiene como tecnología evaluada, sin implementación prevista en el alcance definido."
+          "reconsideration": {
+            "decision": "D-15 (DEC-24)",
+            "reasons": [
+              "La guía del proyecto final exige una base documental con responsabilidad propia.",
+              "El contenido de una simulación es un árbol anidado (pasos → opciones → consecuencias y retroalimentación) que se lee y se escribe como unidad.",
+              "Cada tipo de paso (CORREO, REUNION, CONVERSACION, TAREA, INCIDENTE) tiene un contexto con forma distinta: estructura polimórfica validada con $jsonSchema.",
+              "La evidencia es una instantánea autocontenida que se muestra en una sola lectura por enlace compartido."
+            ],
+            "answer_to_previous_reasons": "Las razones de la v1.1 siguen siendo ciertas para los recorridos, que por eso se quedan en Neo4j; MongoDB no reemplaza al grafo, guarda lo que es documento."
+          },
+          "assigned_uses": [
+            "contenidos_simulacion: un documento por simulación con contexto polimórfico por tipo de paso.",
+            "evidencias: instantánea del recorrido que se comparte."
+          ]
         }
       ],
       "previous_architecture_analysis": {
@@ -1247,8 +1330,8 @@
         "note": "La recomendación anterior no representa la decisión arquitectónica vigente. La decisión actual prioriza Neo4j como base de datos principal."
       },
       "synchronization": {
-        "status": "PENDING_DESIGN",
-        "description": "Se debe definir cómo se mantendrá la consistencia de los datos entre Neo4j y PostgreSQL.",
+        "status": "DESIGNED",
+        "description": "Outbox transaccional en PostgreSQL con aplicación inmediata en Neo4j, reintento idempotente (MERGE por id), reconciliación y reconstrucción completa como último recurso.",
         "risks": [
           "Datos duplicados desactualizados.",
           "Referencias inconsistentes.",
@@ -1263,8 +1346,25 @@
           "Definir el mecanismo de sincronización.",
           "Definir tratamiento de errores y reintentos.",
           "Definir estrategias de consistencia y recuperación."
-        ]
-      }
+        ],
+        "design": "docs/modelos/matriz-propiedad.md §4–§6",
+        "decided_by": "D-17 (DEC-24)"
+      },
+      "superseded_decisions": [
+        {
+          "version": "1.1",
+          "decision": {
+            "primary_database": "Neo4j",
+            "secondary_database": "PostgreSQL",
+            "evaluated_but_not_selected": [
+              "MongoDB"
+            ],
+            "architecture_description": "La arquitectura utilizará Neo4j como base de datos principal para representar el dominio y explotar las relaciones entre usuarios, simulaciones, decisiones, habilidades, progreso y evidencias. PostgreSQL será una base de datos complementaria. La distribución exacta de responsabilidades y la sincronización entre ambas deben definirse."
+          },
+          "status": "SUPERSEDED",
+          "superseded_by": "D-16 (DEC-24)"
+        }
+      ]
     },
     "logical_graph_model": {
       "status": "PRELIMINARY_MODEL",
@@ -1452,19 +1552,22 @@
         "id": "D-08",
         "topic": "Base de datos principal",
         "decision": "Neo4j.",
-        "status": "ACCEPTED"
+        "status": "SUPERSEDED",
+        "superseded_by": "D-16"
       },
       {
         "id": "D-09",
         "topic": "Base de datos complementaria",
         "decision": "PostgreSQL.",
-        "status": "ACCEPTED"
+        "status": "SUPERSEDED",
+        "superseded_by": "D-16"
       },
       {
         "id": "D-10",
         "topic": "MongoDB",
         "decision": "No incluir MongoDB en la arquitectura actual.",
-        "status": "NOT_SELECTED"
+        "status": "SUPERSEDED",
+        "superseded_by": "D-15"
       },
       {
         "id": "D-11",
@@ -1489,23 +1592,75 @@
         "topic": "Resolución de auditoría del KG",
         "decision": "Decisiones DEC-01..DEC-22 (docs/decisiones-modelado.md), incorporadas en KG v1.1.",
         "status": "ACCEPTED"
+      },
+      {
+        "id": "D-15",
+        "topic": "Base documental",
+        "decision": "MongoDB se adopta como base documental para el contenido de simulaciones y evidencias (DEC-24).",
+        "status": "ACCEPTED"
+      },
+      {
+        "id": "D-16",
+        "topic": "Reparto de datos entre bases",
+        "decision": "Cada dato tiene una sola base dueña según la matriz de propiedad v2; resuelve P-01 (DEC-24).",
+        "status": "PRELIMINARY",
+        "note": "Pendiente de aprobación del equipo (puerta 0 del plan de trabajo)."
+      },
+      {
+        "id": "D-17",
+        "topic": "Sincronización",
+        "decision": "Outbox con aplicación inmediata, reintento idempotente, reconciliación y reconstrucción; resuelve P-02 (DEC-24).",
+        "status": "PRELIMINARY",
+        "note": "Pendiente de aprobación del equipo (puerta 0 del plan de trabajo)."
+      },
+      {
+        "id": "D-18",
+        "topic": "Proyección del grafo",
+        "decision": "Salen del grafo Consecuencia, Retroalimentacion y Comparticion (R06, R11, R17); 9 etiquetas y 14 patrones de relación (DEC-24).",
+        "status": "PRELIMINARY",
+        "note": "Pendiente de aprobación del equipo (puerta 0 del plan de trabajo)."
+      },
+      {
+        "id": "D-19",
+        "topic": "Contenido publicado",
+        "decision": "El contenido de una simulación PUBLICADA es inmutable; solo se edita en BORRADOR (DEC-24).",
+        "status": "PRELIMINARY",
+        "note": "Pendiente de aprobación del equipo (puerta 0 del plan de trabajo)."
+      },
+      {
+        "id": "D-20",
+        "topic": "Stack",
+        "decision": "API REST con Node.js + TypeScript (Express), interfaz con Next.js que solo consume la API, Docker Compose para las bases (DEC-24).",
+        "status": "ACCEPTED"
+      },
+      {
+        "id": "D-21",
+        "topic": "Puntuación del intento",
+        "decision": "Promedio de la valoración de las opciones elegidas (0–100) mientras P-03 siga abierta (DEC-24).",
+        "status": "PROPOSED"
       }
     ],
     "pending_decisions": [
       {
         "id": "P-01",
         "topic": "Distribución de información entre bases de datos",
-        "description": "Determinar qué entidades se almacenarán en Neo4j y cuáles en PostgreSQL, así como cuáles necesitarán representación en ambas."
+        "description": "Determinar qué entidades se almacenarán en Neo4j y cuáles en PostgreSQL, así como cuáles necesitarán representación en ambas.",
+        "status": "RESOLVED_PRELIMINARY",
+        "resolved_by": "D-16"
       },
       {
         "id": "P-02",
         "topic": "Sincronización",
-        "description": "Definir el mecanismo para mantener consistencia entre Neo4j y PostgreSQL."
+        "description": "Definir el mecanismo para mantener consistencia entre Neo4j y PostgreSQL.",
+        "status": "RESOLVED_PRELIMINARY",
+        "resolved_by": "D-17"
       },
       {
         "id": "P-03",
         "topic": "Evaluación de habilidades",
-        "description": "Definir cómo se calcula el nivel de habilidad a partir de respuestas, decisiones, consecuencias y resultados."
+        "description": "Definir cómo se calcula el nivel de habilidad a partir de respuestas, decisiones, consecuencias y resultados.",
+        "status": "PARTIALLY_ADDRESSED",
+        "note": "La puntuación del intento tiene una propuesta (D-21); el cálculo del nivel de habilidad sigue abierto."
       },
       {
         "id": "P-04",
@@ -1535,7 +1690,9 @@
       {
         "id": "P-09",
         "topic": "Contenido de simulaciones",
-        "description": "Definir el formato de autoría, almacenamiento y publicación de escenarios."
+        "description": "Definir el formato de autoría, almacenamiento y publicación de escenarios.",
+        "status": "PARTIALLY_ADDRESSED",
+        "note": "Formato de contenido definido (contexto por tipo de paso, matriz §3); el flujo de autoría sigue abierto."
       },
       {
         "id": "P-10",
@@ -1732,12 +1889,12 @@
       "relationships": "PRELIMINARY_DEFINED",
       "integrity_constraints": "PRELIMINARY_DEFINED",
       "logical_graph_model": "PRELIMINARY_DEFINED",
-      "primary_database": "NEO4J_SELECTED",
-      "secondary_database": "POSTGRESQL_SELECTED",
-      "mongodb": "EVALUATED_NOT_SELECTED",
-      "database_responsibility_distribution": "PENDING",
-      "database_synchronization": "PENDING",
-      "implementation": "NOT_DEFINED_IN_CURRENT_MODEL"
+      "database_responsibility_distribution": "DEFINED_PENDING_TEAM_REVIEW",
+      "database_synchronization": "DESIGNED",
+      "implementation": "IN_PROGRESS_PHASE_0",
+      "relational_database": "POSTGRESQL_SELECTED",
+      "document_database": "MONGODB_SELECTED",
+      "graph_database": "NEO4J_SELECTED"
     },
     "value_catalogs": [
       {
@@ -1956,6 +2113,20 @@
       }
     ],
     "changelog": [
+      {
+        "version": "1.2",
+        "date": "2026-11-18",
+        "document": "docs/decisiones-modelado.md (DEC-24)",
+        "changes": [
+          "Arquitectura: tres bases con responsabilidades (PostgreSQL, MongoDB, Neo4j); la de la v1.1 queda en superseded_decisions",
+          "MongoDB pasa de NOT_SELECTED a SELECTED (D-10 → SUPERSEDED por D-15)",
+          "D-08 y D-09 → SUPERSEDED por D-16 (reparto según la matriz de propiedad v2)",
+          "Sincronización diseñada (D-17); P-01 y P-02 resueltos de forma preliminar",
+          "Neo4j.physical_projection: 9 etiquetas, 13 tipos de relación (D-18)",
+          "D-19 contenido publicado inmutable, D-20 stack, D-21 puntuación (propuesta)",
+          "El modelo de dominio y el modelo lógico de grafos de la v1.1 no cambian: son el modelo conceptual común"
+        ]
+      },
       {
         "version": "1.1",
         "date": "2026-11-12",
