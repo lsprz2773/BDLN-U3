@@ -52,7 +52,7 @@ Reglas que no se rompen:
 ## Comandos
 
 ```bash
-cp .env.example .env        # una vez
+npm run setup:env           # una vez: crea .env con secretos aleatorios
 npm install
 npm run db:up               # PostgreSQL :5433, MongoDB :27018, Neo4j :7475/:7688 (espera a que estén sanas)
 npm run dev:api             # API en http://localhost:4000/api

@@ -1,5 +1,5 @@
 # Las 3 bases de QATO'K para desarrollo y pruebas (paso 0.6).
-# Uso:  cp .env.example .env  →  npm run db:up  (espera a que las 3 estén sanas)
+# Uso:  npm run setup:env  →  npm run db:up  (espera a que las 3 estén sanas)
 # Los datos persisten en volúmenes con nombre; `npm run db:reset` los borra.
 name: qatok
 
@@ -8,9 +8,9 @@ services:
     image: postgres:16-alpine
     container_name: qatok-postgres
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:?Falta .env, copia .env.example a .env}
-      POSTGRES_USER: ${POSTGRES_USER:?Falta .env}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Falta .env}
+      POSTGRES_DB: ${POSTGRES_DB:?Falta .env, ejecuta npm run setup:env}
+      POSTGRES_USER: ${POSTGRES_USER:?Falta .env, ejecuta npm run setup:env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Falta .env, ejecuta npm run setup:env}
       TZ: UTC
     ports:
       - '${POSTGRES_PORT:-5433}:5432'
@@ -27,9 +27,9 @@ services:
     image: mongo:7
     container_name: qatok-mongo
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:?Falta .env}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?Falta .env}
-      MONGO_INITDB_DATABASE: ${MONGO_DB:?Falta .env}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:?Falta .env, ejecuta npm run setup:env}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?Falta .env, ejecuta npm run setup:env}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:?Falta .env, ejecuta npm run setup:env}
     ports:
       - '${MONGO_PORT:-27018}:27017'
     volumes:
@@ -45,7 +45,7 @@ services:
     image: neo4j:5-community
     container_name: qatok-neo4j
     environment:
-      NEO4J_AUTH: ${NEO4J_USER:?Falta .env}/${NEO4J_PASSWORD:?Falta .env}
+      NEO4J_AUTH: ${NEO4J_USER:?Falta .env, ejecuta npm run setup:env}/${NEO4J_PASSWORD:?Falta .env, ejecuta npm run setup:env}
       # Memoria acotada para que las 3 bases quepan en una laptop.
       NEO4J_server_memory_heap_initial__size: 256m
       NEO4J_server_memory_heap_max__size: 512m

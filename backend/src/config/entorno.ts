@@ -48,7 +48,7 @@ export function cargarEntorno(fuente: NodeJS.ProcessEnv = process.env): Entorno 
   if (!resultado.success) {
     const lineas = resultado.error.issues.map((i) => `  - ${i.path.join('.')}: ${i.message}`);
     throw new Error(
-      `Configuración inválida (revisa tu .env; plantilla en .env.example):\n${lineas.join('\n')}`,
+      `Configuración inválida (revisa tu .env o créalo con npm run setup:env):\n${lineas.join('\n')}`,
     );
   }
   return resultado.data;

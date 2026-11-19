@@ -27,7 +27,8 @@
     "db:ps": "docker compose ps",
     "dev:api": "npm run dev -w @qatok/backend",
     "test:unit": "vitest run --project unit",
-    "test:integration": "vitest run --project integration"
+    "test:integration": "vitest run --project integration",
+    "setup:env": "node scripts/crear-env.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

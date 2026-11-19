@@ -68,8 +68,8 @@ git clone git@github.com:lsprz2773/BDLN-U3.git
 cd BDLN-U3
 git checkout develop
 
-cp .env.example .env     # valores de desarrollo; no son credenciales reales
 npm install
+npm run setup:env        # crea .env con contraseñas y JWT_SECRET aleatorios
 npm run db:up            # levanta las 3 bases y espera a que estén sanas
 npm run dev:api          # API en http://localhost:4000/api
 ```
@@ -98,6 +98,7 @@ Si una base no responde, el estado es `DEGRADADO`, la respuesta es `503` y esa b
 
 | Comando | Qué hace |
 |---|---|
+| `npm run setup:env` | Crea `.env` a partir de `.env.example` con secretos aleatorios (no sobrescribe uno existente) |
 | `npm run db:up` | Levanta PostgreSQL, MongoDB y Neo4j y espera a que estén sanas |
 | `npm run db:down` | Detiene las bases (los datos se conservan) |
 | `npm run db:reset` | Detiene las bases **y borra sus datos** |
@@ -196,7 +197,8 @@ Las reglas completas están en [convenciones §7](context/convenciones.md).
 
 | Síntoma | Causa probable y solución |
 |---|---|
-| `required variable … is missing a value: Falta .env` | No existe `.env`: `cp .env.example .env` |
+| `required variable … is missing a value: Falta .env…` | No existe `.env` o le faltan los secretos: `npm run setup:env` |
+| La base rechaza la contraseña (`password authentication failed`) | Regeneraste `.env` pero los volúmenes conservan la contraseña anterior: `npm run db:reset` (borra los datos) y `npm run db:up` |
 | `Cannot connect to the Docker daemon` | Docker Desktop está apagado: ábrelo y espera a que termine de arrancar |
 | `port is already allocated` | Otro programa usa ese puerto: cambia el puerto correspondiente en tu `.env` |
 | La API arranca pero `/api/health` da `503` | Alguna base sigue iniciando (Neo4j tarda unos 20 s): `npm run db:ps` y espera a que aparezca `healthy` |

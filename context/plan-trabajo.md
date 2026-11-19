@@ -69,7 +69,7 @@ Mientras A hace esto, **B y C hacen sus tareas "sin bloqueo"** (sección 4).
 | 0.8 | ~~Esqueleto de la interfaz~~ **→ pasa al responsable del frontend** | `frontend/` | Decisión del equipo: lo arma quien hará el frontend, porque eligió Next.js. Ya no bloquea la puerta 0. Requisitos y punto de partida en `frontend/README.md` | Responsable del frontend |
 | 0.9 | **Reglas en GitHub** | `.github/`, `context/github.md` | `CODEOWNERS` (dueño + suplente por base); CI de GitHub Actions con las 3 bases como servicios; protección de `develop` y `main` y rama por defecto (las configura el admin del repo siguiendo `context/github.md`). Sin plantilla de PR, por decisión del equipo | B (admin del repo) |
 | 0.10 | **Documentos de contexto al día** | `CLAUDE.md`, `docs/KG.json`, `docs/decisiones-modelado.md` | DEC-24: MongoDB adoptado (D-10 pasa a SUPERSEDED); la arquitectura pasa a ser de "3 bases con responsabilidades"; `CLAUDE.md` describe la nueva etapa (las rondas ToT/CoVe solo para documentos de modelo; el código se valida con pruebas y CI). `scripts/verificar.py` debe seguir en 0 fallos | — |
-| 0.11 | **README de arranque** | `README.md` | Clonar → `cp .env.example .env` → `docker compose up -d` → `npm install` → `npm run dev` | C lo prueba |
+| 0.11 | **README de arranque** | `README.md` | Clonar → `npm install` → `npm run setup:env` → `npm run db:up` → `npm run dev:api` | C lo prueba |
 | 0.12 | **Tablero** | GitHub Projects | Un issue por cada tarea de las secciones 4 a 6, con su perfil y su fase | — |
 
 **Endpoints v0:** el detalle (entrada, respuesta, errores y bases que toca cada uno) está en `docs/api/contrato-v0.md`. Todas las rutas van bajo `/api`. Resumen por dueño:
