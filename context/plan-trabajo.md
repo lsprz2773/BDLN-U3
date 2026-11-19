@@ -66,7 +66,7 @@ Mientras A hace esto, **B y C hacen sus tareas "sin bloqueo"** (sección 4).
 | 0.5 | **Estructura del repositorio** | raíz | Carpetas según la sección 10 de la guía; npm workspaces (`backend`, `frontend`, `shared`); `tsconfig`, ESLint y Prettier; `.nvmrc`; `.gitignore` con `.env`, `node_modules` y `.DS_Store`; `neo4j/` se mueve a `database/graph/` | — |
 | 0.6 | **Docker** | `docker-compose.yml`, `.env.example` | PostgreSQL 16, MongoDB 7 y Neo4j 5 Community con volúmenes persistentes, memoria de Neo4j limitada y healthchecks | — |
 | 0.7 | **Esqueleto de la API** | `backend/src/` | `config/` (valida el `.env`), `db/` (conexión con `pg`, `mongodb` y `neo4j-driver`), `middlewares/` (errores y validación con zod), `routes/` (un archivo por flujo), `controllers/`, `services/` y `repositories/{relational,document,graph}`. **`GET /health` recorre las capas y consulta las 3 bases: es la plantilla a copiar.** Incluye una prueba con Vitest | — |
-| 0.8 | **Esqueleto de la interfaz** | `frontend/` | **Next.js** (App Router) + TS que arranca; `lib/api.ts` que llama a `/api/health` del backend y muestra el estado de las 3 bases. Reglas de la sección 6 de las convenciones: Next **solo** consume la API | — |
+| 0.8 | ~~Esqueleto de la interfaz~~ **→ pasa al responsable del frontend** | `frontend/` | Decisión del equipo: lo arma quien hará el frontend, porque eligió Next.js. Ya no bloquea la puerta 0. Requisitos y punto de partida en `frontend/README.md` | Responsable del frontend |
 | 0.9 | **Reglas en GitHub** | `.github/` | `CODEOWNERS` (`database/relational` → B, `database/document` → C, `database/graph` → A, y lo mismo para `backend/src/repositories/*`); plantilla de PR; CI de GitHub Actions con las 3 bases como servicios que corre lint y pruebas; proteger `develop` (PR + 1 aprobación + CI en verde) | — |
 | 0.10 | **Documentos de contexto al día** | `CLAUDE.md`, `docs/KG.json`, `docs/decisiones-modelado.md` | DEC-24: MongoDB adoptado (D-10 pasa a SUPERSEDED); la arquitectura pasa a ser de "3 bases con responsabilidades"; `CLAUDE.md` describe la nueva etapa (las rondas ToT/CoVe solo para documentos de modelo; el código se valida con pruebas y CI). `scripts/verificar.py` debe seguir en 0 fallos | — |
 | 0.11 | **README de arranque** | `README.md` | Clonar → `cp .env.example .env` → `docker compose up -d` → `npm install` → `npm run dev` | C lo prueba |
@@ -85,7 +85,7 @@ Mientras A hace esto, **B y C hacen sus tareas "sin bloqueo"** (sección 4).
 
 **Puerta 0:**
 - B y C aprueban 0.1 a 0.4.
-- Cada integrante corre `docker compose up -d && npm install && npm run dev` en su máquina y ve las 3 bases en verde en `/health` y en la interfaz.
+- Cada integrante corre `npm install && npm run db:up && npm run dev:api` en su máquina y ve las 3 bases en verde en `http://localhost:4000/api/health` (la parte de la interfaz pasó al responsable del frontend, ver 0.8).
 - El CI pasa en `develop`.
 
 ---
@@ -121,7 +121,7 @@ Mientras A hace esto, **B y C hacen sus tareas "sin bloqueo"** (sección 4).
 ### Perfil C — Documental e interfaz
 | Fase | Tarea | Hecho cuando… |
 |---|---|---|
-| 0 · **sin bloqueo** | Bocetos de las pantallas de los 3 flujos; borrador de E1 (propuesta con los 8 puntos de la guía §4.1 y la prueba de suficiencia §4.2); revisar 0.1 a 0.4 | Bocetos y borrador compartidos |
+| 0 · **sin bloqueo** | **Esqueleto de la interfaz (antes paso 0.8)**: app Next.js en `frontend/` según `frontend/README.md`, con una página que muestre `/api/health`. Bocetos de las pantallas de los 3 flujos; borrador de E1 (propuesta con los 8 puntos de la guía §4.1 y la prueba de suficiencia §4.2); revisar 0.1 a 0.4 | Bocetos y borrador compartidos |
 | 1 | `database/document/`: colecciones (`contenidos_simulacion`: un documento por simulación con pasos, opciones, consecuencias y retroalimentación anidados, y `contexto` polimórfico por tipo de paso; `evidencias`: instantánea del recorrido), validadores `$jsonSchema`, índices, cargador desde `dataset.json`, consultas, pruebas de documentos válidos e inválidos | `npm run db:document:reset` construye la base desde cero y las pruebas pasan |
 | 1 | Modelo documental para E2 (`docs/modelos/documental.md`): colecciones, anidamiento y validaciones | Revisado por A o B |
 | 2 | `repositories/document` (también lo usan F1 y F3a) | Pruebas en verde |
