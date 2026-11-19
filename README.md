@@ -182,7 +182,7 @@ La guía paso a paso (tablero, ramas, commits, pull requests y revisión) está 
 1. Crea tu rama desde `develop`: `feature/<perfil>-<tarea>` (por ejemplo, `feature/b-esquema-relacional`).
 2. Un commit por implementación, con el formato `<ámbito>: <qué cambia>`.
 3. Antes de subir: `npm run verificar` y `npm run test:integration` en verde.
-4. Abre un pull request a `develop`. Si tocas una base, la revisa su dueño (`.github/CODEOWNERS`).
+4. Abre un pull request a `develop` con `Closes #N` (el issue de tu tarea) y fusiónalo tú mismo: no hace falta esperar aprobación.
 
 Las reglas completas están en [convenciones §7](context/convenciones.md).
 
@@ -190,7 +190,7 @@ Las reglas completas están en [convenciones §7](context/convenciones.md).
 
 | Fase | Contenido | Estado |
 |---|---|---|
-| 0 | Acuerdos (matriz, convenciones, contrato, datos de prueba), estructura, Docker, esqueleto de la API, CI | 🟨 Casi terminada: falta la aprobación de los acuerdos por el equipo, la configuración de GitHub y el tablero de tareas |
+| 0 | Acuerdos (matriz, convenciones, contrato, datos de prueba), estructura, Docker, esqueleto de la API, CI | 🟨 Casi terminada: falta que el equipo revise los acuerdos (issue #2) |
 | 1 | Las tres bases: esquemas, carga desde el dataset, consultas y pruebas por base | ⏳ Siguiente |
 | 2 | Backend de los flujos y sincronización con el grafo | ⏳ |
 | 3 | Interfaz y las siete pruebas de integración | ⏳ |

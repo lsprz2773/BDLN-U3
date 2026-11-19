@@ -65,7 +65,7 @@ npm run test:integration    # contra las 3 bases de Docker
 ## Reglas de trabajo
 
 - **Idioma:** español. Dominio con los nombres exactos del KG (`Simulacion`, `id_intento`, `CONDUCE_A`, RF-xx, C-xx, RI-xx, P-xx, D-xx, DEC-xx).
-- **Gitflow:** `feature/<perfil>-<tarea>` desde `develop` → PR a `develop`. **Un commit por implementación**, con formato `<ámbito>: <qué cambia>` (convenciones §7). Fusionar con merge commit, no squash.
+- **Gitflow:** `feature/<perfil>-<tarea>` desde `develop` → PR a `develop` con `Closes #N` → su autor lo fusiona (sin aprobación obligatoria ni protección de ramas, decisión del equipo). **Un commit por implementación**, con formato `<ámbito>: <qué cambia>` (convenciones §7). Fusionar con merge commit, no squash. Las tareas son los issues del repo (tablero: GitHub Project «QATO'K — Proyecto final»).
 - **Avanzar paso a paso:** terminar un paso del plan, hacer su commit, reportar y esperar el visto bueno antes del siguiente.
 - **Decisiones:** distinguir siempre **ACCEPTED/ADOPTADA**, **PRELIMINARY/PRELIMINAR** (pendiente de aprobación del equipo), **PROPOSED/PROPUESTA** (depende de una P-xx) y **pendientes** (P-xx). No presentar como decidido lo que no lo está. Toda decisión nueva se registra como DEC-xx en `docs/decisiones-modelado.md` y, si cambia el dominio o la arquitectura, en el KG con su `changelog`.
 - **Documentos de modelo** (matriz, modelos lógicos, contrato): se verifican con ToT → CoVe → self-consistency antes de darlos por buenos. **El código** se verifica con pruebas y CI, no con rondas de documentos.

@@ -1,6 +1,6 @@
 # database/
 
-Esquemas, cargas y consultas de las 3 bases, organizados como sugiere la guía (§10). Cada carpeta tiene un **dueño**, que aprueba cualquier PR que la toque (`CODEOWNERS`, paso 0.9).
+Esquemas, cargas y consultas de las 3 bases, organizados como sugiere la guía (§10). Cada carpeta tiene un **dueño**, que es la referencia de esa base: si cambias algo de otra base, avísale.
 
 | Carpeta | Base | Dueño | Subcarpetas |
 |---|---|---|---|
