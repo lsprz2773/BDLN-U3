@@ -1,5 +1,7 @@
 # Neo4j — implementación y pruebas del modelo de QATO'K
 
+> **Estado (fase 0):** estos scripts vienen de la actividad anterior y se movieron tal cual desde `neo4j/`. En la fase 1, el perfil A los recorta a la matriz v2 (`docs/modelos/matriz-propiedad.md`: 9 etiquetas, sin textos), los separa en `schema/`, `queries/` y `tests/`, y los ejecuta contra el Neo4j de Docker. Mientras tanto describen el modelo **anterior**.
+
 Scripts Cypher que llevan el modelo lógico (entregables 1–6) a Neo4j: restricciones, índices, nodos y relaciones de ejemplo, pruebas de humo y limpieza. Se probaron sobre **Neo4j 5.26 LTS, edición Community** (embebida): **76 pruebas, 0 fallos** (`resultado-pruebas.txt`).
 
 ## Orden de ejecución
@@ -19,7 +21,7 @@ Scripts Cypher que llevan el modelo lógico (entregables 1–6) a Neo4j: restric
 **Opción A — automática (Java 21 + Maven):**
 
 ```bash
-neo4j/ejecutar.sh
+database/graph/ejecutar.sh
 ```
 
 Levanta un Neo4j Community embebido en un directorio temporal, ejecuta los seis scripts en orden, imprime cada resultado y termina con `=== RESUMEN: N pruebas, M fallos ===` (código de salida 1 si algo falla). No necesita un servidor instalado. El ejecutor está en `runner/`.

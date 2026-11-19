@@ -18,7 +18,7 @@ Esta carpeta reúne lo que el equipo necesita para **trabajar**: la guía del pr
 
 | Perfil | Lee además |
 |---|---|
-| A — Grafo | `../docs/modelos/analisis-matriz.md`, `../neo4j/README.md`, `../entregables/03` a `06` (modelo de grafo de la actividad anterior) |
+| A — Grafo | `../docs/modelos/analisis-matriz.md`, `../database/graph/README.md`, `../entregables/03` a `06` (modelo de grafo de la actividad anterior) |
 | B — Relacional | `../entregables/02-diccionario-entidades.md` (tipos SQL) y `../entregables/04-restricciones-integridad.md` (RI-01 a RI-25) |
 | C — Documental e interfaz | `../entregables/01-requerimientos-consultas.md` (RF y consultas) y `../presentacion/qatok-explicado.md` (el proyecto explicado) |
 
@@ -42,4 +42,4 @@ Esta carpeta reúne lo que el equipo necesita para **trabajar**: la guía del pr
 | `docs/KG.json` | Grafo de conocimiento del proyecto: fuente de verdad del dominio (lo valida `scripts/verificar.py`) |
 | `docs/decisiones-modelado.md` | Decisiones DEC-01 en adelante |
 | `entregables/`, `verificacion/`, `presentacion/` | Actividad anterior (modelo lógico de grafos). Es antecedente, no se edita salvo para corregir |
-| `neo4j/` | Scripts Cypher actuales; en la fase 0 se mueven a `database/graph/` |
+| `database/graph/` | Scripts Cypher de la actividad anterior (modelo previo a la matriz v2); A los adapta en la fase 1 |

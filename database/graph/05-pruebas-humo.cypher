@@ -2,7 +2,7 @@
 // QATO'K · 05 · Pruebas de humo
 // Cada prueba devuelve una fila (prueba, ok, detalle); ok = false es un fallo.
 // Las líneas "// ESPERA_ERROR: <texto>" marcan sentencias que DEBEN fallar.
-// Se ejecutan con neo4j/ejecutar.sh, o copiándolas una a una en Neo4j Browser.
+// Se ejecutan con database/graph/ejecutar.sh, o copiándolas una a una en Neo4j Browser.
 // Sección D: consultas C-01..C-05 copiadas del entregable 1 (parámetros sustituidos).
 // =====================================================================
 

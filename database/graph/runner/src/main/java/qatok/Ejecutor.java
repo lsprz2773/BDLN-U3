@@ -27,7 +27,7 @@ import org.neo4j.graphdb.Transaction;
  *  - Una sentencia que devuelve las columnas "prueba", "ok" y "detalle" es una prueba de humo:
  *    cada fila con ok = false cuenta como fallo.
  *
- * Uso: mvn -q -f neo4j/runner/pom.xml compile exec:java -Dexec.args="neo4j/01-restricciones.cypher ..."
+ * Uso: mvn -q -f database/graph/runner/pom.xml compile exec:java -Dexec.args="database/graph/01-restricciones.cypher ..."
  * Sale con código 1 si alguna prueba o sentencia falla.
  */
 public final class Ejecutor {
