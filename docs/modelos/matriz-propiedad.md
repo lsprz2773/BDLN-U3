@@ -1,92 +1,122 @@
-# Matriz de propiedad de datos — QATO'K
+# Matriz de propiedad de datos — QATO'K (v2)
 
 - **Paso del plan:** 0.1 (`docs/plan-trabajo.md`). Responde a las secciones 5.1 y 5.2 de la guía.
 - **Estado:** PROPUESTA. Necesita la aprobación de B y C (puerta 0). Un cambio posterior se hace por PR aprobado por los 3.
+- **Por qué esta matriz y no otra:** `analisis-matriz.md` compara 6 repartos y 5 mecanismos de sincronización, los ataca y deja esta como ganadora.
 - **Base:** modelo del KG v1.1 (12 entidades, 17 relaciones) y consultas C-01 a C-05 del entregable A-01.
 
-## 1. Regla general
+## 1. Reglas
 
 1. **Cada dato tiene una sola base dueña.** Solo ahí se modifica oficialmente.
-2. **Una entidad "existe" cuando existe su registro en PostgreSQL.** MongoDB guarda el *contenido* de algunas entidades, pero un documento sin su registro en PostgreSQL es un **huérfano** y la reconciliación lo elimina.
-3. **Neo4j es una proyección** para recorrer conexiones. Solo guarda ids, relaciones y las propiedades que las consultas C-01 a C-05 necesitan para filtrar u ordenar. El único dato que **nace** en el grafo es el **progreso**, que es derivado y se puede recalcular.
-4. **Nada se copia "por si acaso".** Cada propiedad copiada indica qué consulta la necesita.
+2. **Una entidad existe cuando existe su registro en PostgreSQL.** MongoDB guarda el *contenido* de algunas entidades. Un documento sin registro es un **huérfano**, y la reconciliación lo elimina.
+3. **Todo cambio que deba llegar al grafo nace en PostgreSQL**, en la misma transacción que su evento (outbox). Hay un solo mecanismo de sincronización.
+4. **Neo4j es una proyección para recorrer conexiones.** Guarda ids, relaciones y solo las propiedades que C-01 a C-05 usan para filtrar u ordenar. Es dueño de dos datos derivados: `Progreso` y `DEMUESTRA`.
+5. **El contenido publicado es inmutable.** Solo se edita en BORRADOR. Por eso la estructura copiada al grafo nunca se desfasa.
+6. **Una base por operación siempre que se pueda.** Solo 2 operaciones escriben en dos bases, y su peor caso es un huérfano inofensivo (§4).
 
-## 2. Qué responsabilidad tiene cada base
+## 2. Responsabilidad de cada base
 
-| Base | Responsabilidad | Pregunta de la guía (§3) que responde |
+| Base | Responsabilidad | Pregunta de la guía (§3) |
 |---|---|---|
-| **PostgreSQL** | Cuentas, catálogo, estado de las simulaciones, intentos y respuestas, registro de evidencias, enlaces compartidos y eventos de sincronización | ¿Qué registro existe, cuál es su estado y qué operación debe mantenerse íntegra? |
-| **MongoDB** | Contenido de cada simulación (un árbol anidado de pasos, opciones, consecuencias y retroalimentación, de forma variable y versionado), retroalimentación entregada y contenido de las evidencias | ¿Qué información contextual o flexible pertenece a este registro? |
-| **Neo4j** | Ramificaciones entre pasos, recorridos de decisiones, relación habilidad–simulación–progreso–evidencia y recomendaciones | ¿Cómo se conecta esta entidad con otras y qué rutas existen? |
+| **PostgreSQL** | Cuentas y roles, catálogo de habilidades, metadatos y estado de las simulaciones, intentos, respuestas, registro de evidencias, enlaces compartidos, eventos de sincronización | ¿Qué registro existe, cuál es su estado y qué operación debe mantenerse íntegra? |
+| **MongoDB** | Contenido de cada simulación (documento polimórfico y anidado) y contenido de cada evidencia (instantánea autocontenida) | ¿Qué información contextual o flexible pertenece a este registro? |
+| **Neo4j** | Ramificaciones entre pasos, recorridos de decisiones, conexión habilidad–simulación–progreso–evidencia, recomendaciones | ¿Cómo se conecta esta entidad con otras y qué rutas existen? |
 
-### Prueba de suficiencia (guía §4.2): ¿qué se pierde si quitamos cada base?
+### Prueba de suficiencia (guía §4.2)
 
-| Si se quita… | Se pierde |
-|---|---|
-| PostgreSQL | La atomicidad de "registrar respuesta + cerrar intento + emitir evento"; la unicidad de correo, token y secuencia; la revocación y el vencimiento confiables de los enlaces |
-| MongoDB | Editar y versionar una simulación como **una unidad**. Habría que partir un árbol de forma variable en 4 tablas o en cientos de nodos y reensamblarlo en cada lectura |
-| Neo4j | Las recomendaciones (C-01), los recorridos de decisiones (C-03) y la relación evidencia–habilidad–simulación (C-04, C-05) con consultas simples. En SQL serían JOIN múltiples o CTE recursivas |
+| Si se quita… | Se pierde | Operación que lo demuestra |
+|---|---|---|
+| **PostgreSQL** | La atomicidad de "registrar respuesta + cerrar intento + emitir evento"; la unicidad de correo, token y secuencia; FK entre usuario, intento, simulación y habilidad; revocación y vencimiento confiables | Responder un paso (F2); compartir y revocar (F3b) |
+| **MongoDB** | Guardar, leer y validar **como una unidad** un árbol cuya forma cambia según el tipo de paso. En SQL serían 5 o más tablas con columnas nulas o tablas por tipo, reensambladas en cada lectura | Cargar una simulación para jugarla (F2); ver una evidencia compartida en una sola lectura (F3b) |
+| **Neo4j** | Recomendaciones (C-01), recorrido de decisiones (C-03), evidencia–habilidad–simulación (C-04) y evolución (C-05) con consultas de patrón simples. En SQL serían JOIN múltiples o CTE recursivas | Perfil de habilidades (F3a) |
 
 ## 3. Matriz por entidad
 
-Leyenda: **●** = base dueña · **◐** = copia parcial (solo los campos listados) · — = no está.
+Leyenda: **●** dueña · **◐** copia parcial (solo los campos listados) · — no está.
 
-| Entidad (KG) | PostgreSQL | MongoDB | Neo4j | Campos copiados y para qué |
+| Entidad (KG) | PostgreSQL | MongoDB | Neo4j | Campos copiados → consulta que los usa |
 |---|---|---|---|---|
-| E01 Usuario | ● (`usuario`: nombre, correo normalizado, contrasena_hash, fecha_registro, estado, **rol**) | — | ◐ `id_usuario` | Ancla de C-01 a C-05. El correo **no** se copia (privacidad, RF-09) |
-| E02 Simulacion (metadatos) | ● (`simulacion`: titulo, descripcion, dificultad, duracion_estimada, estado, version_contenido) | — | ◐ `id_simulacion`, `titulo`, `estado` | `estado` filtra PUBLICADA en C-01; `titulo` aparece en los resultados de C-01, C-04 y C-05 |
-| E02 Simulacion (contenido) | — | ● (`contenidos_simulacion`, un documento por simulación y versión) | — | — |
-| E03 Habilidad | ● (`habilidad`: nombre único, descripcion, categoria, nivel_objetivo) | — | ◐ `id_habilidad`, `nombre`, `nivel_objetivo` | `nombre` es parámetro de C-04 y C-05; `nivel_objetivo` lo usa C-02 |
-| R04 DESARROLLA {peso, nivel_esperado} | ● (`simulacion_habilidad`, PK (id_simulacion, id_habilidad), RI-08) | — | ◐ relación con `peso`, `nivel_esperado` | C-01 (`nivel_esperado`), C-02, C-05 |
-| E04 Paso | — | ● (anidado en `contenidos_simulacion.pasos[]`: titulo, descripcion, orden, tipo) | ◐ `id_paso`, `orden` + `CONTIENE` | Ramificación y C-03 (orden). Los textos los completa el servicio desde MongoDB |
-| E05 Opcion | — | ● (anidada en `pasos[].opciones[]`: descripcion, valoracion, id_paso_siguiente) | ◐ `id_opcion` + `OFRECE`, `CONDUCE_A` | Ramificación (`CONDUCE_A`) y C-03 |
-| E06 Consecuencia | — | ● (anidada en `opciones[].consecuencias[]`) | — **(sale del grafo)** | No se recorre: siempre se lee junto con su opción. C-03 la completa desde MongoDB |
-| E07 Intento | ● (`intento`: id_usuario, id_simulacion, version_contenido, fecha_inicio, fecha_fin, estado, puntuacion) | — | ◐ `id_intento`, `estado`, `fecha_inicio`, `fecha_fin`, `puntuacion` + `REALIZA`, `TIENE` | C-02, C-03 (fecha), C-05 (COMPLETADO, fecha_fin, puntuacion) |
-| E08 Respuesta | ● (`respuesta`: id_intento, id_paso, id_opcion, fecha_respuesta, secuencia; UNIQUE (id_intento, secuencia)) | — | ◐ `id_respuesta`, `secuencia` + `REGISTRA`, `CORRESPONDE_A`, `SELECCIONA` | C-03 (orden del recorrido), C-02 |
-| E09 Retroalimentacion | — | ● (`retroalimentaciones_entregadas`: id_respuesta, comentario, tipo, recomendacion) | ◐ `id_retroalimentacion`, `tipo` + `GENERA` | C-02 cuenta ACIERTO, PARCIAL y ERROR |
-| E10 Progreso | — | — | ● (`nivel_actual`, `fecha_actualizacion`) + `TIENE_PROGRESO`, `CORRESPONDE_A` | **Derivado**: se recalcula a partir de intentos COMPLETADO y DESARROLLA (fórmula pendiente, P-03). Si se pierde, la reconciliación lo reconstruye |
-| E11 Evidencia (registro) | ● (`evidencia`: id_usuario, id_intento, titulo, fecha_generacion, visibilidad) | — | ◐ `id_evidencia`, `titulo` + `GENERA`, `PRODUCE` | C-04 |
-| E11 Evidencia (contenido) | — | ● (`evidencias_contenido`: resumen del recorrido, decisiones destacadas y métricas, con forma variable) | — | — |
-| R16 DEMUESTRA | — | — | ● (derivada al generar: habilidades DESARROLLA de la simulación del intento, RI-20) | C-04 |
-| E12 Comparticion | ● (`comparticion`: token único, fecha_creacion, fecha_expiracion, estado, destinatario) | — | — **(sale del grafo)** | Es un dato transaccional (RI-15, RI-21). C-04 pasa a ser una **consulta integrada**: el grafo da evidencia–habilidad–simulación y PostgreSQL filtra por enlace vigente |
-| *Nuevo* Evento de sincronización | ● (`eventos_sincronizacion`, ver §5) | — | — | — |
+| E01 Usuario | ● `usuario` (nombre, correo normalizado único, contrasena_hash, fecha_registro, estado, **rol**) | — | ◐ `id_usuario` | Ancla de C-01 a C-05. El correo **no** se copia (RF-09) |
+| E02 Simulacion — metadatos | ● `simulacion` (titulo, descripcion, dificultad, duracion_estimada, estado) | — | ◐ `id_simulacion`, `titulo`, `estado` | `estado` → C-01; `titulo` → resultados de C-01, C-04 y C-05 |
+| E02 Simulacion — contenido | — | ● `contenidos_simulacion` (un documento por simulación) | — | — |
+| E03 Habilidad | ● `habilidad` (nombre único, descripcion, categoria, nivel_objetivo) | — | ◐ `id_habilidad`, `nombre`, `nivel_objetivo` | `nombre` → C-04 y C-05; `nivel_objetivo` → C-02 |
+| R04 DESARROLLA | ● `simulacion_habilidad` (PK compuesta = RI-08; peso, nivel_esperado) | — | ◐ relación con `peso`, `nivel_esperado` | C-01, C-02, C-05 |
+| E04 Paso | — | ● anidado: `pasos[]` (titulo, descripcion, orden, tipo, **contexto según el tipo**) | ◐ `id_paso`, `orden` + `CONTIENE` | Ramificación; orden en C-03 |
+| E05 Opcion | — | ● anidada: `pasos[].opciones[]` (descripcion, valoracion, id_paso_siguiente) | ◐ `id_opcion` + `OFRECE`, `CONDUCE_A` | Ramificación; C-03 |
+| E06 Consecuencia | — | ● anidada: `opciones[].consecuencias[]` | — **sale del grafo** | No se recorre: siempre se lee con su opción |
+| E09 Retroalimentacion | — | ● anidada: `opciones[].retroalimentacion` (comentario, tipo, recomendacion) | ◐ propiedad `Respuesta.tipo_retroalimentacion` — **el nodo sale del grafo** | C-02 cuenta ACIERTO, PARCIAL y ERROR. Era un nodo 1:1 con una sola propiedad útil |
+| E07 Intento | ● `intento` (id_usuario FK, id_simulacion FK, fecha_inicio, fecha_fin, estado, puntuacion) | — | ◐ `id_intento`, `estado`, `fecha_inicio`, `fecha_fin`, `puntuacion` + `REALIZA`, `TIENE` | C-02, C-03, C-05 |
+| E08 Respuesta | ● `respuesta` (id_intento FK, id_paso, id_opcion, fecha_respuesta, secuencia; UNIQUE (id_intento, secuencia)) | — | ◐ `id_respuesta`, `secuencia`, `tipo_retroalimentacion` + `REGISTRA`, `CORRESPONDE_A`, `SELECCIONA` | C-02, C-03 |
+| E10 Progreso | — | — | ● `nivel_actual`, `fecha_actualizacion` + `TIENE_PROGRESO`, `CORRESPONDE_A` | **Derivado**: se recalcula desde cero con los intentos COMPLETADO y DESARROLLA (fórmula: P-03) |
+| E11 Evidencia — registro | ● `evidencia` (id_usuario FK, id_intento FK, titulo, fecha_generacion, visibilidad) | — | ◐ `id_evidencia`, `titulo` + `GENERA`, `PRODUCE` | C-04 |
+| E11 Evidencia — contenido | — | ● `evidencias` (instantánea del recorrido: decisiones, consecuencias, puntuación y habilidades, con forma variable) | — | — |
+| R16 DEMUESTRA | — | — | ● derivada al generar la evidencia (habilidades DESARROLLA de la simulación del intento: RI-20) | C-04 |
+| E12 Comparticion | ● `comparticion` (id_evidencia FK, token único, fecha_creacion, fecha_expiracion, estado, destinatario) | — | — **sale del grafo** | Dato transaccional (RI-15, RI-21) |
+| *Nuevo* Evento | ● `eventos_sincronizacion` (§5) | — | — | — |
 
-**Cambios frente al modelo de grafo actual (A-02 a A-06), que A aplica en la fase 1:**
-- Salen del grafo `Consecuencia` y `Comparticion`, con sus relaciones R06 y R17.
-- Los nodos pierden las propiedades de texto, que ahora viven en MongoDB o en PostgreSQL.
-- La restricción de unicidad de `Usuario.correo` en Neo4j ya no aplica.
-- C-03 y C-04 se reescriben como consultas que el servicio completa con otras bases.
-
-## 4. Operaciones que escriben en más de una base
-
-Patrón común:
-1. **Contenido primero** en MongoDB.
-2. **Registro después** en PostgreSQL, dentro de una transacción que también escribe el evento.
-3. **Proyección al final** en Neo4j, de forma asíncrona y con reintento.
-
-| Operación (flujo, dueño) | Orden de escritura | Si falla el paso 2 | Si falla el paso 3 (Neo4j) | Qué responde la API |
-|---|---|---|---|---|
-| Registrar usuario (F1, B) | PG `usuario` + evento `USUARIO_CREADO` (misma transacción) | Nada que compensar | Evento queda PENDIENTE y se reintenta | `201` + `sincronizacion` |
-| Crear simulación en BORRADOR (F1, B) | 1) Mongo contenido v1 → 2) PG `simulacion` + `simulacion_habilidad` | **Compensación:** borrar el documento de Mongo. Si también falla, la reconciliación lo detecta como huérfano | No aplica: un BORRADOR no se proyecta | `201` / `500` sin huérfano |
-| Editar contenido (F1, B) | 1) Mongo nueva versión → 2) PG `version_contenido` | Compensación: borrar la versión nueva | No aplica en BORRADOR | `200` |
-| Publicar (F1, B) | Valida RI-17 contra Mongo → PG estado PUBLICADA + evento `SIMULACION_PUBLICADA` con la estructura (pasos, opciones, `CONDUCE_A`, DESARROLLA) | Transacción revierte | Reintento | `200` + `sincronizacion` |
-| Eliminar (F1, B) | Solo BORRADOR: PG delete → Mongo delete. PUBLICADA nunca se borra: pasa a INACTIVA + evento | Si falla el borrado en Mongo: huérfano, lo limpia la reconciliación | Reintento | `204` |
-| Iniciar intento (F2, C) | PG `intento` (RI-19) + evento `INTENTO_INICIADO` | — | Reintento | `201` |
-| **Responder un paso** (F2, C) | Lee contenido de Mongo → **una transacción PG**: `respuesta` (RI-10, RI-16, RI-22) + cerrar intento si la opción es terminal (RI-23) + evento `RESPUESTA_REGISTRADA` (+ `INTENTO_FINALIZADO`) → Mongo `retroalimentaciones_entregadas` | Si falla Mongo después del commit: la retroalimentación se puede **derivar** del contenido, así que la API la devuelve igual y la reconciliación la regenera | Reintento; el progreso se recalcula al aplicar `INTENTO_FINALIZADO` | `201` con la retroalimentación + `sincronizacion` |
-| Generar evidencia (F3a, A) | 1) Mongo `evidencias_contenido` → 2) PG `evidencia` + evento `EVIDENCIA_GENERADA` | Compensación: borrar el contenido de Mongo | Reintento; al aplicar se crean `PRODUCE` y `DEMUESTRA` | `201` + `sincronizacion` |
-| Compartir y revocar (F3b, B) | Solo PG | — | — | `201` / `204` |
-
-**Honestidad de la respuesta (guía §9):** cada operación que deja trabajo pendiente en otra base incluye
+### Ejemplo del documento de contenido (por qué es documental)
 
 ```json
-"sincronizacion": { "grafo": "PENDIENTE" | "APLICADO", "id_evento": "<uuid>" }
+{
+  "_id": "<id_simulacion>",
+  "pasos": [
+    { "id_paso": "…", "orden": 1, "tipo": "CORREO", "titulo": "…",
+      "contexto": { "remitente": "cliente@…", "asunto": "Retraso del pedido", "cuerpo": "…" },
+      "opciones": [
+        { "id_opcion": "…", "descripcion": "…", "valoracion": 90, "id_paso_siguiente": "…",
+          "consecuencias": [ { "descripcion": "…", "impacto": "POSITIVO", "tipo": "RELACIONAL" } ],
+          "retroalimentacion": { "tipo": "ACIERTO", "comentario": "…", "recomendacion": "…" } } ] },
+    { "id_paso": "…", "orden": 2, "tipo": "REUNION",
+      "contexto": { "participantes": ["Jefa de proyecto", "Cliente"], "agenda": ["…"] }, "opciones": [ … ] }
+  ]
+}
 ```
 
-La API **nunca** responde que todo está sincronizado si el evento no se aplicó.
+Cada `tipo` de paso tiene un `contexto` distinto (CORREO: remitente, asunto y cuerpo; REUNION: participantes y agenda; CONVERSACION: líneas de diálogo; TAREA: entregables y plazo; INCIDENTE: cronología). El validador `$jsonSchema` impone la forma de cada uno.
+
+### Cambios al modelo de grafo actual (los aplica A en la fase 1)
+- Salen `Consecuencia`, `Retroalimentacion` y `Comparticion`, junto con R06, R11 y R17. Quedan **9 etiquetas y 14 patrones de relación**.
+- Los nodos pierden las propiedades de texto.
+- Se quita la restricción de unicidad de `Usuario.correo` en Neo4j.
+- C-02 lee `Respuesta.tipo_retroalimentacion`.
+- C-03 y C-04 pasan a ser consultas que el servicio completa con otras bases.
+- La búsqueda por texto (RF-02, antes la prueba D7 del grafo) se hace en PostgreSQL.
+
+## 4. Operaciones y en qué base escriben
+
+| Operación (flujo, dueño) | Escribe en | Si algo falla | La API responde |
+|---|---|---|---|
+| Registrarse (F1, B) | PG `usuario` + evento `USUARIO_CREADO` | La transacción revierte | `201` + `sincronizacion` |
+| Eliminar cuenta (F1, B) | PG (borrado en cascada) + evento `USUARIO_ELIMINADO` → después, Mongo borra sus `evidencias` | Si falla Mongo: evidencias huérfanas, las limpia la reconciliación | `204` |
+| Crear, editar o eliminar habilidad (F1, admin, B) | PG + evento `HABILIDAD_GUARDADA` / `HABILIDAD_ELIMINADA` (solo si ninguna simulación la usa: FK RESTRICT) | Revierte | `201` / `200` / `204` / `409` |
+| Crear simulación (F1, B) | **Solo PG** (`simulacion` en BORRADOR + `simulacion_habilidad`) | Revierte | `201` |
+| Cargar o editar contenido (F1, B) | **Solo Mongo** (reemplaza el documento). Antes verifica en PG que exista y esté en BORRADOR | Nada que compensar | `200` / `409` si está publicada |
+| Publicar (F1, B) | Lee el contenido de Mongo y valida RI-17 y RI-11 → **solo PG**: estado PUBLICADA + evento `SIMULACION_PUBLICADA` con la estructura | Revierte | `200` + `sincronizacion` |
+| Desactivar (F1, B) | PG estado INACTIVA + evento `SIMULACION_ESTADO_CAMBIADO` | Revierte | `200` |
+| Eliminar BORRADOR (F1, B) | PG delete → Mongo delete (**2 bases**) | Si falla Mongo: huérfano, lo limpia la reconciliación | `204` |
+| Iniciar intento (F2, C) | PG `intento` (RI-19) + evento `INTENTO_INICIADO` | Revierte | `201` |
+| **Responder un paso** (F2, C) | Lee el contenido de Mongo y valida RI-10 → **solo PG**, en una transacción: `respuesta` (RI-16, RI-22) + cerrar el intento si la opción es terminal (RI-23, puntuación calculada) + eventos `RESPUESTA_REGISTRADA` (y `INTENTO_FINALIZADO`) | Revierte | `201` con consecuencias y retroalimentación (leídas del contenido) + `sincronizacion` |
+| Abandonar intento (F2, C) | PG + evento `INTENTO_FINALIZADO` | Revierte | `200` |
+| Generar evidencia (F3a, A) | 1) Mongo `evidencias` → 2) PG `evidencia` + evento `EVIDENCIA_GENERADA` (**2 bases**) | Si falla PG: se borra el documento (compensación). Si eso también falla, la reconciliación lo limpia | `201` + `sincronizacion` |
+| Cambiar visibilidad o eliminar evidencia (F3a, A) | PG (+ Mongo delete si se elimina) | Igual que eliminar BORRADOR | `200` / `204` |
+| Compartir y revocar (F3b, B) | Solo PG | Revierte | `201` / `204` |
+| Ver evidencia compartida (F3b, B) | Lectura: PG valida token, estado y vencimiento → Mongo da el contenido | Mongo caído → `503` con el formato de error | `200` / `404` / `410` |
+
+**Honestidad de la respuesta (guía §9).** Toda operación que genera eventos devuelve
+
+```json
+"sincronizacion": { "grafo": "APLICADO" | "PENDIENTE", "eventos": ["<id_evento>"] }
+```
+
+La API nunca afirma que el grafo está al día si el evento no se aplicó.
 
 ## 5. Sincronización hacia Neo4j (dueño: A; tabla: B)
 
-**Mecanismo:** *outbox* transaccional. El evento se escribe en PostgreSQL **dentro de la misma transacción** que el cambio, así que no puede existir un cambio sin su evento ni un evento sin su cambio. Un proceso dentro del backend lo aplica en Neo4j.
+**Mecanismo:** outbox transaccional con **aplicación inmediata** y reintento.
+1. El servicio escribe el cambio y su evento en la misma transacción de PostgreSQL.
+2. Tras el commit, el servicio intenta aplicar el evento en Neo4j de inmediato. Si lo logra, lo marca `APLICADO`.
+3. Si no lo logra, queda `PENDIENTE`. Un proceso dentro del backend reintenta cada pocos segundos, tomando los eventos con `FOR UPDATE SKIP LOCKED` en orden de `creado_en`. Hace hasta 5 intentos con espera creciente y después lo marca `FALLIDO`.
+4. Todo efecto en el grafo es un `MERGE` por id: **aplicar dos veces da lo mismo**. El progreso se recalcula desde cero, nunca se incrementa.
 
 ```sql
 CREATE TABLE eventos_sincronizacion (
@@ -101,43 +131,44 @@ CREATE TABLE eventos_sincronizacion (
   creado_en     TIMESTAMPTZ  NOT NULL DEFAULT now(),
   aplicado_en   TIMESTAMPTZ  NULL
 );
-CREATE INDEX ON eventos_sincronizacion (estado, creado_en);
+CREATE INDEX ix_eventos_pendientes ON eventos_sincronizacion (estado, creado_en);
 ```
 
-| Tipo de evento | Lo emite | Efecto en Neo4j |
+| Evento | Lo emite | Efecto en Neo4j |
 |---|---|---|
 | `USUARIO_CREADO` | F1 | MERGE `Usuario` |
-| `HABILIDAD_GUARDADA` | F1 (admin) | MERGE `Habilidad` (nombre, nivel_objetivo) |
+| `USUARIO_ELIMINADO` | F1 | DETACH DELETE del usuario y de sus intentos, respuestas, progresos y evidencias |
+| `HABILIDAD_GUARDADA` | F1 | MERGE `Habilidad` (nombre, nivel_objetivo) |
+| `HABILIDAD_ELIMINADA` | F1 | DETACH DELETE `Habilidad` |
 | `SIMULACION_PUBLICADA` | F1 | MERGE `Simulacion`, `Paso`, `Opcion`, `CONTIENE`, `OFRECE`, `CONDUCE_A`, `DESARROLLA` |
-| `SIMULACION_ESTADO_CAMBIADO` | F1 | SET `estado` (p. ej. INACTIVA) |
+| `SIMULACION_ESTADO_CAMBIADO` | F1 | SET `estado` |
 | `INTENTO_INICIADO` | F2 | MERGE `Intento` + `REALIZA` + `TIENE` |
-| `RESPUESTA_REGISTRADA` | F2 | MERGE `Respuesta` + relaciones + `Retroalimentacion {tipo}` |
-| `INTENTO_FINALIZADO` | F2 | SET estado, fecha_fin, puntuacion; **recalcula `Progreso`** |
+| `RESPUESTA_REGISTRADA` | F2 | MERGE `Respuesta` (secuencia, tipo_retroalimentacion) + `REGISTRA`, `CORRESPONDE_A`, `SELECCIONA` |
+| `INTENTO_FINALIZADO` | F2 | SET estado, fecha_fin, puntuacion; **recalcula `Progreso`** del usuario en las habilidades de la simulación |
 | `EVIDENCIA_GENERADA` | F3a | MERGE `Evidencia` + `GENERA` + `PRODUCE` + `DEMUESTRA` |
+| `EVIDENCIA_ELIMINADA` | F3a | DETACH DELETE `Evidencia` |
 
-Reglas del proceso:
-- Todo efecto usa `MERGE` por id, así que **aplicar dos veces da lo mismo** (idempotente). Por eso se puede reintentar sin miedo.
-- Los eventos se aplican en orden de `creado_en`.
-- Máximo 5 intentos con espera creciente. Después queda `FALLIDO` y lo atiende la reconciliación.
+## 6. Reconciliación y reconstrucción (dueño: A)
 
-## 6. Reconciliación (dueño: A)
-
-Es un script (`npm run reconciliar`) que se puede correr a mano o de forma periódica. Reporta lo que encontró y lo que reparó:
+`npm run reconciliar` reporta lo que encuentra y lo que repara:
 
 | Revisión | Detecta | Repara |
 |---|---|---|
-| PG ↔ Neo4j por etiqueta | Ids que faltan o sobran en el grafo | Reemite el evento / borra el nodo sobrante |
-| Eventos `FALLIDO` | Eventos que no se aplicaron | Los reintenta y reporta los que siguen fallando |
-| Mongo ↔ PG | Contenidos de simulación o evidencia sin registro en PG (huérfanos) | Los borra (solo si tienen más de 10 minutos, para no pisar una escritura en curso) |
-| Retroalimentación | Respuestas sin documento en `retroalimentaciones_entregadas` | La regenera a partir del contenido |
+| PG ↔ Neo4j por etiqueta | Ids que faltan o sobran en el grafo | Reemite el evento / borra el nodo |
+| Eventos `FALLIDO` | Eventos sin aplicar | Los reintenta; reporta los que siguen fallando |
+| Mongo ↔ PG | Contenidos y evidencias sin registro en PG con más de 10 minutos | Los borra |
+| Referencias entre bases | Respuestas cuyo paso u opción no existe en el contenido; simulaciones PUBLICADA sin contenido | Solo reporta (indica un error de programación) |
 | Progreso | `nivel_actual` distinto del recálculo | Lo recalcula |
 
-Esta reconciliación es la evidencia de las pruebas de **consistencia** y **errores** de la guía (§9).
+`npm run grafo:reconstruir` es el último recurso: vacía el grafo y lo reconstruye desde PostgreSQL y MongoDB.
 
-## 7. Decisiones que esta matriz toma (para registrar como DEC-24 en el paso 0.10)
+La reconciliación es la evidencia de las pruebas de **consistencia** y **errores** de la guía (§9).
 
-1. MongoDB se adopta como base documental (D-10 pasa a SUPERSEDED).
-2. PostgreSQL deja de ser "complementaria": es dueña de cuentas, estados y transacciones (resuelve P-01).
-3. La sincronización se hace con outbox + proceso idempotente + reconciliación (resuelve P-02).
-4. Salen del grafo `Consecuencia` y `Comparticion`, junto con R06 y R17.
-5. Se agregan `Usuario.rol` {ESTUDIANTE, ADMIN} y `version_contenido` en simulación e intento. Esta última permite editar una simulación sin romper los intentos que ya existen.
+## 7. Decisiones que se registran como DEC-24 (paso 0.10)
+
+1. MongoDB se adopta como base documental (D-10 → SUPERSEDED).
+2. PostgreSQL es dueño de cuentas, estados y transacciones (resuelve P-01).
+3. Sincronización: outbox con aplicación inmediata, reintento idempotente, reconciliación y reconstrucción (resuelve P-02).
+4. Salen del grafo `Consecuencia`, `Retroalimentacion` y `Comparticion` (R06, R11, R17); la retroalimentación pasa a ser propiedad de `Respuesta`.
+5. El contenido publicado es inmutable; solo se edita en BORRADOR.
+6. Se agrega `Usuario.rol` {ESTUDIANTE, ADMIN} y un `contexto` polimórfico por `Paso.tipo` (avanza P-09).
