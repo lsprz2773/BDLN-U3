@@ -19,7 +19,12 @@
     "test": "npm run test --workspaces --if-present",
     "validar:dataset": "python3 database/seed/validar_dataset.py",
     "verificar:modelo": "python3 scripts/verificar.py",
-    "verificar": "npm run lint && npm run format:check && npm run typecheck && npm run validar:dataset && npm run verificar:modelo"
+    "verificar": "npm run lint && npm run format:check && npm run typecheck && npm run validar:dataset && npm run verificar:modelo",
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose down",
+    "db:reset": "docker compose down -v",
+    "db:logs": "docker compose logs -f",
+    "db:ps": "docker compose ps"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
