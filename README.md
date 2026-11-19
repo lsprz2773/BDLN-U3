@@ -1,5 +1,12 @@
 # QATO'K
 
+> [!IMPORTANT]
+> **Este repositorio se archivó el 2026-11-19.** El proyecto continúa en dos repos:
+> - **[The-Tito/qatok-backend](https://github.com/The-Tito/qatok-backend)**: API, `shared/`, bases de datos (`database/`), pruebas y documentación.
+> - **[The-Tito/qatok-frontend](https://github.com/The-Tito/qatok-frontend)**: interfaz Next.js.
+>
+> Los issues abiertos se recrearon allá (tabla de equivalencias en `context/github.md` del backend).
+
 **Simulaciones de situaciones laborales para practicar habilidades profesionales antes de vivirlas.**
 
 [![CI](https://github.com/lsprz2773/BDLN-U3/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/lsprz2773/BDLN-U3/actions/workflows/ci.yml)
