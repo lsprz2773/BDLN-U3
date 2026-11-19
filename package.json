@@ -1,0 +1,33 @@
+{
+  "name": "qatok",
+  "version": "2.0.0-dev",
+  "private": true,
+  "description": "QATO'K: simulaciones de habilidades profesionales sobre PostgreSQL, MongoDB y Neo4j",
+  "workspaces": [
+    "shared",
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write \"{shared,backend,frontend,tests}/**/*.{ts,tsx,js,mjs,json,css}\" \"*.{json,mjs}\"",
+    "format:check": "prettier --check \"{shared,backend,frontend,tests}/**/*.{ts,tsx,js,mjs,json,css}\" \"*.{json,mjs}\"",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "validar:dataset": "python3 database/seed/validar_dataset.py",
+    "verificar:modelo": "python3 scripts/verificar.py",
+    "verificar": "npm run lint && npm run format:check && npm run typecheck && npm run validar:dataset && npm run verificar:modelo"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.15.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.14.0",
+    "prettier": "^3.10.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.73.0"
+  }
+}

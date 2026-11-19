@@ -1,0 +1,7 @@
+{
+  "name": "@qatok/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "API de QATO'K: controladores, servicios y un repositorio por base (paso 0.7)"
+}
