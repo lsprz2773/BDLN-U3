@@ -1,4 +1,8 @@
-# CLAUDE.md — Proyecto QATO'K (proyecto final de Bases de Datos en la Nube)
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Proyecto QATO'K (proyecto final de Bases de Datos en la Nube)
 
 QATO'K es una plataforma de simulaciones profesionales: el estudiante toma decisiones en situaciones laborales, ve consecuencias y recibe retroalimentación, y la plataforma sigue el progreso de sus habilidades y genera evidencias compartibles.
 
@@ -58,7 +62,27 @@ npm run db:up               # PostgreSQL :5433, MongoDB :27018, Neo4j :7475/:768
 npm run dev:api             # API en http://localhost:4000/api
 npm run verificar           # lint + formato + tipos + unitarias + dataset + modelo (debe quedar en verde)
 npm run test:integration    # contra las 3 bases de Docker
+npm run db:down             # detiene las bases; db:reset además borra sus volúmenes
 ```
+
+Una sola prueba (Vitest con proyectos `unit` e `integration`, definidos en `vitest.config.mts`):
+
+```bash
+npx vitest run --project unit tests/unit/backend/health.service.test.ts
+npx vitest run --project unit -t "DEGRADADO"     # por nombre de caso
+```
+
+Las de integración corren en serie (`fileParallelism: false`) y necesitan `npm run db:up` antes. CI (`.github/workflows/ci.yml`) hace lo mismo: `setup:env` → `db:up` → `verificar` → `test:integration`.
+
+## Patrón del backend (copiar el de `health`)
+
+- **Fábricas, no clases ni singletons:** cada capa se crea con `crearXxx(dependencias)` (`crearHealthRepositoryRelacional(pool)`, `crearHealthService(repos, opciones)`, `crearHealthController(servicio)`).
+- **El servicio depende de una interfaz** que él mismo declara (p. ej. `ComprobadorBase` en `services/health.service.ts`), no de los drivers; los repositorios de cada base la implementan y devuelven objetos del dominio, nunca filas crudas. Así las unitarias pasan repositorios falsos (ver `tests/unit/backend/health.service.test.ts`).
+- **Raíz de composición única:** `backend/src/contenedor.ts` crea y conecta repositorios → servicios → controladores, con un bloque por flujo y dueño (F1, F2, F3a, F3b). Las rutas se registran con una línea por archivo en `backend/src/routes/index.ts`.
+- **`app.ts` no abre puertos ni conexiones** (lo hace `server.ts`), para probar con supertest; `tests/apoyo/app-de-prueba.ts` da `appConRutas()` y `loggerSilencioso`.
+- **Errores:** los servicios lanzan `ErrorApp(codigo, estadoHttp, mensaje, detalles)` (`backend/src/lib/errores.ts`); el middleware lo traduce al formato del contrato, y los fallos de conexión de cualquier driver se responden como `503 BASE_NO_DISPONIBLE`.
+- **`@qatok/shared` exporta TypeScript fuente** (`shared/src/index.ts`, sin paso de compilación): los esquemas zod del contrato se agregan ahí y se validan respuestas con `Esquema.parse(...)` en las pruebas.
+- Imports relativos con extensión `.js` (ESM, `"type": "module"`).
 
 `npm run verificar` y `npm run test:integration` deben pasar antes de cada commit que toque código. `python3 scripts/verificar.py` (incluido en `verificar`) debe seguir en **0 fallos**: valida los entregables de la actividad anterior contra el KG. `python3 database/seed/validar_dataset.py` valida los datos de prueba.
 
