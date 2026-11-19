@@ -41,6 +41,7 @@
 | DEC-21 | — | Método: KG v1.1 con `changelog`; v1.0 conservada. | ADOPTADA |
 | DEC-22 | — | Todos los entregables en la carpeta `entregables/`; la verificación en `verificacion/`. | ADOPTADA |
 | DEC-23 | — (surgida en F1) | Añadir `Simulacion` a las entidades de C-03. | ADOPTADA |
+| DEC-24 | — (proyecto final) | Arquitectura de tres bases según la matriz de propiedad v2: MongoDB adoptado, reparto por base dueña, sincronización por outbox, proyección del grafo, stack. KG v1.2. | ADOPTADA (D-15, D-20) / PRELIMINAR (D-16..D-19) / PROPUESTA (D-21) |
 
 ---
 
@@ -202,6 +203,24 @@ Todos los entregables se crean en `entregables/`. Los razonamientos de verificac
 - **CoVe:** camino `(Usuario)-[:REALIZA]->(Intento)<-[:TIENE]-(Simulacion)` → existe (R01, R02). ✔
 - **SC:** texto de la pregunta → sí · necesidad del parámetro → sí · lista del KG → no. **2–1 → añadir** (mismo criterio que DEC-05).
 - **Decisión:** C-03 pasa a 8 entidades. **ADOPTADA.** Aplicada en el KG v1.1 (`changelog`).
+
+
+### DEC-24 — Arquitectura de tres bases (proyecto final, 2026-11-18)
+- **Origen:** la guía del proyecto final (`context/guia/`) exige una aplicación con base relacional, documental y de grafos, cada una con una responsabilidad justificada. La v1.1 tenía MongoDB descartado (D-10) y el reparto entre Neo4j y PostgreSQL pendiente (P-01, P-02).
+- **ToT:** 6 repartos y 5 mecanismos de sincronización, con criterio eliminatorio (cada base debe pasar "si la quitamos, ¿qué se pierde?"). → `docs/modelos/analisis-matriz.md`.
+- **CoVe y red team:** 10 ataques a la alternativa ganadora, con respuesta y riesgo residual (mismo documento, §4).
+- **Decisión** (detalle en `docs/modelos/matriz-propiedad.md`):
+  | KG | Qué decide | Estado |
+  |---|---|---|
+  | D-15 | MongoDB se adopta como base documental (D-10 → SUPERSEDED) | ADOPTADA (la exige la guía) |
+  | D-16 | Cada dato tiene una base dueña; PostgreSQL es dueño de cuentas, estados y transacciones; Neo4j es una proyección (D-08 y D-09 → SUPERSEDED; resuelve P-01) | PRELIMINAR (aprobación del equipo) |
+  | D-17 | Outbox con aplicación inmediata, reintento idempotente, reconciliación y reconstrucción (resuelve P-02) | PRELIMINAR |
+  | D-18 | Salen del grafo `Consecuencia`, `Retroalimentacion` y `Comparticion` (R06, R11, R17); la retroalimentación pasa a `Respuesta.tipo_retroalimentacion` | PRELIMINAR |
+  | D-19 | El contenido publicado es inmutable | PRELIMINAR |
+  | D-20 | Stack: API REST Node.js + TypeScript (Express), interfaz Next.js que solo consume la API, Docker Compose | ADOPTADA (decisión del equipo) |
+  | D-21 | Puntuación del intento = promedio de las valoraciones elegidas (P-03) | PROPUESTA |
+- **Qué no cambia:** el modelo de dominio (12 entidades, 17 relaciones, RI-01..RI-25) y el modelo lógico de grafos de la v1.1 siguen siendo el **modelo conceptual común**; por eso los entregables de la actividad anterior siguen siendo válidos y `scripts/verificar.py` no cambia. La v1.2 cambia en qué base vive cada dato, no qué datos existen.
+- **Aplicada en:** `docs/KG.json` v1.2 (`changelog`); v1.1 conservada en `docs/KG-v1.1.json`.
 
 ---
 
