@@ -30,6 +30,7 @@ Esta carpeta reúne lo que el equipo necesita para **trabajar**: la guía del pr
 |---|---|
 | `plan-trabajo.md` | Plan vigente: perfiles, fases, tareas, dependencias |
 | `convenciones.md` | Reglas comunes que todos siguen |
+| `github.md` | Configuración de GitHub que hace el admin: rama por defecto y protección de ramas |
 | `guia/` | Guía del proyecto final del profesor |
 | `antecedentes/Reporte_Auditoria_BDLN-U3.pdf` | Auditoría v1 del estado del repo |
 | `antecedentes/auditoria-v2.md` | Auditoría v2: confirma y corrige la v1 |
