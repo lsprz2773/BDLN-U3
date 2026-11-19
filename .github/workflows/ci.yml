@@ -1,0 +1,72 @@
+# CI de QATO'K (paso 0.9): en cada push y PR levanta las 3 bases como servicios y corre
+# lint, formato, tipos, pruebas unitarias, validación del dataset, verificación del modelo
+# y pruebas de integración. Un PR a develop o main solo se fusiona con este job en verde.
+name: CI
+
+on:
+  push:
+    branches: [develop, main, 'feature/**', 'release/**', 'hotfix/**']
+  pull_request:
+    branches: [develop, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verificar:
+    name: Verificar (lint, tipos, pruebas y 3 bases)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    # Mismos valores y puertos que .env.example (solo para CI, no son credenciales reales).
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: qatok
+          POSTGRES_USER: qatok
+          POSTGRES_PASSWORD: ${{ vars.CI_POSTGRES_PASSWORD }}
+        ports: ['5433:5432']
+        options: >-
+          --health-cmd "pg_isready -U qatok -d qatok"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      mongo:
+        image: mongo:7
+        env:
+          MONGO_INITDB_ROOT_USERNAME: qatok
+          MONGO_INITDB_ROOT_PASSWORD: ${{ vars.CI_MONGO_PASSWORD }}
+        ports: ['27018:27017']
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1}).ok'"
+          --health-interval 5s --health-timeout 5s --health-retries 20
+      neo4j:
+        image: neo4j:5-community
+        env:
+          NEO4J_AUTH: neo4j/${{ vars.CI_NEO4J_PASSWORD }}
+          NEO4J_server_memory_heap_max__size: 512m
+          NEO4J_server_memory_pagecache_size: 256m
+        ports: ['7475:7474', '7688:7687']
+        options: >-
+          --health-cmd "cypher-shell -u neo4j -p ${{ vars.CI_NEO4J_PASSWORD }} 'RETURN 1'"
+          --health-interval 10s --health-timeout 10s --health-retries 30 --health-start-period 20s
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Configuración de entorno
+        run: cp .env.example .env
+
+      - name: Lint, formato, tipos, unitarias, dataset y modelo
+        run: npm run verificar
+
+      - name: Pruebas de integración (3 bases)
+        run: npm run test:integration
