@@ -4,16 +4,16 @@
 
 ## Contexto
 
-La guía del profesor (`docs/guia-evaluacion/Guia_Proyecto_Final_Bases_Datos.pdf`) pide una sola aplicación con una base relacional, una documental y una de grafos, coordinadas por una API y con interfaz. Hoy el repo solo tiene el modelo y los scripts de Neo4j, que vienen de la actividad anterior (ver `docs/guia-evaluacion/auditoria-v2.md`).
+La guía del profesor (`context/guia/Guia_Proyecto_Final_Bases_Datos.pdf`) pide una sola aplicación con una base relacional, una documental y una de grafos, coordinadas por una API y con interfaz. Hoy el repo solo tiene el modelo y los scripts de Neo4j, que vienen de la actividad anterior (ver `context/antecedentes/auditoria-v2.md`).
 
 Ya está decidido:
 - Equipo de 3; stack Node + TypeScript.
 - Se sigue la guía completa, con interfaz.
-- Estrategia "dueño de base + dueño de flujo" (`plan-reparto.md`).
+- Estrategia "dueño de base + dueño de flujo" (`context/antecedentes/plan-reparto.md`).
 - **El coordinador (perfil A) deja hechas las fundaciones**: acuerdos, estructura, Docker y esqueleto de la API.
 - **No se planea con fechas**: se avanza por fases y cada fase se cierra con una "puerta" verificable.
 
-**Resultado esperado:** un archivo `docs/plan-trabajo.md` en el repo que cualquier integrante lea y sepa exactamente qué hacer, en qué orden, de qué depende y cómo saber que terminó. Este es ese archivo.
+**Resultado esperado:** un archivo `context/plan-trabajo.md` en el repo que cualquier integrante lea y sepa exactamente qué hacer, en qué orden, de qué depende y cómo saber que terminó. Este es ese archivo.
 
 
 ---
@@ -60,7 +60,7 @@ Mientras A hace esto, **B y C hacen sus tareas "sin bloqueo"** (sección 4).
 | # | Entregable | Ubicación | Contenido | Revisa |
 |---|---|---|---|---|
 | 0.1 | **Reparto de datos** (quién es dueño de cada dato) | `docs/modelos/matriz-propiedad.md` + `analisis-matriz.md` | Por entidad: base dueña, qué se copia a otra base y para qué; alternativas evaluadas y descartadas. Incluye la **tabla de eventos de sincronización** (`eventos_sincronizacion`: id, tipo, payload jsonb, estado PENDIENTE/APLICADO/FALLIDO, intentos, creado_en, aplicado_en) y la política ante escrituras parciales: escribir primero en la base dueña, reintentar después y reconciliar | B y C |
-| 0.2 | **Convenciones** | `docs/convenciones.md` | UUID v4 generados en el backend; nombres del KG (`id_usuario`, `fecha_inicio`…); fechas ISO-8601 en UTC; catálogos de valores del KG (`EN_CURSO`, `PUBLICADA`…); nuevo campo `rol` de usuario {ESTUDIANTE, ADMIN}; nombres de ramas y formato de commits | B y C |
+| 0.2 | **Convenciones** | `context/convenciones.md` | UUID v4 generados en el backend; nombres del KG (`id_usuario`, `fecha_inicio`…); fechas ISO-8601 en UTC; catálogos de valores del KG (`EN_CURSO`, `PUBLICADA`…); nuevo campo `rol` de usuario {ESTUDIANTE, ADMIN}; nombres de ramas y formato de commits | B y C |
 | 0.3 | **Contrato de la API v0** | `docs/api/contrato-v0.md` + esquemas en `shared/` | Endpoints (abajo), formato de error `{ error: { codigo, mensaje, detalles } }`, sesión con `Authorization: Bearer <jwt>` | B y C |
 | 0.4 | **Datos de prueba comunes** | `database/seed/dataset.json` | Un solo conjunto con UUID fijos, a partir de los datos de ejemplo de `neo4j/03-nodos-ejemplo.cypher` (prefijo `e0000000-…`: Ana, Bruno, simulaciones, intentos). **Cada dueño escribe el cargador de su base** que lee este archivo | B y C |
 | 0.5 | **Estructura del repositorio** | raíz | Carpetas según la sección 10 de la guía; npm workspaces (`backend`, `frontend`, `shared`); `tsconfig`, ESLint y Prettier; `.nvmrc`; `.gitignore` con `.env`, `node_modules` y `.DS_Store`; `neo4j/` se mueve a `database/graph/` | — |

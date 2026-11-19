@@ -1,6 +1,6 @@
 # Auditoría v2 del proyecto BDLN-U3 (QATO'K) frente a la guía del proyecto final
 
-> **Documento vigente para trabajar:** [`docs/plan-trabajo.md`](../plan-trabajo.md). Este archivo queda como antecedente.
+> **Documento vigente para trabajar:** [`context/plan-trabajo.md`](../plan-trabajo.md). Este archivo queda como antecedente.
 
 - **Fecha:** 18 de noviembre de 2026
 - **Rama auditada:** `develop`, commit `3d1a719` (80 archivos versionados). Al día con `origin/develop` y `origin/main` después de `git fetch`.

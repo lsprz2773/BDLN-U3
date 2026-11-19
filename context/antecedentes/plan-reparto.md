@@ -1,10 +1,10 @@
 # Plan de reparto del trabajo — proyecto final QATO'K
 
-> **Documento vigente para trabajar:** [`docs/plan-trabajo.md`](../plan-trabajo.md). Este archivo queda como antecedente.
+> **Documento vigente para trabajar:** [`context/plan-trabajo.md`](../plan-trabajo.md). Este archivo queda como antecedente.
 
 - **Fecha:** 18 de noviembre de 2026
 - **Equipo:** 3 personas (A, B y C; asignen nombres en la sección 4)
-- **Parte de:** `docs/guia-evaluacion/auditoria-v2.md`
+- **Parte de:** `context/antecedentes/auditoria-v2.md`
 - **Decisiones ya tomadas:** se sigue la guía completa, **con interfaz** (D1). El stack es **Node.js con TypeScript** (D4).
 - **Pendiente:** la fecha de entrega. El calendario está en semanas relativas; si hay menos tiempo, ver la sección 6.
 

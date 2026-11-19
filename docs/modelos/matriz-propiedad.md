@@ -1,6 +1,6 @@
 # Matriz de propiedad de datos — QATO'K (v2)
 
-- **Paso del plan:** 0.1 (`docs/plan-trabajo.md`). Responde a las secciones 5.1 y 5.2 de la guía.
+- **Paso del plan:** 0.1 (`context/plan-trabajo.md`). Responde a las secciones 5.1 y 5.2 de la guía.
 - **Estado:** PROPUESTA. Necesita la aprobación de B y C (puerta 0). Un cambio posterior se hace por PR aprobado por los 3.
 - **Por qué esta matriz y no otra:** `analisis-matriz.md` compara 6 repartos y 5 mecanismos de sincronización, los ataca y deja esta como ganadora.
 - **Base:** modelo del KG v1.1 (12 entidades, 17 relaciones) y consultas C-01 a C-05 del entregable A-01.
