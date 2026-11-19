@@ -102,7 +102,7 @@ El contrato completo (endpoints) es el paso 0.3. Estas reglas aplican a **todos*
 
 | Código | Cuándo |
 |---|---|
-| `200` / `201` / `204` | OK / creado / sin contenido (borrado) |
+| `200` / `201` / `204` | OK / creado / sin contenido. Un borrado **sin** eventos responde `204`; un borrado **con** eventos responde `200 { "eliminado": true, "sincronizacion": … }` |
 | `400` `VALIDACION` | Entrada inválida (zod); `detalles` lista los campos |
 | `401` `NO_AUTENTICADO` | Sin token o token inválido |
 | `403` `SIN_PERMISO` | Autenticado pero sin permiso (rol o dueño) |

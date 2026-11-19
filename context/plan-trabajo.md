@@ -72,17 +72,16 @@ Mientras A hace esto, **B y C hacen sus tareas "sin bloqueo"** (sección 4).
 | 0.11 | **README de arranque** | `README.md` | Clonar → `cp .env.example .env` → `docker compose up -d` → `npm install` → `npm run dev` | C lo prueba |
 | 0.12 | **Tablero** | GitHub Projects | Un issue por cada tarea de las secciones 4 a 6, con su perfil y su fase | — |
 
-**Endpoints v0** (rutas y forma de respuesta; la lógica la implementa cada dueño). Todas las rutas van bajo el prefijo `/api` (`context/convenciones.md` §5):
+**Endpoints v0:** el detalle (entrada, respuesta, errores y bases que toca cada uno) está en `docs/api/contrato-v0.md`. Todas las rutas van bajo `/api`. Resumen por dueño:
 
-| Flujo | Dueño | Endpoints |
+| Flujo | Dueño | Rutas |
 |---|---|---|
 | Salud | A | `GET /health` |
-| F1 Cuenta | B | `POST /auth/registro`, `POST /auth/login`, `GET /me` |
-| F1 Catálogo | B | `GET /simulaciones?habilidad=&dificultad=`, `GET /simulaciones/:id` |
-| F1 Administración | B | `POST /admin/simulaciones`, `PUT /admin/simulaciones/:id`, `POST /admin/simulaciones/:id/publicar`, `DELETE /admin/simulaciones/:id` |
-| F2 Jugar | C | `POST /intentos`, `GET /intentos/:id` (paso actual + opciones), `POST /intentos/:id/respuestas`, `POST /intentos/:id/abandonar` |
-| F3a Perfil | A | `GET /perfil/habilidades` (C-02, C-05), `GET /perfil/recomendaciones` (C-01), `GET /intentos/:id/recorrido` (C-03), `POST /evidencias`, `GET /evidencias`, `GET /evidencias/:id` |
-| F3b Compartir | B | `POST /evidencias/:id/comparticiones`, `DELETE /comparticiones/:id`, `GET /publico/evidencias/:token` (C-04) |
+| F1 Cuenta y habilidades | B | `/auth/registro`, `/auth/login`, `/me` (GET, PATCH, DELETE), `/habilidades`, `/admin/habilidades/*` |
+| F1 Catálogo y administración | B | `/simulaciones/*`, `/admin/simulaciones/*` (incluye `/contenido`, `/publicar`, `/desactivar`) |
+| F2 Jugar | C | `/intentos/*` (iniciar, consultar, responder, abandonar) |
+| F3a Perfil y evidencias | A | `/perfil` (**flujo integrado**), `/perfil/habilidades`, `/perfil/recomendaciones`, `/perfil/habilidades/:id/evolucion`, `/perfil/intentos/:id/recorrido`, `/evidencias/*` |
+| F3b Compartir | B | `/evidencias/:id/comparticiones`, `/comparticiones/:id`, `/publico/evidencias/:token` |
 
 **Puerta 0:**
 - B y C aprueban 0.1 a 0.4.

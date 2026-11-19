@@ -48,7 +48,7 @@ Leyenda: **●** dueña · **◐** copia parcial (solo los campos listados) · �
 | E07 Intento | ● `intento` (id_usuario FK, id_simulacion FK, fecha_inicio, fecha_fin, estado, puntuacion) | — | ◐ `id_intento`, `estado`, `fecha_inicio`, `fecha_fin`, `puntuacion` + `REALIZA`, `TIENE` | C-02, C-03, C-05 |
 | E08 Respuesta | ● `respuesta` (id_intento FK, id_paso, id_opcion, fecha_respuesta, secuencia; UNIQUE (id_intento, secuencia)) | — | ◐ `id_respuesta`, `secuencia`, `tipo_retroalimentacion` + `REGISTRA`, `CORRESPONDE_A`, `SELECCIONA` | C-02, C-03 |
 | E10 Progreso | — | — | ● `nivel_actual`, `fecha_actualizacion` + `TIENE_PROGRESO`, `CORRESPONDE_A` | **Derivado**: se recalcula desde cero con los intentos COMPLETADO y DESARROLLA (fórmula: P-03) |
-| E11 Evidencia — registro | ● `evidencia` (id_usuario FK, id_intento FK, titulo, fecha_generacion, visibilidad) | — | ◐ `id_evidencia`, `titulo` + `GENERA`, `PRODUCE` | C-04 |
+| E11 Evidencia — registro | ● `evidencia` (id_usuario FK, id_intento FK **UNIQUE**: una evidencia por intento, titulo, fecha_generacion, visibilidad) | — | ◐ `id_evidencia`, `titulo` + `GENERA`, `PRODUCE` | C-04 |
 | E11 Evidencia — contenido | — | ● `evidencias` (instantánea del recorrido: decisiones, consecuencias, puntuación y habilidades, con forma variable) | — | — |
 | R16 DEMUESTRA | — | — | ● derivada al generar la evidencia (habilidades DESARROLLA de la simulación del intento: RI-20) | C-04 |
 | E12 Comparticion | ● `comparticion` (id_evidencia FK, token único, fecha_creacion, fecha_expiracion, estado, destinatario) | — | — **sale del grafo** | Dato transaccional (RI-15, RI-21) |
