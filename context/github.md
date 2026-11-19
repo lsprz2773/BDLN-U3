@@ -1,6 +1,8 @@
 # Configuración de GitHub (paso 0.9)
 
-Lo que vive en el repo ya está hecho: `CODEOWNERS` y el CI (`.github/workflows/ci.yml`). Lo que sigue se configura **en GitHub** y requiere permisos de **administrador** del repositorio (`lsprz2773/BDLN-U3`). Hoy solo @lsprz2773 los tiene. Hay que hacerlo **después del primer push** de `develop` con el CI, porque la protección exige el nombre del job.
+Lo que vive en el repo ya está hecho: `CODEOWNERS` y el CI (`.github/workflows/ci.yml`). Lo que sigue se configura **en GitHub** y requiere permisos de **administrador** del repositorio (`lsprz2773/BDLN-U3`). Hoy solo @lsprz2773 los tiene.
+
+**Tablero de tareas:** GitHub Project "QATO'K — Proyecto final" (cuenta @The-Tito), con un issue por tarea del plan agrupado por milestone (fase) y etiquetado por perfil y base. Hay que hacerlo **después del primer push** de `develop` con el CI, porque la protección exige el nombre del job.
 
 ## 1. Rama por defecto → `develop`
 
@@ -48,6 +50,5 @@ Comprobar: `gh api repos/lsprz2773/BDLN-U3/branches/develop/protection --jq '.re
 
 ## 3. Pendiente
 
-- **Usuario de GitHub de C:** completar `.github/CODEOWNERS` (las instrucciones están dentro del archivo).
-- Que C tenga permiso de escritura en el repo (Settings → Collaborators).
+- ~~Usuario de GitHub de C en `CODEOWNERS`~~: hecho (@AngelChame, con permiso de escritura).
 - La plantilla de PR quedó fuera por decisión del equipo.

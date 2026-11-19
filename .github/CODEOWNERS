@@ -1,8 +1,7 @@
 # Dueños de código (paso 0.9). Un PR que toque estas rutas necesita la aprobación de uno de
 # sus dueños que NO sea el autor. Por eso cada base tiene dueño + suplente (plan §1 y §3).
-# Perfiles: A = @The-Tito · B = @lsprz2773 · C = PENDIENTE (falta su usuario de GitHub).
+# Perfiles: A = @The-Tito · B = @lsprz2773 · C = @AngelChame.
 #
-# Al tener el usuario de C: reemplazar @USUARIO_C, quitar el "#" de sus líneas y borrar esta nota.
 # Rutas sin dueño (código de flujos, docs, etc.): basta 1 aprobación de cualquier integrante.
 
 # ---- Grafo (A; suplente B) ----
@@ -14,17 +13,15 @@
 /backend/src/repositories/relational/ @lsprz2773 @The-Tito
 
 # ---- Documental e interfaz (C; suplente A) ----
-# /database/document/                   @USUARIO_C @The-Tito
-# /backend/src/repositories/document/   @USUARIO_C @The-Tito
-# /frontend/                            @USUARIO_C @The-Tito
-/database/document/                   @The-Tito @lsprz2773
-/backend/src/repositories/document/   @The-Tito @lsprz2773
+/database/document/                   @AngelChame @The-Tito
+/backend/src/repositories/document/   @AngelChame @The-Tito
+/frontend/                            @AngelChame @The-Tito
 
 # ---- Acuerdos de la fase 0 (el plan pide que los aprueben los 3; GitHub solo exige 1 dueño,
 # así que el autor del PR debe pedir la revisión de los otros dos) ----
-/database/seed/                       @The-Tito @lsprz2773
-/docs/modelos/matriz-propiedad.md     @The-Tito @lsprz2773
-/context/convenciones.md              @The-Tito @lsprz2773
-/docs/api/                            @The-Tito @lsprz2773
-/shared/                              @The-Tito @lsprz2773
-/.github/                             @The-Tito @lsprz2773
+/database/seed/                       @The-Tito @lsprz2773 @AngelChame
+/docs/modelos/matriz-propiedad.md     @The-Tito @lsprz2773 @AngelChame
+/context/convenciones.md              @The-Tito @lsprz2773 @AngelChame
+/docs/api/                            @The-Tito @lsprz2773 @AngelChame
+/shared/                              @The-Tito @lsprz2773 @AngelChame
+/.github/                             @The-Tito @lsprz2773 @AngelChame

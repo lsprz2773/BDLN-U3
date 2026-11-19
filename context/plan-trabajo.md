@@ -22,9 +22,9 @@ Ya está decidido:
 
 | Perfil | Persona | Base que posee | Flujo que programa de punta a punta | Tarea transversal |
 |---|---|---|---|---|
-| **A — Coordinación y grafo** | *(coordinador)* | Neo4j | **F3a Perfil de habilidades y evidencias** | **Fase 0 completa**; sincronización hacia Neo4j y reconciliación; documento de arquitectura (E3) |
-| **B — Relacional y seguridad** | ________ | PostgreSQL | **F1 Cuenta y catálogo** + **F3b Compartir evidencias** | Inicio de sesión y roles; pruebas de rendimiento; catálogo de operaciones (E5) |
-| **C — Documental e interfaz** | ________ | MongoDB | **F2 Jugar una simulación** | Estructura de la interfaz y cliente de la API; prueba e2e; propuesta (E1) y README |
+| **A — Coordinación y grafo** | @The-Tito (coordinador) | Neo4j | **F3a Perfil de habilidades y evidencias** | **Fase 0 completa**; sincronización hacia Neo4j y reconciliación; documento de arquitectura (E3) |
+| **B — Relacional y seguridad** | @lsprz2773 | PostgreSQL | **F1 Cuenta y catálogo** + **F3b Compartir evidencias** | Inicio de sesión y roles; pruebas de rendimiento; catálogo de operaciones (E5) |
+| **C — Documental e interfaz** | @AngelChame | MongoDB | **F2 Jugar una simulación** | Estructura de la interfaz y cliente de la API; prueba e2e; propuesta (E1) y README |
 
 **Ajuste frente a `plan-reparto.md`:** A asume el esqueleto que antes tenía B. Para equilibrar, B toma la parte de compartir evidencias (tokens, vencimiento y revocación, que es transaccional y le toca a PostgreSQL) y A se queda con perfil y evidencias.
 
