@@ -150,6 +150,6 @@ Ejemplos de rama: `feature/b-esquema-relacional`, `feature/c-validadores-documen
 
 Ámbitos: `relacional`, `documental`, `grafo`, `backend`, `frontend`, `sync`, `shared`, `pruebas`, `infra`, `docs`. Ejemplo: `relacional: tabla respuesta con secuencia única por intento (RI-16)`.
 
-**Pull requests:** a `develop`; 1 aprobación (la del dueño si toca su base, según `CODEOWNERS`); CI en verde; con pruebas. Se fusiona con *merge commit* (no *squash*), para conservar los commits por implementación.
+**Pull requests:** a `develop`, con `Closes #N` para cerrar el issue. **Cada quien fusiona su propio PR, sin aprobación obligatoria** (decisión del equipo, 2026-11-19). El CI es un aviso, no un bloqueo. Si el PR cambia un acuerdo (matriz, convenciones, contrato o dataset), se avisa a los otros dos antes de fusionar. Se fusiona con *merge commit* (no *squash*), para conservar los commits por implementación.
 
 **Versiones:** la actividad anterior terminó en `1.1.0`. La entrega del proyecto final será `2.0.0`.

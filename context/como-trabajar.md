@@ -1,6 +1,6 @@
 # Cómo trabajamos: del tablero al merge
 
-Guía práctica para el día a día: cómo tomar una tarea, hacerla y entregarla. Las reglas detalladas están en [`convenciones.md`](convenciones.md) §7; aquí está el **paso a paso**.
+Guía práctica para el día a día: cómo tomar una tarea, hacerla y entregarla. **Regla de oro del equipo: avanzar sin esperar a nadie.** Los issues y el tablero dicen en qué trabaja cada quien; nadie necesita la aprobación de otro para fusionar. Las reglas detalladas están en [`convenciones.md`](convenciones.md) §7; aquí está el **paso a paso**.
 
 | Quién | Perfil | Tus tareas |
 |---|---|---|
@@ -44,7 +44,7 @@ Lee también, una vez (unos 30 minutos): [`plan-trabajo.md`](plan-trabajo.md) (t
 
 Cómo leer una tarjeta:
 
-- **Milestone** = la fase (0 a 4). **No empieces una tarea de la fase siguiente** mientras la puerta de la fase actual no se cumpla. La puerta está en la descripción del milestone. La excepción son las tarjetas que dicen **"sin bloqueo"**.
+- **Milestone** = la fase (0 a 4), en el orden recomendado. La descripción del milestone dice qué debería estar listo antes de pasar a la siguiente fase. Es una guía, no un candado: si puedes adelantar algo sin depender de otro, adelántalo.
 - **Etiquetas:** `perfil:X` dice de quién es; `base:relacional`, `base:documental` y `base:grafo` dicen qué bases toca; `entregable` marca un documento que evalúa el profesor (E1–E8).
 - **Cuerpo del issue:** qué hacer y **"Hecho cuando…"**, que es el criterio para darla por terminada.
 
@@ -102,34 +102,23 @@ En la descripción del PR:
 
 **Base del PR: siempre `develop`**, nunca `main` ni otra rama.
 
-### Paso 6. Revisión
-- GitHub pide revisión automáticamente según `.github/CODEOWNERS`: si tocas una base, la revisa su dueño o su suplente.
-- **Necesitas 1 aprobación y el CI en verde** (el check "Verificar").
-- Si te piden cambios, haz commits nuevos en la **misma rama** y vuelve a hacer push. El PR se actualiza solo.
-
-### Paso 7. Fusiona
-Cuando tengas la aprobación y el CI en verde:
-- Usa **"Create a merge commit"**, no "Squash", para conservar los commits.
-- Revisa que el issue se haya cerrado y que la tarjeta esté en **Done**.
+### Paso 6. Fusiona tú mismo
+**No hay que esperar aprobación** (decisión del equipo): cuando tu PR esté listo, fusiónalo.
+- Mira el check **Verificar** (CI). Es un **aviso**, no un bloqueo: si sale en rojo, arréglalo antes de fusionar, salvo que sepas exactamente por qué falla.
+- Botón **Merge pull request**, con la opción **"Create a merge commit"** (no "Squash"), para conservar los commits.
+- El issue se cierra solo (por el `Closes #N`) y la tarjeta pasa a **Done**.
 - Actualiza tu `develop` local: `git checkout develop && git pull`.
+
+¿Quieres una segunda opinión? Pide revisión a quien quieras en el PR (Reviewers). Es opcional, salvo en un caso: si tu PR **cambia un acuerdo** (sección 5), avisa a los otros dos antes de fusionar.
 
 ---
 
-## 4. Revisar el PR de un compañero
+## 4. Revisar el PR de un compañero (opcional)
 
-Cuando GitHub te pida revisar:
-
+Si alguien te pide opinión:
 1. Lee la descripción y el issue que cierra: ¿cumple el "Hecho cuando…"?
-2. Bájalo y pruébalo:
-   ```bash
-   git fetch origin
-   git checkout feature/<rama-del-compañero>
-   npm install && npm run verificar && npm run test:integration
-   ```
-3. Revisa que respete la [matriz](../docs/modelos/matriz-propiedad.md) (cada dato en su base), las [convenciones](convenciones.md) y el [contrato](../docs/api/contrato-v0.md).
-4. Responde en GitHub: **Approve**, o **Request changes** con comentarios concretos.
-
-Intenta revisar el mismo día. Un PR detenido bloquea a quien lo abrió.
+2. Si hace falta, bájalo y pruébalo: `git fetch origin && git checkout feature/<rama>` y luego `npm run verificar`.
+3. Comenta en GitHub. Para dar el visto bueno: pestaña **Files changed** → **Review changes** → **Approve** → **Submit review**.
 
 ---
 
@@ -137,11 +126,11 @@ Intenta revisar el mismo día. Un PR detenido bloquea a quien lo abrió.
 
 | Situación | Qué hacer |
 |---|---|
-| Hay que cambiar un acuerdo (matriz, convenciones, contrato, dataset) | No lo cambies en silencio. Abre un PR solo con ese cambio y pide la revisión de los otros dos |
+| Hay que cambiar un acuerdo (matriz, convenciones, contrato, dataset) | No lo cambies en silencio: abre un PR solo con ese cambio y avisa a los otros dos (menciónalos en el PR) antes de fusionarlo |
 | Te bloquea el trabajo de otro perfil | Coméntalo en tu issue mencionándolo (`@usuario`) y sigue con un repositorio falso |
 | Encontraste un error fuera de tu tarea | Abre un issue nuevo con su etiqueta de perfil y la fase |
 | La tarea es más grande de lo que parecía | Divídela: crea issues hijos y agrégalos al tablero |
-| `develop` cambió mientras trabajabas | `git checkout develop && git pull && git checkout <tu-rama> && git merge develop` |
+| `develop` cambió mientras trabajabas | No es obligatorio actualizar tu rama. Si hay conflictos, en el PR usa **Update branch** o, en local: `git checkout develop && git pull && git checkout <tu-rama> && git merge develop` |
 | No sabes qué toca después | Revisa tus tarjetas en **Todo** de la fase actual en el tablero |
 
 ---
@@ -158,4 +147,4 @@ Intenta revisar el mismo día. Un PR detenido bloquea a quien lo abrió.
 
 ## Resumen en una línea
 
-**Tarjeta a In Progress → rama desde `develop` → commits pequeños → `npm run verificar` → PR a `develop` con `Closes #N` → 1 aprobación + CI verde → merge commit → tarjeta en Done.**
+**Tarjeta a In Progress → rama desde `develop` → commits pequeños → `npm run verificar` → PR a `develop` con `Closes #N` → lo fusionas tú (merge commit) → tarjeta en Done.**

@@ -30,7 +30,7 @@ Ya está decidido:
 
 Carga estimada en días-persona: A ≈ 16 (de ellos 5 de fase 0), B ≈ 16, C ≈ 15.
 
-**Qué significa ser "dueño de base":** escribes el esquema, el cargador de datos, las consultas, el repositorio en el backend y las pruebas de esa base. Además **apruebas todo PR que la toque**, cosa que GitHub hace cumplir con `CODEOWNERS`.
+**Qué significa ser "dueño de base":** escribes el esquema, el cargador de datos, las consultas, el repositorio en el backend y las pruebas de esa base. Además eres la referencia de esa base: si alguien la cambia, te avisa.
 
 ---
 
@@ -67,7 +67,7 @@ Mientras A hace esto, **B y C hacen sus tareas "sin bloqueo"** (sección 4).
 | 0.6 | **Docker** | `docker-compose.yml`, `.env.example` | PostgreSQL 16, MongoDB 7 y Neo4j 5 Community con volúmenes persistentes, memoria de Neo4j limitada y healthchecks | — |
 | 0.7 | **Esqueleto de la API** | `backend/src/` | `config/` (valida el `.env`), `db/` (conexión con `pg`, `mongodb` y `neo4j-driver`), `middlewares/` (errores y validación con zod), `routes/` (un archivo por flujo), `controllers/`, `services/` y `repositories/{relational,document,graph}`. **`GET /health` recorre las capas y consulta las 3 bases: es la plantilla a copiar.** Incluye una prueba con Vitest | — |
 | 0.8 | ~~Esqueleto de la interfaz~~ **→ pasa al responsable del frontend** | `frontend/` | Decisión del equipo: lo arma quien hará el frontend, porque eligió Next.js. Ya no bloquea la puerta 0. Requisitos y punto de partida en `frontend/README.md` | Responsable del frontend |
-| 0.9 | **Reglas en GitHub** | `.github/`, `context/github.md` | `CODEOWNERS` (dueño + suplente por base); CI de GitHub Actions con las 3 bases como servicios; protección de `develop` y `main` y rama por defecto (las configura el admin del repo siguiendo `context/github.md`). Sin plantilla de PR, por decisión del equipo | B (admin del repo) |
+| 0.9 | **Reglas en GitHub** | `.github/`, `context/github.md` | CI de GitHub Actions con las 3 bases (como aviso, no bloquea) y `develop` como rama por defecto. **Sin protección de ramas, sin `CODEOWNERS` y sin plantilla de PR, por decisión del equipo** (`context/github.md`) | B (admin del repo) |
 | 0.10 | **Documentos de contexto al día** | `CLAUDE.md`, `docs/KG.json`, `docs/decisiones-modelado.md` | DEC-24: MongoDB adoptado (D-10 pasa a SUPERSEDED); la arquitectura pasa a ser de "3 bases con responsabilidades"; `CLAUDE.md` describe la nueva etapa (las rondas ToT/CoVe solo para documentos de modelo; el código se valida con pruebas y CI). `scripts/verificar.py` debe seguir en 0 fallos | — |
 | 0.11 | **README de arranque** | `README.md` | Clonar → `npm install` → `npm run setup:env` → `npm run db:up` → `npm run dev:api` | C lo prueba |
 | 0.12 | **Tablero** | GitHub Projects | Un issue por cada tarea de las secciones 4 a 6, con su perfil y su fase | — |
@@ -156,11 +156,11 @@ Mientras A hace esto, **B y C hacen sus tareas "sin bloqueo"** (sección 4).
 
 ## 7. Reglas de trabajo
 
-1. Rama `feature/<perfil>-<tarea>` desde `develop` → PR → 1 aprobación (la del dueño si toca su base) → CI en verde → merge.
-2. PR sin pruebas no entra.
+1. Rama `feature/<perfil>-<tarea>` desde `develop` → PR a `develop` con `Closes #N` → **lo fusiona su autor, sin esperar aprobación** (decisión del equipo). Detalle: `context/como-trabajar.md`.
+2. Cada PR trae sus pruebas (el CI avisa si algo se rompe).
 3. El SQL, el MQL y el Cypher solo viven en `repositories/` y en `database/`.
 4. Nadie inserta datos a mano: todo sale de `dataset.json`.
-5. Un cambio a un acuerdo de la fase 0 (matriz, convenciones, contrato) se hace por PR aprobado por los 3.
+5. Un cambio a un acuerdo de la fase 0 (matriz, convenciones, contrato, dataset) se hace en un PR propio, avisando a los otros dos antes de fusionarlo.
 6. Revisión semanal corta con el tablero: qué cerré, qué me bloquea.
 
 ## 8. Si hay que recortar (en este orden)

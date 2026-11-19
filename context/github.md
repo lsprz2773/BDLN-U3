@@ -1,54 +1,32 @@
-# Configuración de GitHub (paso 0.9)
+# Configuración de GitHub
 
-Lo que vive en el repo ya está hecho: `CODEOWNERS` y el CI (`.github/workflows/ci.yml`). Lo que sigue se configura **en GitHub** y requiere permisos de **administrador** del repositorio (`lsprz2773/BDLN-U3`). Hoy solo @lsprz2773 los tiene.
+**Decisión del equipo (2026-11-19): avanzar sin candados.** Los issues y el tablero dicen en qué trabaja cada quien; nadie espera la aprobación de otro para fusionar. Por eso **no hay** protección de ramas, `CODEOWNERS` ni plantilla de PR.
 
-**Tablero de tareas:** GitHub Project "QATO'K — Proyecto final" (cuenta @The-Tito), con un issue por tarea del plan agrupado por milestone (fase) y etiquetado por perfil y base. Hay que hacerlo **después del primer push** de `develop` con el CI, porque la protección exige el nombre del job.
+## Qué sí hay
 
-## 1. Rama por defecto → `develop`
-
-Hoy la rama por defecto es `claude/cool-allen-ni30jv`, así que los PR se abrirían contra ella. En gitflow, el trabajo diario va a `develop`.
-
-```bash
-gh repo edit lsprz2773/BDLN-U3 --default-branch develop
-```
-
-(o en GitHub: Settings → General → Default branch).
-
-## 2. Proteger `develop` y `main`
-
-| Regla | Valor | Por qué |
+| Qué | Dónde | Para qué |
 |---|---|---|
-| Cambios solo por PR | Sí, con 1 aprobación | Convenciones §7: un PR, una revisión |
-| Exigir revisión de dueños de código | Sí | Activa `CODEOWNERS`: cambios en una base los aprueba su dueño o su suplente |
-| Descartar aprobaciones si llegan commits nuevos | Sí | La aprobación vale para lo que se revisó |
-| CI obligatorio | Job `Verificar (lint, tipos, pruebas y 3 bases)`, rama al día con la base | Nada entra a `develop` con pruebas en rojo |
-| Push forzado y borrado de la rama | Bloqueados | Proteger el historial |
-| Aplicar también a administradores | No | Deja una salida si el CI falla por algo ajeno al código |
+| Rama por defecto `develop` | Settings → General | Los PR se abren contra `develop` y el panel Contributors cuenta el trabajo del equipo |
+| CI "Verificar" | `.github/workflows/ci.yml` | Corre lint, tipos, pruebas y las 3 bases en cada push y PR. **Es un aviso**: no bloquea el merge |
+| Issues + milestones + etiquetas | Pestaña Issues | Una tarea del plan por issue; milestone = fase; `perfil:A/B/C` = de quién es |
+| Tablero | GitHub Project «QATO'K — Proyecto final» (cuenta @The-Tito): https://github.com/users/The-Tito/projects/1 | Ver en qué va cada uno (Todo / In Progress / Done) |
+| GitGuardian | App instalada en el repo | Avisa si se sube una credencial. Nunca subir `.env` (ya está en `.gitignore`) |
 
-Comando (lo corre @lsprz2773, una vez por rama):
+El flujo diario está en [`como-trabajar.md`](como-trabajar.md).
+
+## Quitar la protección de ramas (solo el admin, @lsprz2773)
+
+En GitHub: **Settings → Branches** (o **Settings → Rules → Rulesets**, según cómo se haya creado) → borrar la regla de `develop` y la de `main`.
+
+O por terminal:
 
 ```bash
-for RAMA in develop main; do
-gh api -X PUT "repos/lsprz2773/BDLN-U3/branches/$RAMA/protection" --input - <<JSON
-{
-  "required_status_checks": { "strict": true, "contexts": ["Verificar (lint, tipos, pruebas y 3 bases)"] },
-  "enforce_admins": false,
-  "required_pull_request_reviews": {
-    "required_approving_review_count": 1,
-    "require_code_owner_reviews": true,
-    "dismiss_stale_reviews": true
-  },
-  "restrictions": null,
-  "allow_force_pushes": false,
-  "allow_deletions": false
-}
-JSON
-done
+gh api -X DELETE repos/lsprz2773/BDLN-U3/branches/develop/protection
+gh api -X DELETE repos/lsprz2773/BDLN-U3/branches/main/protection   # si existe
 ```
 
-Comprobar: `gh api repos/lsprz2773/BDLN-U3/branches/develop/protection --jq '.required_pull_request_reviews'`.
+Comprobar: `gh api repos/lsprz2773/BDLN-U3/branches/develop --jq .protected` debe responder `false`.
 
-## 3. Pendiente
+## Acceso al tablero
 
-- ~~Usuario de GitHub de C en `CODEOWNERS`~~: hecho (@AngelChame, con permiso de escritura).
-- La plantilla de PR quedó fuera por decisión del equipo.
+El dueño del Project (@The-Tito) da acceso **Write** a @lsprz2773 y @AngelChame en Project → ⋯ → Settings → Manage access, para que puedan mover sus tarjetas.
