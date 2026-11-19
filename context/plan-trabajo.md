@@ -59,7 +59,7 @@ Mientras A hace esto, **B y C hacen sus tareas "sin bloqueo"** (sección 4).
 
 | # | Entregable | Ubicación | Contenido | Revisa |
 |---|---|---|---|---|
-| 0.1 | **Reparto de datos** (quién es dueño de cada dato) | `docs/modelos/matriz-propiedad.md` + `analisis-matriz.md` | Por entidad: base dueña, qué se copia a otra base y para qué; alternativas evaluadas y descartadas. Incluye la **tabla de eventos de sincronización** (`eventos_sincronizacion`: id, tipo, payload jsonb, estado PENDIENTE/APLICADO/FALLIDO, intentos, creado_en, aplicado_en) y la política ante escrituras parciales: escribir primero en la base dueña, reintentar después y reconciliar | B y C |
+| 0.1 | **Reparto de datos** (quién es dueño de cada dato) | `docs/modelos/matriz-propiedad.md` + `analisis-matriz.md` | Por entidad: base dueña, qué se copia a otra base y para qué; alternativas evaluadas y descartadas. Incluye la **tabla de eventos de sincronización** (`evento_sincronizacion`: id, tipo, payload jsonb, estado PENDIENTE/APLICADO/FALLIDO, intentos, creado_en, aplicado_en) y la política ante escrituras parciales: escribir primero en la base dueña, reintentar después y reconciliar | B y C |
 | 0.2 | **Convenciones** | `context/convenciones.md` | UUID v4 generados en el backend; nombres del KG (`id_usuario`, `fecha_inicio`…); fechas ISO-8601 en UTC; catálogos de valores del KG (`EN_CURSO`, `PUBLICADA`…); nuevo campo `rol` de usuario {ESTUDIANTE, ADMIN}; nombres de ramas y formato de commits | B y C |
 | 0.3 | **Contrato de la API v0** | `docs/api/contrato-v0.md` + esquemas en `shared/` | Endpoints (abajo), formato de error `{ error: { codigo, mensaje, detalles } }`, sesión con `Authorization: Bearer <jwt>` | B y C |
 | 0.4 | **Datos de prueba comunes** | `database/seed/dataset.json` | Un solo conjunto con UUID fijos, a partir de los datos de ejemplo de `neo4j/03-nodos-ejemplo.cypher` (prefijo `e0000000-…`: Ana, Bruno, simulaciones, intentos). **Cada dueño escribe el cargador de su base** que lee este archivo | B y C |
@@ -72,7 +72,7 @@ Mientras A hace esto, **B y C hacen sus tareas "sin bloqueo"** (sección 4).
 | 0.11 | **README de arranque** | `README.md` | Clonar → `cp .env.example .env` → `docker compose up -d` → `npm install` → `npm run dev` | C lo prueba |
 | 0.12 | **Tablero** | GitHub Projects | Un issue por cada tarea de las secciones 4 a 6, con su perfil y su fase | — |
 
-**Endpoints v0** (rutas y forma de respuesta; la lógica la implementa cada dueño):
+**Endpoints v0** (rutas y forma de respuesta; la lógica la implementa cada dueño). Todas las rutas van bajo el prefijo `/api` (`context/convenciones.md` §5):
 
 | Flujo | Dueño | Endpoints |
 |---|---|---|
@@ -100,7 +100,7 @@ Mientras A hace esto, **B y C hacen sus tareas "sin bloqueo"** (sección 4).
 | 1 | Pasar los scripts de `database/graph/` al Neo4j de Docker (`cypher-shell -f`); recortar el grafo a su responsabilidad según la matriz (los nodos copiados solo llevan id y lo necesario para recorrer); cargador del grafo desde `dataset.json`; pruebas de humo y de integridad (C1–C14, C-01 a C-05) con resultado **fechado**, con versión y commit | `npm run db:graph:reset` construye el grafo desde cero y las pruebas pasan |
 | 1 | Modelo de grafo para E2 (`docs/modelos/grafo.md`), reutilizando los entregables A-03 a A-06 | Documento revisado por B o C |
 | 2 | `repositories/graph`: consultas C-01 a C-05 parametrizadas | Pruebas de repositorio en verde |
-| 2 | **Sincronización**: proceso que lee `eventos_sincronizacion` (PENDIENTE), aplica cada evento en Neo4j con reintento y lo marca APLICADO o FALLIDO; script de **reconciliación** que compara ids entre PostgreSQL y Neo4j y repara diferencias | Prueba: crear una respuesta con Neo4j apagado → queda PENDIENTE → encender Neo4j → queda APLICADO |
+| 2 | **Sincronización**: proceso que lee `evento_sincronizacion` (PENDIENTE), aplica cada evento en Neo4j con reintento y lo marca APLICADO o FALLIDO; script de **reconciliación** que compara ids entre PostgreSQL y Neo4j y repara diferencias | Prueba: crear una respuesta con Neo4j apagado → queda PENDIENTE → encender Neo4j → queda APLICADO |
 | 2 | Backend de F3a: servicio de perfil que **combina las 3 bases** (cuenta e intentos de PostgreSQL, habilidades y recomendaciones de Neo4j, textos de pasos, retroalimentación y evidencias de MongoDB) | Pruebas de integración en verde |
 | 3 | Pantallas de F3a: perfil, recomendaciones, recorrido de un intento, evidencias | Se usan desde la interfaz |
 | 3 | Pruebas de **integración** (perfil de punta a punta) y de **consistencia** (provocar una diferencia y ver que la reconciliación la detecta y repara) | En verde en CI |
@@ -110,7 +110,7 @@ Mientras A hace esto, **B y C hacen sus tareas "sin bloqueo"** (sección 4).
 | Fase | Tarea | Hecho cuando… |
 |---|---|---|
 | 0 · **sin bloqueo** | Borrador de las tablas a partir de A-02 (diccionario) y A-04 (restricciones), sin llaves definitivas; revisar 0.1 a 0.4 | Comentarios entregados a A |
-| 1 | `database/relational/schema/`: tablas según la matriz, PK, FK, `CHECK` (RI-05, RI-06, RI-07, RI-12, RI-21), `UNIQUE` (correo normalizado, token, secuencia por intento), índices justificados, tabla `eventos_sincronizacion`; cargador desde `dataset.json`; consultas representativas; pruebas de integridad y de transacciones | `npm run db:relational:reset` construye la base desde cero y las pruebas pasan |
+| 1 | `database/relational/schema/`: tablas según la matriz, PK, FK, `CHECK` (RI-05, RI-06, RI-07, RI-12, RI-21), `UNIQUE` (correo normalizado, token, secuencia por intento), índices justificados, tabla `evento_sincronizacion`; cargador desde `dataset.json`; consultas representativas; pruebas de integridad y de transacciones | `npm run db:relational:reset` construye la base desde cero y las pruebas pasan |
 | 1 | Modelo relacional para E2 (`docs/modelos/relacional.md`): entidades, claves y cardinalidades | Revisado por A o C |
 | 2 | `repositories/relational`; autenticación (bcrypt + JWT, middleware de rol ADMIN) | Pruebas en verde |
 | 2 | Backend de F1 según `matriz-propiedad.md` §4: crear simulación (solo PG), cargar contenido (solo Mongo, repositorio de C), publicar (valida el contenido y luego PG + evento), eliminar BORRADOR (PG y después Mongo); cuenta y habilidades con sus eventos | Pruebas de integración en verde, incluido el huérfano que deja eliminar un BORRADOR |
@@ -140,7 +140,7 @@ Mientras A hace esto, **B y C hacen sus tareas "sin bloqueo"** (sección 4).
 | Todos | Fase 0 | A | Tareas "sin bloqueo" |
 | B (F1) | `repositories/document` | C | B escribe primero la parte de PostgreSQL; las pruebas usan un repositorio falso hasta que C fusione |
 | A (F3a) | Repositorios de PostgreSQL y MongoDB | B y C | Igual: un repositorio falso con la misma firma |
-| C (F2) | Tabla `eventos_sincronizacion` | B | Está definida en 0.1; B la crea en la fase 1 |
+| C (F2) | Tabla `evento_sincronizacion` | B | Está definida en 0.1; B la crea en la fase 1 |
 | A (sincronización) | Que F2 escriba eventos | C | A prueba con eventos insertados a mano en las pruebas |
 
 **Regla:** las firmas de los repositorios (nombre, parámetros y tipo de retorno) se publican en `shared/` **antes** de implementarlas, para que los demás puedan programar contra ellas.

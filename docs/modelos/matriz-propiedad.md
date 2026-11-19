@@ -52,7 +52,7 @@ Leyenda: **●** dueña · **◐** copia parcial (solo los campos listados) · �
 | E11 Evidencia — contenido | — | ● `evidencias` (instantánea del recorrido: decisiones, consecuencias, puntuación y habilidades, con forma variable) | — | — |
 | R16 DEMUESTRA | — | — | ● derivada al generar la evidencia (habilidades DESARROLLA de la simulación del intento: RI-20) | C-04 |
 | E12 Comparticion | ● `comparticion` (id_evidencia FK, token único, fecha_creacion, fecha_expiracion, estado, destinatario) | — | — **sale del grafo** | Dato transaccional (RI-15, RI-21) |
-| *Nuevo* Evento | ● `eventos_sincronizacion` (§5) | — | — | — |
+| *Nuevo* Evento | ● `evento_sincronizacion` (§5) | — | — | — |
 
 ### Ejemplo del documento de contenido (por qué es documental)
 
@@ -119,7 +119,7 @@ La API nunca afirma que el grafo está al día si el evento no se aplicó.
 4. Todo efecto en el grafo es un `MERGE` por id: **aplicar dos veces da lo mismo**. El progreso se recalcula desde cero, nunca se incrementa.
 
 ```sql
-CREATE TABLE eventos_sincronizacion (
+CREATE TABLE evento_sincronizacion (
   id_evento     UUID PRIMARY KEY,
   tipo          VARCHAR(40)  NOT NULL,
   id_entidad    UUID         NOT NULL,
@@ -131,7 +131,7 @@ CREATE TABLE eventos_sincronizacion (
   creado_en     TIMESTAMPTZ  NOT NULL DEFAULT now(),
   aplicado_en   TIMESTAMPTZ  NULL
 );
-CREATE INDEX ix_eventos_pendientes ON eventos_sincronizacion (estado, creado_en);
+CREATE INDEX ix_eventos_pendientes ON evento_sincronizacion (estado, creado_en);
 ```
 
 | Evento | Lo emite | Efecto en Neo4j |
