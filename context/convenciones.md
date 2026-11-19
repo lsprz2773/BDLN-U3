@@ -123,6 +123,10 @@ Una escritura que se completó en la base dueña pero dejó el grafo pendiente *
 5. Errores de negocio: `throw new ErrorApp(codigo, estado, mensaje, detalles?)`; el middleware los convierte al formato de error.
 6. Logs con nivel y en JSON (pino). Nunca se registran contraseñas, tokens ni correos completos.
 7. Sin `any` en TypeScript (`strict: true`). Lint y formato (ESLint + Prettier) deben pasar antes del PR.
+8. **Frontend con Next.js: solo consume la API.** Next puede ejecutar código en el servidor, y eso facilita caer en el error que la guía prohíbe: que la interfaz toque las bases (§7.6 y §12). Por eso:
+   - `frontend/` **no** importa `pg`, `mongodb` ni `neo4j-driver` (ESLint lo bloquea) y no tiene credenciales de bases en su entorno.
+   - **No** se usan Route Handlers (`app/api/*`) ni Server Actions como backend. Toda lectura y escritura pasa por la API de `backend/` (`NEXT_PUBLIC_API_URL`).
+   - Los tipos y esquemas se importan de `@qatok/shared`, no se redefinen.
 
 ## 7. Git (gitflow)
 

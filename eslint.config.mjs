@@ -29,8 +29,21 @@ export default tseslint.config(
     },
   },
   {
+    // La interfaz solo consume la API: nunca un driver de base de datos (guía §7.6).
     files: ['frontend/**/*.{ts,tsx}'],
     languageOptions: { globals: { ...globals.browser } },
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: ['pg', 'mongodb', 'neo4j-driver'].map((name) => ({
+            name,
+            message:
+              'El frontend no accede a las bases: usa la API del backend (convenciones §6.8).',
+          })),
+        },
+      ],
+    },
   },
   prettier,
 );

@@ -3,5 +3,5 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Interfaz de QATO'K (Vite + React), consume solo la API (paso 0.8)"
+  "description": "Interfaz de QATO'K (Next.js), consume solo la API del backend (paso 0.8)"
 }
