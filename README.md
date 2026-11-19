@@ -166,6 +166,7 @@ La guía del proyecto pide siete tipos de prueba de integración (conectividad, 
 | Documento | Contenido |
 |---|---|
 | [Plan de trabajo](context/plan-trabajo.md) | Perfiles del equipo, fases y tareas |
+| [Cómo trabajamos](context/como-trabajar.md) | Del tablero al merge: el paso a paso del día a día |
 | [Convenciones](context/convenciones.md) | Nombres, identificadores, formatos, reglas de la API y de git |
 | [Matriz de propiedad de datos](docs/modelos/matriz-propiedad.md) | Qué dato vive en qué base y cómo se sincroniza |
 | [Análisis de alternativas](docs/modelos/analisis-matriz.md) | Por qué esta arquitectura y no otra |
@@ -175,6 +176,8 @@ La guía del proyecto pide siete tipos de prueba de integración (conectividad, 
 | [Guía del profesor](context/guia/Guia_Proyecto_Final_Bases_Datos.pdf) | Requisitos del proyecto final |
 
 ## Cómo contribuir
+
+La guía paso a paso (tablero, ramas, commits, pull requests y revisión) está en [context/como-trabajar.md](context/como-trabajar.md). En resumen:
 
 1. Crea tu rama desde `develop`: `feature/<perfil>-<tarea>` (por ejemplo, `feature/b-esquema-relacional`).
 2. Un commit por implementación, con el formato `<ámbito>: <qué cambia>`.
